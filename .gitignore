@@ -1,0 +1,5 @@
+*.db
+*.swp
+*.pyc
+*.pyo
+old_stuff/

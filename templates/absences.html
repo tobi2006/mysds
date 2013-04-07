@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}CCCU Law - {{current_module}}{% endblock %}
+
+{% block content %}
+
+{% url "absences" as action_url%}
+
+<h2>
+    Attendance for {{ current_module.title }} ({{ current_module.year }})
+</h2>
+
+<table id ="sortable_table" class="table table-striped table-sortable">
+    <thead>
+        <tr>
+            <th>
+                Student
+            </th>
+            <th>
+                Present
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <form action="{{ action_url }}" id="absenceForm" method="post"> 
+        {% csrf_token %}
+    {% for student, performance in performances.items %}
+        <tr>
+            <td>
+                <label>{{ student.last_name }}, {{ student.first_name }}</label>
+            </td>
+            <td>
+                <div class="btn-group" data-toggle="buttons-radio">
+                    <button type="button" class="btn btn-primary" name="{{ student.student_id }}" value=True>Present</button>
+                    <button type="button" class="btn btn-primary" name="{{ student.student_id }}" value=False>Absent</button>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<input type="hidden" name="option" value="" id="btn-input" />
+
+<input type="submit" value="Submit Attendance Sheet" class="btn btn-primary" align=right>
+</form>
+
+{% endblock %}

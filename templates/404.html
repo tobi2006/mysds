@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}CCCU Law - Page not found{% endblock %}
+
+{% block content %}
+
+{% load static %}
+
+<p align=center>
+<strong>404 error</strong>
+<br><br>
+<table align=center>
+    <tr>
+        <td>
+            <img src="{{ STATIC_URL }}images/404.jpg">
+        </td>
+        <td>
+            <br><br>No idea what you are looking for!
+        </td>
+    </tr>
+</table>
+</p>
+
+{% endblock %}

@@ -1,0 +1,91 @@
+from django.db import models
+
+# Create your models here.
+
+class Course(models.Model):
+    title = models.CharField(max_length = 50)
+
+    def __unicode__(self):
+        return u'%s' % (self.title)
+
+class Tutor(models.Model):
+    name = models.CharField(max_length = 50)
+    email = models.CharField(max_length = 50)
+
+    def __unicode__(self):
+        return u'%s' % (self.name)
+
+class Module(models.Model):
+    title = models.CharField(max_length = 50)
+    code = models.CharField(max_length = 20)
+    year = models.IntegerField()
+    assessment_1_title = models.CharField(max_length = 30, verbose_name="Assessment 1: Name", blank=True)
+    assessment_1_value = models.IntegerField(verbose_name="Assessment 1: Percentage", blank=True)
+    assessment_2_title = models.CharField(max_length = 30, verbose_name="Assessment 2: Name", blank=True)
+    assessment_2_value = models.IntegerField(verbose_name="Assessment 2: Percentage", blank=True)
+    assessment_3_title = models.CharField(max_length = 30, verbose_name="Assessment 3: Name", blank=True)
+    assessment_3_value = models.IntegerField(verbose_name="Assessment 3: Percentage", blank=True)
+    assessment_4_title = models.CharField(max_length = 30, verbose_name="Assessment 4: Name", blank=True)
+    assessment_4_value = models.IntegerField(verbose_name="Assessment 4: Percentage", blank=True)
+    assessment_5_title = models.CharField(max_length = 30, verbose_name="Assessment 5: Name", blank=True)
+    assessment_5_value = models.IntegerField(verbose_name="Assessment 5: Percentage", blank=True)
+    assessment_6_title = models.CharField(max_length = 30, verbose_name="Assessment 6: Name", blank=True)
+    assessment_6_value = models.IntegerField(verbose_name="Assessment 6: Percentage", blank=True)
+    assessment_7_title = models.CharField(max_length = 30, verbose_name="Assessment 7: Name", blank=True)
+    assessment_7_value = models.IntegerField(verbose_name="Assessment 7: Percentage", blank=True)
+    assessment_8_title = models.CharField(max_length = 30, verbose_name="Assessment 8: Name", blank=True)
+    assessment_8_value = models.IntegerField(verbose_name="Assessment 8: Percentage", blank=True)
+    exam_value = models.IntegerField(verbose_name="Percentage value for the exam") # set Default or Placeholder on 60
+
+    def __unicode__(self):
+        return u'%s' % (self.title)
+
+class Student(models.Model):
+    student_id = models.CharField(max_length = 15)
+    first_name = models.CharField(max_length = 30)
+    last_name = models.CharField(max_length = 30)
+    since = models.IntegerField() 
+    year = models.IntegerField()
+    email = models.CharField(max_length = 50)
+    course = models.ForeignKey(Course)
+    qld = models.BooleanField(verbose_name="QLD Status")
+    tutor = models.ForeignKey(Tutor)
+    modules = models.ManyToManyField(Module)
+    marks = models.TextField(blank=True)
+    notes = models.TextField(blank=True)
+    highlighted = models.BooleanField()
+    active = models.BooleanField(default=True)
+
+    def __unicode__(self):
+        return u'%s %s' % (self.first_name, self.last_name)
+
+    def save(self):
+        pass
+
+    def calculate_average(self):
+        pass
+
+class Performance(models.Model):
+    student = models.ForeignKey(Student)
+    module = models.ForeignKey(Module)
+    assessment_1 = models.IntegerField(blank=True)
+    assessment_2 = models.IntegerField(blank=True)
+    assessment_3 = models.IntegerField(blank=True)
+    assessment_4 = models.IntegerField(blank=True)
+    assessment_5 = models.IntegerField(blank=True)
+    assessment_6 = models.IntegerField(blank=True)
+    assessment_7 = models.IntegerField(blank=True)
+    assessment_8 = models.IntegerField(blank=True)
+    exam = models.IntegerField(blank=True)
+    average = models.IntegerField(blank=True)
+    absences = models.IntegerField(blank=True)
+
+    def save(self):
+        pass
+        #Calculate Average!
+
+
+class CSVUploader(models.Model):
+    csvfile = models.FileField(upload_to='csv/')
+
+

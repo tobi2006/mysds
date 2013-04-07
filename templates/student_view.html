@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}CCCU Law - {{current_student.first_name}} {{current_student.last_name}}{% endblock %}
+
+{% block content %}
+
+<div class="hero-unit">
+    <h2>{{current_student.first_name}} {{current_student.last_name}}</h2>
+<p>
+<!--<table cellpadding="5">-->
+<table class="table">
+    <tr>
+        <td><strong>ID</strong></td>
+        <td align="right">{{current_student.student_id}}</td>
+        <td><strong>Course</strong></td>
+        <td align="right">{{current_student.course}} ({% if not current_student.qld %}No {% endif %}QLD)</td>
+    </tr>
+    <tr>
+        <td><strong>Email</strong></td>
+        <td align="right"><a href="mailto:{{current_student.email}}">{{current_student.email}}</a></td>
+        <td><strong>Tutor</strong></td>
+        <td align="right"><a href="mailto:{{current_student.tutor.email}}?Subject={{current_student}}">{{current_student.tutor}}</a></td>
+    </tr>
+    <tr>
+        <td><strong>Year</strong></td>
+        <td align="right">{{current_student.year}} {% if current_student.since %} (Since {{current_student.since}}/{{current_student.since|add:"1"}}) {% endif %}</td>
+    </tr>
+</table>
+</p>  
+ <p align="right">
+ <a class="btn btn-primary" href="/edit_student/{{ current_student.student_id }}">
+        Edit
+    </a>
+</p>
+</div>
+
+<h3>Notes</h3>
+{% if current_student.notes %}
+    <p>
+        {{current_student.notes}}
+    </p>  
+{% else %}
+    <em>
+        No notes for this student.
+    </em>
+{% endif %}
+<p align="right">
+    <a class="btn btn-primary">
+        Edit
+    </a>
+</p>
+
+{% for module in current_student.modules.all %}
+
+    <hr>
+    <h3>{{module}}</h3>
+    <p>
+        {{module.code}}
+    </p>
+
+     <p align="right">
+        <a class="btn btn-primary">
+            Edit
+        </a>
+    </p>
+{% endfor %}
+{% endblock %}

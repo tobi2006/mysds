@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %} {% if add %} Add {% else %} Edit {% endif %} Module {% endblock %}
+
+{% block content %}
+
+<h1>{% if add %} Add {% else %} Edit {% endif %} Module</h1>
+
+{% if add %}
+{% url "add_module" as action_url %}
+{% else %}
+{% url "edit_module" object.pk as action_url %} #Das wird nicht gehen!
+{% endif %}
+
+<form action="{{ action_url }}" method="post" accept-charset="utf-8">
+    <table>
+        {{ module_form.as_p }}
+        {% csrf_token %}
+    </table>
+    <input type = "submit" value="Save" class="btn btn-primary">
+</form>
+
+{% endblock %}

@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+
+{% block title %}CCCU Law - {{current_module}}{% endblock %}
+
+{% block content %}
+
+<div class="hero-unit">
+    <h2>{{current_module}}</h2>
+<p>
+<table class="table">
+    <tr>
+        <td><strong>ID</strong></td>
+        <td align="right">{{current_module.code}}</td>
+        <td><strong>Year</strong></td>
+        <td align="right">{{current_module.year}}/{{current_module.year|add:"1"}}</td>
+    </tr>
+    <tr>
+        <td><strong>Number of Students</strong></td>
+        <td>{{ current_module.student_set.count }}</td>
+        <td></td>
+        <td></td>
+</table>
+</p>  
+ <p align="right">
+ <a class="btn btn-primary" href="/edit_module/{{ current_module.code }}/{{ current_module.year }}">
+        Edit
+    </a>
+</p>
+</div>
+
+
+<div class="btn-toolbar" align="center">
+    <div class="btn-group dropdown">
+        <a class = "btn btn-primary dropdown-toggle" data-toggle="dropdown">Enter/Change Marks <span class="caret"></span></a>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+            {% if current_module.assessment_1_title %}
+                <li>
+                    <a href="/mark/{{ current_module.code }}/{{ current_module.year }}/assessment_1">
+                        {{ current_module.assessment_1_title }}
+                    </a>
+                </li>
+            {% endif %}
+            {% if current_module.assessment_2_title %}
+                <li>
+                    <a href="/mark/{{ current_module.code }}/{{ current_module.year }}/assessment_2">
+                        {{ current_module.assessment_2_title }}
+                    </a>
+                </li>
+            {% endif %}
+            {% if current_module.assessment_3_title %}
+                <li>
+                    <a href="/mark/{{ current_module.code }}/{{ current_module.year }}/assessment_3">
+                        {{ current_module.assessment_3_title }}
+                    </a>
+                </li>
+            {% endif %}
+            {% if current_module.assessment_4_title %}
+                <li>
+                    <a href="/mark/{{ current_module.code }}{{ current_module.year }}/assessment_4">
+                        {{ current_module.assessment_4_title }}
+                    </a>
+                </li>
+            {% endif %}
+            {% if current_module.assessment_5_title %}
+                <li>
+                    <a href="/mark/{{ current_module.code }}/{{ current_module.year }}/assessment_5">
+                        {{ current_module.assessment_5_title }}
+                    </a>
+                </li>
+            {% endif %}
+            {% if current_module.assessment_6_title %}
+                <li>
+                    <a href="/mark/{{ current_module.code }}/{{ current_module.year }}/assessment_6">
+                        {{ current_module.assessment_6_title }}
+                    </a>
+                </li>
+            {% endif %}
+            {% if current_module.exam_value %}
+                <li>
+                    <a href="/mark/{{ current_module.code }}/{{ current_module.year }}/exam">
+                        Exam
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+    <div class="btn-group dropdown">
+        <a class = "btn btn-primary dropdown-toggle" data-toggle="dropdown">Edit Attendance<span class="caret"></span></a>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+            <li>
+                <a href="/absences/{{ current_module.code }}/{{ current_module.year }}/all">
+                    For all Groups
+                </a>
+            </li>
+            {% for i in number_of_groups %}
+            <li>
+                <a href="/absences/{{ current_module.code }}/{{ current_module.year }}/{{ i }}">
+                    Seminar Group {{ i }}
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <a class="btn btn-primary" href="/seminar_groups/{{ current_module.code }}/{{ current_module.year }}">
+        Assign/Change Seminar Groups
+    </a>
+    <a class="btn btn-primary" href="/add_students_to_module/{{ current_module.code }}/{{ current_module.year }}">
+                    Add Student(s)
+    </a>
+</div>
+
+<br><br>
+
+<table id ="sortable_table" class="table table-striped table-sortable">
+    <thead>
+        <tr>
+            <th>
+                Seminar Group
+            </th>
+            <th>
+                Student
+            </th>
+            <th>
+                Absences
+            </th>
+            {% if current_module.assessment_1_title %}
+                <th>
+                    {{ current_module.assessment_1_title }} ({{ current_module.assessment_1_value }}%)
+                </th>
+            {% endif %}
+            {% if current_module.assessment_2_title %}
+                <th>
+                    {{ current_module.assessment_2_title }} ({{ current_module.assessment_2_value }}%)
+                </th>
+            {% endif %}
+            {% if current_module.assessment_3_title %}
+                <th>
+                    {{ current_module.assessment_3_title }} ({{ current_module.assessment_3_value }}%)
+                </th>
+            {% endif %}
+            {% if current_module.assessment_4_title %}
+                <th>
+                    {{ current_module.assessment_4_title }} ({{ current_module.assessment_4_value }}%)
+                </th>
+            {% endif %}
+            {% if current_module.assessment_5_title %}
+                <th>
+                    {{ current_module.assessment_5_title }} ({{ current_module.assessment_5_value }}%)
+                </th>
+            {% endif %}
+            {% if current_module.assessment_6_title %}
+                <th>
+                    {{ current_module.assessment_6_title }} ({{ current_module.assessment_6_value }}%)
+                </th>
+            {% endif %}
+            {% if current_module.exam_value %}
+                <th>
+                    Exam ({{ current_module.exam_value }}%)
+                </th>
+            {% endif %}
+            <th>
+                Module Mark
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for student, performance in performances.items %}
+        <tr>
+            <td>
+                {{ performance.seminar_group }}
+            </td>
+            <td>
+                <a href="/student/{{student.student_id}}">{{student}}</a>
+            </td>
+            <td>
+                {{ performance.absences }}
+            </td>
+            {% if current_module.assessment_1_title %}
+                <th>
+                    {{ performance.assessment_1 }}
+                </th>
+            {% endif %}
+            {% if current_module.assessment_2_title %}
+                <th>
+                    {{ performance.assessment_2 }}
+                </th>
+            {% endif %}
+            {% if current_module.assessment_3_title %}
+                <th>
+                    {{ performance.assessment_3 }}
+                </th>
+            {% endif %}
+            {% if current_module.assessment_4_title %}
+                <th>
+                    {{ performance.assessment_4 }}
+                </th>
+            {% endif %}
+            {% if current_module.assessment_5_title %}
+                <th>
+                    {{ performance.assessment_5 }}
+                </th>
+            {% endif %}
+            {% if current_module.assessment_6_title %}
+                <th>
+                    {{ performance.assessment_6 }}
+                </th>
+            {% endif %}
+            {% if current_module.exam_value %}
+                <th>
+                    {{ performance.exam }}
+                </th>
+            {% endif %}
+            <th>
+                {{ performance.average }}
+            </th>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+
+{% endblock %}

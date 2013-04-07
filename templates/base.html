@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+{% load bootstrap_toolkit %}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title> {% block title %} CCCU Law Database {% endblock %}</title>
+    <meta name="description" content="">
+    <meta name="author" content="Tobias Kliem">
+    {% bootstrap_stylesheet_tag %}
+    <style type="text/css">
+        body {
+            padding-top: 60px;
+        }
+    </style>
+    <!--[if lt IE 9]>
+    <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
+    {% bootstrap_javascript_tag "dropdown" %}
+    <script src="/static/js/jquery.tablesorter.js"></script>
+    <script src="/static/js/jquery.metadata.js"></script>
+    <script src="/static/js/jquery.validate.min.js"></script>
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top navbar-inverse">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="brand" href="/">CCCU Law DB</a>
+            <ul class="nav">
+                <!-- <li><a href="">Form</a></li> -->
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Year<b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a class="nav" href="{% url "na" %}"></a></li>
+                        <li><a href="{% url "na" %}">All Years</a></li>
+                        <li><a href="/year/1">Year 1</a></li>
+                        <li><a href="/year/2">Year 2</a></li>
+                        <li><a href="/year/3">Year 3</a></li>
+                        <li><a href="/year/9">Alumni</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Module<b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a class="nav" href="{% url "na" %}"></a></li>
+                        {% for module in module_dict.current %}
+                            <li><a href="{{ module.get_absolute_url }}">{{ module }}</a></li>
+                        {% endfor %}
+                        <li class="divider"></li>
+                        {% if module_dict.past %}
+                            <li class="dropdown-submenu">
+                            <a tabindex="-1" href="#">Past Modules</a>
+                            <ul class = "dropdown-menu">
+                                {% for year in module_dict.past %}
+                                    <li><a href="/module_overview/{{ year }}">{{ year }}/{{ year|add:"1" }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                        {% if module_dict.future %}
+                            <li class="dropdown-submenu">
+                            <a tabindex="-1" href="#">Future Modules</a>
+                            <ul class = "dropdown-menu">
+                                {% for year in module_dict.future %}
+                                    <li><a href="/module_overview/{{ year }}">{{ year }}/{{ year|add:"1" }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </ul>
+                </li>
+                <li>
+                    <form class="navbar-search pull-right" action="/search_student/" method="get">
+                        <input type="text" class="search-query" placeholder="Search Student" name="q">
+                    </form>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin<b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a class="nav" href="{% url "na" %}"></a></li>
+                        <li><a href="{% url "add_student" %}">Add Student(s)</a></li>
+                        <li><a href="{% url "add_module" %}">Add Module(s)</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+{% block content %}{% endblock %}
+
+{% block footer %}
+    <br><br>
+    <hr>
+    <p style="font-size:small">This website has been created with <a href="https://www.djangoproject.com/" target="_blank">Django</a> and the <a href="https://github.com/dyve/django-bootstrap-toolkit">Django Bootstrap Toolkit</a>.</p>
+    {% endblock %}
+</div>
+</body>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function() 
+        { 
+        $("#sortable_table").tablesorter({
+            sortForce: [[0,0]]            
+            }); 
+        } 
+    ); 
+
+    $(document).ready(function(){
+            $("#markForm").validate();
+            });
+
+{% comment %}
+    $(document).ready(function(){
+        $("#markForm").validate({
+            rules:{
+                field: {
+                    required: false,
+                    range: [0, 100]
+                }
+            }
+        });
+      });
+{% endcomment %}
+
+</script>
+
+</html>

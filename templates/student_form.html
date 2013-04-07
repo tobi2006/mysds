@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %} {% if add %} Add {% else %} Edit {% endif %} Student {% endblock %}
+
+{% block content %}
+
+<h1>{% if add %} Add {% else %} Edit {% endif %} Student</h1>
+
+{% if add %}
+
+<a class="btn btn-primary" href="{% url "upload_csv" %}" align="right">Add Students from Spreadsheet</a>
+
+<hr>
+
+{% url "add_student" as action_url %}
+{% else %}
+{% url "edit_student" object.pk as action_url %}
+{% endif %}
+
+<form action="{{ action_url }}" method="post" accept-charset="utf-8">
+    <table>
+        {{ student_form.as_p }}
+        {% csrf_token %}
+    </table>
+    <input type = "submit" value="Save" class="btn btn-primary" align="right">
+</form>
+
+{% endblock %}

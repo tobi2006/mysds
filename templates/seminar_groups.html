@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}CCCU Law - {{current_module}}{% endblock %}
+
+{% block content %}
+
+{% url "seminar_groups" as action_url%}
+
+<h2>
+    Assign Seminar Groups for {{ current_module.title }} ({{ current_module.year }})
+</h2>
+
+<p align="center">Number of students: {{ current_module.student_set.count }}</p>
+<p align="center">
+Randomly assign students (number of groups / maximum number of students per group):
+</p>
+
+
+<form action="{{ action_url }}" id="seminarGroupForm" method="post">
+{% csrf_token %}
+
+<div class="btn-toolbar" align="center">
+    {% for number, max_students in random_options.items %}
+    <button class="btn btn-small" type="button" onclick="assign_randomly({{ number }})">
+        {{ number }} / {{ max_students }}
+    </button>
+    {% endfor %}
+</div>
+
+
+<br><br>
+
+<table id ="sortable_table" class="table table-striped table-sortable">
+    <thead>
+        <tr>
+            <th>
+                Seminar Group
+            </th>
+            <th>
+                Student
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+
+    {% for student, performance in performances.items %}
+        <tr>
+            <td>
+                {% if performance.seminar_group %}
+                    <input type="text" class="input-mini" name="{{ student.student_id }}" id="{{ student.student_id }}" value="{{ performance.seminar_group }}">
+                {% else %}
+                    <input type="text" class="input-mini" name="{{ student.student_id }}" id="{{ student.student_id }}">
+                {% endif %}
+            </td>
+            <td>
+                <label>{{ student.last_name }}, {{ student.first_name }}</label>
+            </td>
+        {% endfor %}
+    </tbody>
+</table>
+
+<input type="submit" value="Save Groups" class="btn btn-primary" align=right>
+
+</form>
+
+<script type="text/javascript">
+    function assign_randomly(number_of_groups){
+        var all_students=[];
+        {% for student, performance in performances.items %}
+            all_students.push("{{ student.student_id }}");
+        {% endfor %}
+        var i = all_students.length, j, tempi, tempj;
+        if ( i == 0 ) return false;
+        while ( --i ) {
+                j = Math.floor( Math.random() * ( i + 1 ) );
+                tempi = all_students[i];
+                tempj = all_students[j];
+                all_students[i] = tempj;
+                all_students[j] = tempi;
+            }
+        var counter = 0;
+        for (var i=0;i<all_students.length;i++){
+            if (counter==number_of_groups){
+                counter = 1;
+            }
+            else{
+                counter ++;
+            }
+            var field = document.getElementById(all_students[i]);
+            field.value = counter;
+        }
+    }
+</script>
+
+{% endblock %}
