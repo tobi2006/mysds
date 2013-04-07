@@ -206,6 +206,23 @@ class Performance(models.Model):
     assessment_5 = models.IntegerField(blank=True, null=True)
     assessment_6 = models.IntegerField(blank=True, null=True)
     exam = models.IntegerField(blank=True, null=True)
+    # Resit Marks
+    r_assessment_1 = models.IntegerField(blank=True, null=True)
+    r_assessment_2 = models.IntegerField(blank=True, null=True)
+    r_assessment_3 = models.IntegerField(blank=True, null=True)
+    r_assessment_4 = models.IntegerField(blank=True, null=True)
+    r_assessment_5 = models.IntegerField(blank=True, null=True)
+    r_assessment_6 = models.IntegerField(blank=True, null=True)
+    r_exam = models.IntegerField(blank=True, null=True)
+    # QLD Resit Marks
+    q_assessment_1 = models.IntegerField(blank=True, null=True)
+    q_assessment_2 = models.IntegerField(blank=True, null=True)
+    q_assessment_3 = models.IntegerField(blank=True, null=True)
+    q_assessment_4 = models.IntegerField(blank=True, null=True)
+    q_assessment_5 = models.IntegerField(blank=True, null=True)
+    q_assessment_6 = models.IntegerField(blank=True, null=True)
+    q_exam = models.IntegerField(blank=True, null=True)
+
     average = models.IntegerField(blank=True, null=True)
     attendance = models.CharField(max_length=50, blank=True)
     notes = models.TextField(blank=True)
@@ -215,25 +232,67 @@ class Performance(models.Model):
 
     def save_with_avg(self):
         sum = 0
-        if self.assessment_1:
+        if self.q_assessment_1: # Take the last resit mark for the average
+            value = self.q_assessment_1 * self.module.assessment_1_value
+            sum = sum + value
+        elif self.r_assessment_1:
+            value = self.r_assessment_1 * self.module.assessment_1_value
+            sum = sum + value
+        elif self.assessment_1:
             value = self.assessment_1 * self.module.assessment_1_value
             sum = sum + value
-        if self.assessment_2:
+        if self.q_assessment_2:
+            value = self.q_assessment_2 * self.module.assessment_2_value
+            sum = sum + value
+        elif self.r_assessment_2:
+            value = self.r_assessment_2 * self.module.assessment_2_value
+            sum = sum + value
+        elif self.assessment_2:
             value = self.assessment_2 * self.module.assessment_2_value
             sum = sum + value
-        if self.assessment_3:
+        if self.q_assessment_3:
+            value = self.q_assessment_3 * self.module.assessment_3_value
+            sum = sum + value
+        elif self.r_assessment_3:
+            value = self.r_assessment_3 * self.module.assessment_3_value
+            sum = sum + value
+        elif self.assessment_3:
             value = self.assessment_3 * self.module.assessment_3_value
             sum = sum + value
-        if self.assessment_4:
+        if self.q_assessment_4:
+            value = self.q_assessment_4 * self.module.assessment_4_value
+            sum = sum + value
+        elif self.r_assessment_4:
+            value = self.r_assessment_4 * self.module.assessment_4_value
+            sum = sum + value
+        elif self.assessment_4:
             value = self.assessment_4 * self.module.assessment_4_value
             sum = sum + value
-        if self.assessment_5:
+        if self.q_assessment_5:
+            value = self.q_assessment_5 * self.module.assessment_5_value
+            sum = sum + value
+        elif self.r_assessment_5:
+            value = self.r_assessment_5 * self.module.assessment_5_value
+            sum = sum + value
+        elif self.assessment_5:
             value = self.assessment_5 * self.module.assessment_5_value
             sum = sum + value
-        if self.assessment_6:
+        if self.q_assessment_6:
+            value = self.q_assessment_6 * self.module.assessment_6_value
+            sum = sum + value
+        elif self.r_assessment_6:
+            value = self.r_assessment_6 * self.module.assessment_6_value
+            sum = sum + value
+        elif self.assessment_6:
             value = self.assessment_6 * self.module.assessment_6_value
             sum = sum + value
-        if self.exam:
+        if self.q_exam:
+            value = self.q_exam * self.module.exam_value
+            sum = sum + value
+        elif self.r_exam:
+            value = self.r_exam * self.module.exam_value
+            sum = sum + value
+        elif self.exam:
             value = self.exam * self.module.exam_value
             sum = sum + value
         average = float(sum) / 100
