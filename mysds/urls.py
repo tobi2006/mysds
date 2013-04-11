@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+from django.contrib.auth.views import login, logout
 import mysds
 import database
 admin.autodiscover()
@@ -8,6 +9,8 @@ urlpatterns = patterns('mysds.views',
     url(r'^$', 'default_page', name = 'home'),
     url(r'^na/$', 'na', name = 'na'),
     url(r'^admin/', include(admin.site.urls)),
+    (r'^accounts/login/$',  login, {'template_name': 'login.html'}),
+    (r'^accounts/logout/$', logout, {'template_name': 'logout.html'}),
 )
 
 urlpatterns += patterns('database.views',

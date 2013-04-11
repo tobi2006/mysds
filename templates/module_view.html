@@ -2,34 +2,9 @@
 
 {% block title %}CCCU Law - {{current_module}}{% endblock %}
 
-{% block content %}
+{% block sidebar %}
 
-<div class="hero-unit">
-    <h2>{{current_module}}</h2>
-<p>
-<table class="table">
-    <tr>
-        <td><strong>ID</strong></td>
-        <td align="right">{{current_module.code}}</td>
-        <td><strong>Year</strong></td>
-        <td align="right">{{current_module.year}}/{{current_module.year|add:"1"}}</td>
-    </tr>
-    <tr>
-        <td><strong>Number of Students</strong></td>
-        <td>{{ current_module.student_set.count }}</td>
-        <td></td>
-        <td></td>
-</table>
-</p>  
- <p align="right">
- <a class="btn btn-primary" href="/edit_module/{{ current_module.code }}/{{ current_module.year }}">
-        Edit
-    </a>
-</p>
-</div>
-
-
-<div class="btn-toolbar" align="center">
+{% comment %}<div class="btn-group btn-group-vertical">
     <div class="btn-group dropdown">
         <a class = "btn btn-primary dropdown-toggle" data-toggle="dropdown">Enter/Change Marks <span class="caret"></span></a>
         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
@@ -102,12 +77,55 @@
         </ul>
     </div>
     <a class="btn btn-primary" href="/seminar_groups/{{ current_module.code }}/{{ current_module.year }}">
-        Assign/Change Seminar Groups
+        Seminar Groups
+    </a>
+    <a class="btn btn-primary" href="/resits/{{ current_module.code }}/{{ current_module.year }}">
+        Sits/Resits
+    </a>
+    <a class="btn btn-primary" href="/export_module/{{ current_module.code }}/{{ current_module.year }}">
+        Export Data
     </a>
     <a class="btn btn-primary" href="/add_students_to_module/{{ current_module.code }}/{{ current_module.year }}">
                     Add Student(s)
     </a>
+</div> {% endcomment %}
+<ul class="nav nav-list" data-spy="affix" data-offset-top="200">
+      <li><a href="#typography"><i class="icon-chevron-right"></i> Typography</a></li>
+      <li><a href="#code"><i class="icon-chevron-right"></i> Code</a></li>
+      <li><a href="#tables"><i class="icon-chevron-right"></i> Tables</a></li>
+      <li><a href="#forms"><i class="icon-chevron-right"></i> Forms</a></li>
+      <li><a href="#buttons"><i class="icon-chevron-right"></i> Buttons</a></li>
+      <li><a href="#images"><i class="icon-chevron-right"></i> Images</a></li>
+      <li><a href="#icons"><i class="icon-chevron-right"></i> Icons by Glyphicons</a></li>
+</ul>
+{% endblock %}
+
+{% block content %}
+
+<div class="hero-unit">
+    <h2>{{current_module}}</h2>
+<p>
+<table class="table">
+    <tr>
+        <td><strong>ID</strong></td>
+        <td align="right">{{current_module.code}}</td>
+        <td><strong>Year</strong></td>
+        <td align="right">{{current_module.year}}/{{current_module.year|add:"1"}}</td>
+    </tr>
+    <tr>
+        <td><strong>Number of Students</strong></td>
+        <td>{{ current_module.student_set.count }}</td>
+        <td></td>
+        <td></td>
+</table>
+</p>  
+ <p align="right">
+ <a class="btn btn-primary" href="/edit_module/{{ current_module.code }}/{{ current_module.year }}">
+        Edit
+    </a>
+</p>
 </div>
+
 
 <br><br>
 

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from database.models import MetaData, Course, Tutor, Module, Student 
+from database.models import MetaData, Course, Module, Student 
 
 class StudentAdmin(admin.ModelAdmin):
     list_display = ('last_name', 'first_name')
@@ -8,6 +8,5 @@ class StudentAdmin(admin.ModelAdmin):
 
 admin.site.register(MetaData)
 admin.site.register(Course)
-admin.site.register(Tutor)
 admin.site.register(Module)
 admin.site.register(Student, StudentAdmin)

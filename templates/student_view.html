@@ -50,13 +50,141 @@
     </a>
 </p>
 
-{% for module in current_student.modules.all %}
+{% for performance in current_student.performance_set.all %}
 
     <hr>
-    <h3>{{module}}</h3>
-    <p>
-        {{module.code}}
-    </p>
+    <h3>{{ performance.module }}</h3>
+
+    <table class="table table-bordered">
+        <tr>
+            <td>
+                Attendance
+            </td>
+            <td>
+                soon
+            </td>
+        </tr>
+        {% if performance.module.assessment_1_title %}
+            <tr>
+                <td>
+                    {{ performance.module.assessment_1_title }} ({{ performance.module.assessment_1_value }} %)
+                </td>
+                <td>
+                    {% if performance.q_assessment_1 %}
+                        {{ performance.q_assessment_1 }} (QLD Resit, resit: {{ performance.r_assessment_1 }}, first: {{ performance.assessment_1 }})
+                    {% elif performance.r_assessment_1 %}
+                        {{ performance.r_assessment_1 }} (Resit, first: {{ performance.assessment_1 }})
+                    {% else %}
+                        {{ performance.assessment_1 }}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endif %}
+        {% if performance.module.assessment_2_title %}
+            <tr>
+                <td>
+                    {{ performance.module.assessment_2_title }} ({{ performance.module.assessment_2_value }} %)
+                </td>
+                <td>
+                    {% if performance.q_assessment_2 %}
+                        {{ performance.q_assessment_2 }} (QLD Resit, resit: {{ performance.r_assessment_2 }}, first: {{ performance.assessment_2 }})
+                    {% elif performance.r_assessment_2 %}
+                        {{ performance.r_assessment_2 }} (Resit, first: {{ performance.assessment_2 }})
+                    {% else %}
+                        {{ performance.assessment_2 }}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endif %}
+        {% if performance.module.assessment_3_title %}
+            <tr>
+                <td>
+                    {{ performance.module.assessment_3_title }} ({{ performance.module.assessment_3_value }} %)
+                </td>
+                <td>
+                    {% if performance.q_assessment_3 %}
+                        {{ performance.q_assessment_3 }} (QLD Resit, resit: {{ performance.r_assessment_3 }}, first: {{ performance.assessment_3 }})
+                    {% elif performance.r_assessment_3 %}
+                        {{ performance.r_assessment_3 }} (Resit, first: {{ performance.assessment_3 }})
+                    {% else %}
+                        {{ performance.assessment_3 }}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endif %}
+        {% if performance.module.assessment_4_title %}
+            <tr>
+                <td>
+                    {{ performance.module.assessment_4_title }} ({{ performance.module.assessment_4_value }} %)
+                </td>
+                <td>
+                    {% if performance.q_assessment_4 %}
+                        {{ performance.q_assessment_4 }} (QLD Resit, resit: {{ performance.r_assessment_4 }}, first: {{ performance.assessment_4 }})
+                    {% elif performance.r_assessment_4 %}
+                        {{ performance.r_assessment_4 }} (Resit, first: {{ performance.assessment_4 }})
+                    {% else %}
+                        {{ performance.assessment_4 }}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endif %}
+        {% if performance.module.assessment_5_title %}
+            <tr>
+                <td>
+                    {{ performance.module.assessment_5_title }} ({{ performance.module.assessment_5_value }} %)
+                </td>
+                <td>
+                    {% if performance.q_assessment_5 %}
+                        {{ performance.q_assessment_5 }} (QLD Resit, resit: {{ performance.r_assessment_5 }}, first: {{ performance.assessment_5 }})
+                    {% elif performance.r_assessment_5 %}
+                        {{ performance.r_assessment_5 }} (Resit, first: {{ performance.assessment_5 }})
+                    {% else %}
+                        {{ performance.assessment_5 }}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endif %}
+        {% if performance.module.assessment_6_title %}
+            <tr>
+                <td>
+                    {{ performance.module.assessment_6_title }} ({{ performance.module.assessment_6_value }} %)
+                </td>
+                <td>
+                    {% if performance.q_assessment_6 %}
+                        {{ performance.q_assessment_6 }} (QLD Resit, resit: {{ performance.r_assessment_6 }}, first: {{ performance.assessment_6 }})
+                    {% elif performance.r_assessment_6 %}
+                        {{ performance.r_assessment_6 }} (Resit, first: {{ performance.assessment_6 }})
+                    {% else %}
+                        {{ performance.assessment_6 }}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endif %}
+        {% if performance.module.exam_value %}
+            <tr>
+                <td>
+                    Exam ({{ performance.module.exam_value }} %)
+                </td>
+                <td>
+                    {% if performance.q_exam %}
+                        {{ performance.q_exam }} (QLD Resit, resit: {{ performance.r_exam }}, first: {{ performance.exam }})
+                    {% elif performance.r_exam %}
+                        {{ performance.r_exam }} (Resit, first: {{ performance.exam }})
+                    {% else %}
+                        {{ performance.exam }}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endif %}
+        <tr>
+            <td>
+                <strong>Module Mark</strong>
+            </td>
+            <td>
+                {{ performance.average }}
+            </td>
+        </tr> 
+    </table>
 
      <p align="right">
         <a class="btn btn-primary">

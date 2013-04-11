@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 import datetime
 
 ACADEMIC_YEARS = (
@@ -34,13 +35,6 @@ class Course(models.Model):
 
     def __unicode__(self):
         return u'%s' % (self.title)
-
-class Tutor(models.Model):
-    name = models.CharField(max_length = 50)
-    email = models.CharField(max_length = 50)
-
-    def __unicode__(self):
-        return u'%s' % (self.name)
 
 class Module(models.Model):
     ELIGIBLE = (
@@ -171,7 +165,7 @@ class Student(models.Model):
     email = models.CharField(max_length = 50, blank=True)
     course = models.ForeignKey(Course, blank=True, null=True)
     qld = models.BooleanField(verbose_name="QLD Status")
-    tutor = models.ForeignKey(Tutor, blank=True, null=True)
+    tutor = models.ForeignKey(User, blank=True, null=True)
     modules = models.ManyToManyField(Module, blank=True)
     notes = models.TextField(blank=True)
     highlighted = models.BooleanField()
