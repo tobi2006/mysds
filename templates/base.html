@@ -1,25 +1,24 @@
 <!DOCTYPE html>
-{% load bootstrap_toolkit %}
+
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <title> {% block title %} CCCU Law Database {% endblock %}</title>
     <meta name="description" content="">
     <meta name="author" content="Tobias Kliem">
-    {% bootstrap_stylesheet_tag %}
+    <link href="{{ STATIC_URL }}/css/bootstrap.css" rel="stylesheet" media="screen">
     <style type="text/css">
         body {
             padding-top: 60px;
+            padding-bottom: 40px;
+        }
+        .sidebar-nav{
+            padding: 9px 0;
         }
     </style>
     <!--[if lt IE 9]>
     <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
-    {% bootstrap_javascript_tag "dropdown" %}
-    <script src="/static/js/jquery.tablesorter.js"></script>
-    <script src="/static/js/jquery.metadata.js"></script>
-    <script src="/static/js/jquery.validate.min.js"></script>
 </head>
 
 <body>
@@ -112,11 +111,31 @@
 {% block footer %}
     <br><br>
     <hr>
-    <p style="font-size:small">This website has been created with <a href="https://www.djangoproject.com/" target="_blank">Django</a> and the <a href="https://github.com/dyve/django-bootstrap-toolkit">Django Bootstrap Toolkit</a>.</p>
-    {% endblock %}
-</div>
+    <p style="font-size:small" align="center">This website has been created with <a href="https://www.djangoproject.com/" target="_blank">Django</a> and <a href="http://twitter.github.io/bootstrap">Twitter Bootstrap</a>.</p>
+{% endblock %}
 
-</body>
+
+<script src="{{ STATIC_URL }}js/jquery.min.js"></script>
+<script src="{{ STATIC_URL }}js/bootstrap.js"></script>
+
+{% comment %}
+<script src="/assets/js/bootstrap-transition.js"></script>
+<script src="/assets/js/bootstrap-alert.js"></script>
+<script src="/assets/js/bootstrap-modal.js"></script>
+<script src="/assets/js/bootstrap-dropdown.js"></script
+<script src="/assets/js/bootstrap-scrollspy.js"></script
+<script src="/assets/js/bootstrap-tab.js"></script
+<script src="/assets/js/bootstrap-tooltip.js"></script
+<script src="/assets/js/bootstrap-popover.js"></script
+<script src="/assets/js/bootstrap-button.js"></script
+<script src="/assets/js/bootstrap-collapse.js"></script
+<script src="/assets/js/bootstrap-carousel.js"></script
+<script src="/assets/js/bootstrap-typeahead.js"></script
+{% endcomment %}
+
+<script src="/static/js/jquery.tablesorter.js"></script>
+<script src="/static/js/jquery.metadata.js"></script>
+<script src="/static/js/jquery.validate.min.js"></script>
 
 
 <script type="text/javascript">
@@ -148,4 +167,5 @@
 
 </script>
 
+</body>
 </html>

@@ -3,3 +3,4 @@
 *.pyc
 *.pyo
 old_stuff/
+mysds/settings.py

@@ -1,4 +1,6 @@
 # Django settings for mysds project.
+import os
+ROOT_PROJECT = os.path.join(os.path.split(__file__)[0], "..")
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -45,7 +47,7 @@ USE_TZ = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = '/home/tobi/Dropbox/Python/Django/mysds/files/'
+MEDIA_ROOT = '/home/tobi/Dropbox/Projects/Django/mysds/files/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -56,7 +58,7 @@ MEDIA_URL = '/media/'
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = '/home/tobi/Dropbox/Python/Django/mysds/static'
+STATIC_ROOT = os.path.join(ROOT_PROJECT, 'static')
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -103,7 +105,7 @@ ROOT_URLCONF = 'mysds.urls'
 WSGI_APPLICATION = 'mysds.wsgi.application'
 
 TEMPLATE_DIRS = (
-    "/home/tobi/Dropbox/Python/Django/mysds/templates",
+    "templates",
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
