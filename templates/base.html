@@ -6,7 +6,7 @@
     <title> {% block title %} CCCU Law Database {% endblock %}</title>
     <meta name="description" content="">
     <meta name="author" content="Tobias Kliem">
-    <link href="{{ STATIC_URL }}/css/bootstrap.css" rel="stylesheet" media="screen">
+    <link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet" media="screen">
     <style type="text/css">
         body {
             padding-top: 60px;
@@ -96,16 +96,11 @@
 </div>
 {% endblock %}
 
-<div class="container-fluid">
-    <div class="row-fluid">
-        <div class="span2">
-            {% block sidebar %}{% endblock %}
-        </div>
-        <div class="span10">
-            {% block content %}{% endblock %}
-        </div>
-    </div>
+{% block structure %}
+<div class="container">
+    {% block content %}{% endblock %}
 </div>
+{% endblock %}
 
 
 {% block footer %}
@@ -117,25 +112,9 @@
 
 <script src="{{ STATIC_URL }}js/jquery.min.js"></script>
 <script src="{{ STATIC_URL }}js/bootstrap.js"></script>
-
-{% comment %}
-<script src="/assets/js/bootstrap-transition.js"></script>
-<script src="/assets/js/bootstrap-alert.js"></script>
-<script src="/assets/js/bootstrap-modal.js"></script>
-<script src="/assets/js/bootstrap-dropdown.js"></script
-<script src="/assets/js/bootstrap-scrollspy.js"></script
-<script src="/assets/js/bootstrap-tab.js"></script
-<script src="/assets/js/bootstrap-tooltip.js"></script
-<script src="/assets/js/bootstrap-popover.js"></script
-<script src="/assets/js/bootstrap-button.js"></script
-<script src="/assets/js/bootstrap-collapse.js"></script
-<script src="/assets/js/bootstrap-carousel.js"></script
-<script src="/assets/js/bootstrap-typeahead.js"></script
-{% endcomment %}
-
-<script src="/static/js/jquery.tablesorter.js"></script>
-<script src="/static/js/jquery.metadata.js"></script>
-<script src="/static/js/jquery.validate.min.js"></script>
+<script src="{{ STATIC_URL }}js/jquery.tablesorter.js"></script>
+<script src="{{ STATIC_URL }}js/jquery.metadata.js"></script>
+<script src="{{ STATIC_URL }}js/jquery.validate.min.js"></script>
 
 
 <script type="text/javascript">

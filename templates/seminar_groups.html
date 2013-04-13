@@ -1,6 +1,16 @@
-{% extends "base.html" %}
+{% extends "sidebar.html" %}
 
 {% block title %}CCCU Law - {{current_module}}{% endblock %}
+
+{% block sidebar %}
+
+<div class="well" data-spy="affix" data-offset-top="0">
+    <strong>Group strengths</strong>
+    <p id="group_strengths">
+    </p>
+</div>
+
+{% endblock %}
 
 {% block content %}
 
@@ -21,7 +31,7 @@ Randomly assign students (number of groups / maximum number of students per grou
 
 <div class="btn-toolbar" align="center">
     {% for number, max_students in random_options.items %}
-    <button class="btn btn-small" type="button" onclick="assign_randomly({{ number }})">
+    <button class="btn btn-small" type="button" onclick="var ret = assign_randomly({{ number }}); count_groups(); return ret">
         {{ number }} / {{ max_students }}
     </button>
     {% endfor %}
@@ -47,9 +57,9 @@ Randomly assign students (number of groups / maximum number of students per grou
         <tr>
             <td>
                 {% if performance.seminar_group %}
-                    <input type="text" class="input-mini" name="{{ student.student_id }}" id="{{ student.student_id }}" value="{{ performance.seminar_group }}">
+                    <input type="text" class="input-mini" name="{{ student.student_id }}" id="{{ student.student_id }}" value="{{ performance.seminar_group }}" onchange="count_groups()">
                 {% else %}
-                    <input type="text" class="input-mini" name="{{ student.student_id }}" id="{{ student.student_id }}">
+                    <input type="text" class="input-mini" name="{{ student.student_id }}" id="{{ student.student_id }}" onchange="count_groups()">
                 {% endif %}
             </td>
             <td>
@@ -90,6 +100,37 @@ Randomly assign students (number of groups / maximum number of students per grou
             field.value = counter;
         }
     }
-</script>
 
+    function count_groups(){
+        var highest_group=0;
+        var fields = document.getElementsByClassName("input-mini");
+        for(var i=0; i<fields.length; i++) {
+            var group = parseInt(fields[i].value);
+            if (group > highest_group){
+                highest_group = group;
+            }
+        }
+        if(highest_group==0){
+            var output="No groups assigned yet"
+        }
+        else{
+            var all_groups=[];
+            for(var i=0; i<highest_group; i++) {
+                all_groups[i] = 0;
+            }
+            for(var i=0; i<fields.length; i++) {
+                var group = parseInt(fields[i].value);
+                all_groups[group-1]++;
+            }
+            var output="";
+            for(var i=0; i<highest_group; i++) {
+                var group_no = i+1;
+                output = output + "Group " + group_no + ": " + all_groups[i] + "<br>";
+            }
+        }
+        document.getElementById("group_strengths").innerHTML=output;
+    }
+
+    window.onload = count_groups();
+</script>
 {% endblock %}

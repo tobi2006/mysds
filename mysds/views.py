@@ -20,6 +20,7 @@ def is_teacher(user):
 @user_passes_test(is_teacher)
 def default_page(request):
     modules = functions.modules_for_menubar() 
+    title = 'CCCU Law DB'
     return render_to_response('home.html', {'module_dict': modules},
             context_instance = RequestContext(request)
             )
@@ -28,4 +29,4 @@ def na(request):
     modules = functions.modules_for_menubar() 
     printstring = 'This function is not available yet'
     title = 'CCCU Law DB: Not available'
-    return render_to_response('blank.html', {'printstring': printstring, 'title': title, 'module_dict': modules})
+    return render_to_response('blank.html', {'printstring': printstring, 'title': title, 'module_dict': modules}, context_instance = RequestContext(request))
