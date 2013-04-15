@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load custom_filters %}
 
 {% block title %}CCCU Law - {{current_module}}{% endblock %}
 
@@ -87,13 +88,13 @@
         <a class = "btn btn-primary dropdown-toggle" data-toggle="dropdown">Edit Attendance<span class="caret"></span></a>
         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
             <li>
-                <a href="/absences/{{ current_module.code }}/{{ current_module.year }}/all">
+                <a href="/attendance/{{ current_module.code }}/{{ current_module.year }}/all">
                     For all Groups
                 </a>
             </li>
             {% for i in number_of_groups %}
             <li>
-                <a href="/absences/{{ current_module.code }}/{{ current_module.year }}/{{ i }}">
+                <a href="/attendance/{{ current_module.code }}/{{ current_module.year }}/{{ i }}">
                     Seminar Group {{ i }}
                 </a>
             </li>
@@ -126,7 +127,7 @@
                 Student
             </th>
             <th>
-                Absences
+                Attendance
             </th>
             {% if current_module.assessment_1_title %}
                 <th>
@@ -178,7 +179,7 @@
                 <a href="/student/{{student.student_id}}">{{student}}</a>
             </td>
             <td>
-                {{ performance.absences }}
+                {{ performance.attendance | count_attendance }} / {{ current_module.sessions_recorded }}
             </td>
             {% if current_module.assessment_1_title %}
                 <th>

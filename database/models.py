@@ -57,6 +57,7 @@ class Module(models.Model):
     year = models.IntegerField(choices=ACADEMIC_YEARS, default=current_year)
     is_qld = models.BooleanField(verbose_name="QLD Module")
     is_pg = models.BooleanField(verbose_name="Postgraduate Module")
+    credits = models.IntegerField(default=20)
     eligible = models.CharField(
             max_length = 3,
             choices = ELIGIBLE,
@@ -65,7 +66,7 @@ class Module(models.Model):
         )
     # Add: instructor = USER??
     number_of_sessions = models.IntegerField(default=10, verbose_name = "Number of sessions with attendance record")
-    last_recorded_session = models.IntegerField(blank=True, null=True, default=0)
+    sessions_recorded = models.IntegerField(blank=True, null=True, default=0)
     assessment_1_title = models.CharField(
             max_length = 30,
             verbose_name="Assessment 1: Name",
@@ -208,6 +209,14 @@ class Performance(models.Model):
     r_assessment_5 = models.IntegerField(blank=True, null=True)
     r_assessment_6 = models.IntegerField(blank=True, null=True)
     r_exam = models.IntegerField(blank=True, null=True)
+    # Sit means the average is not capped
+    assessment_1_is_sit = models.BooleanField()
+    assessment_2_is_sit = models.BooleanField()
+    assessment_3_is_sit = models.BooleanField()
+    assessment_4_is_sit = models.BooleanField()
+    assessment_5_is_sit = models.BooleanField()
+    assessment_6_is_sit = models.BooleanField()
+    exam_is_sit = models.BooleanField()
     # QLD Resit Marks
     q_assessment_1 = models.IntegerField(blank=True, null=True)
     q_assessment_2 = models.IntegerField(blank=True, null=True)
@@ -218,11 +227,23 @@ class Performance(models.Model):
     q_exam = models.IntegerField(blank=True, null=True)
 
     average = models.IntegerField(blank=True, null=True)
+
     attendance = models.CharField(max_length=50, blank=True)
+
     notes = models.TextField(blank=True)
 
     class Meta:
         unique_together = ('student', 'module')
+
+    def initial_save(self):
+        """ Sets the initial attendance string based on the number of sessions in the module """
+        counter = 0
+        initial_attendance = ""
+        while counter < self.module.number_of_sessions:
+            initial_attendance = initial_attendance + "0"
+            counter += 1
+        self.attendance = initial_attendance
+        self.save()
 
     def save_with_avg(self):
         sum = 0
@@ -293,6 +314,3 @@ class Performance(models.Model):
         rounded = round(average)
         self.average = int(rounded)
         self.save()
-
-#class CSVUpload(models.Model):
-#    csvfile = models.FileField(upload_to='csv')

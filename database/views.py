@@ -1,7 +1,7 @@
 from django.forms.models import modelformset_factory, inlineformset_factory
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, redirect, get_object_or_404
-from django.template import RequestContext
+from django.template import Template, Context, RequestContext
 from django.contrib.auth.decorators import login_required, user_passes_test
 
 from database.models import Student, Module, Course, Performance, MetaData
@@ -31,6 +31,7 @@ def module_view(request, module_id, year):
         if performance.seminar_group > number_of_groups:
             number_of_groups = performance.seminar_group
         performances[student] = performance
+         
 
     #create string to make it iterable
     groupstring = ''
@@ -238,33 +239,62 @@ def mark(request, module_id, year, assessment):
 
 @login_required
 @user_passes_test(is_teacher)
-def absences(request, module_id, year, group):
+def attendance(request, module_id, year, group):
     module_dict = functions.modules_for_menubar()
     module = Module.objects.get(code=module_id, year=year)
+    no_of_sessions = range(module.number_of_sessions)
     students = module.student_set.all()
-    performances = {}
-    for student in students:
-        performance = Performance.objects.get(student=student, module=module)
-        if group == "all":
-            performances[student] = performance
-        else:
+    if group == "all":
+        students_in_group = students
+        seminar_group = None
+    else:
+        seminar_group = group
+        students_in_group = []
+        for student in students:
+            performance = Performance.objects.get(student=student, module=module)
             if performance.seminar_group == int(group):
-                performances[student] = performance
+                students_in_group.append(student)
 
     if request.method == 'POST':
+        last_session = 0
+        for student in students_in_group:
+            performance = Performance.objects.get(student = student, module = module)
+            weeks_present = request.POST.getlist(student.student_id)
+            counter = 0
+            attendance = ""
+            while counter < module.number_of_sessions:
+                if str(counter) in weeks_present:
+                    attendance = attendance + "1"
+                    week_number = counter + 1
+                    if week_number > last_session:
+                        last_session = week_number
+                else:
+                    attendance = attendance + "0"
+                counter += 1
+            performance.attendance  = attendance
+            performance.save()
+        module.sessions_recorded = last_session
+        module.save()
         return HttpResponseRedirect(module.get_absolute_url())
 
     else:
         attendances = {}
-        sessions = module.number_of_sessions
-        for student, performance in performances.iteritems():
-            attendances[student] = performance.attendance
-
-    #Go on here
+        for student in students_in_group:
+            performance = Performance.objects.get(student=student, module=module)
+            attendance = {}
+            counter = 0
+            for session in performance.attendance:
+                if session == "1":
+                    attendance[counter] = True
+                else:
+                    attendance[counter] = False
+                counter += 1
+            attendances[student] = attendance
 
     return render_to_response(
-            'absences.html',
-            {'current_module': module, 'attendances': attendances, 'module_dict': module_dict},
+            'attendance.html',
+            {'current_module': module, 'attendances': attendances, 'seminar_group': seminar_group,
+            'sessions': no_of_sessions, 'module_dict': module_dict},
             context_instance = RequestContext(request)
         )
 
@@ -348,7 +378,7 @@ def add_students_to_module(request, module_id, year):
                     student = student_to_add,
                     module = module
                 )
-            performance.save()
+            performance.initial_save()
 
         return HttpResponseRedirect(module.get_absolute_url())
     return render_to_response(
@@ -547,7 +577,9 @@ def upload_csv(request):
             return HttpResponseRedirect('/parse_csv')
     else:
         form = CSVUploadForm()
-    return render_to_response('upload_csv.html', {'form': form, 'module_dict': module_dict}, context_instance=RequestContext(request))
+    return render_to_response('upload_csv.html',
+            {'form': form, 'module_dict': module_dict},
+            context_instance=RequestContext(request))
 
 @login_required
 @user_passes_test(is_teacher)
@@ -556,4 +588,7 @@ def import_success(request):
     successful_entrys = request.session.get('number_of_imports')
     printstring = 'CSV File imported successfully: %s students added to the database' % (successful_entrys)
     title = 'CCCU Law DB: Data'
-    return render_to_response('blank.html', {'printstring': printstring, 'title': title, 'module_dict': module_dict})
+    return render_to_response(
+            'blank.html', 
+            {'printstring': printstring, 'title': title, 'module_dict': module_dict},
+            context_instance = RequestContext(request))
