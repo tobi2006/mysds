@@ -35,3 +35,19 @@ def modules_for_menubar():
     dict_to_return = {'current': current, 'past': past, 'future': future}
     return dict_to_return
 
+def get_number_of_assessments(module):
+    number_of_assessments = 0
+    if module.assessment_6_title:
+        number_of_assessments = 6
+    elif module.assessment_5_title:
+        number_of_assessments = 5
+    elif module.assessment_4_title:
+        number_of_assessments = 4
+    elif module.assessment_3_title:
+        number_of_assessments = 3
+    elif module.assessment_2_title:
+        number_of_assessments = 2
+    elif module.assessment_1_title:
+        number_of_assessments = 1
+    return number_of_assessments
+    

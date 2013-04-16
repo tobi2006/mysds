@@ -3,10 +3,11 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import Template, Context, RequestContext
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.db.models import Q
 
 from database.models import Student, Module, Course, Performance, MetaData
 from database import functions
-from database.forms import StudentForm, ModuleForm, CSVUploadForm, CSVParseForm, generate_mark_form
+from database.forms import StudentForm, ModuleForm, CSVUploadForm, CSVParseForm
 
 def is_teacher(user):
     if user:
@@ -17,9 +18,28 @@ def is_teacher(user):
     else:
         return False
 
+
+###############################################################################
+###############################################################################
+#                       
+#                       Module Functions
+#
+###############################################################################
+###############################################################################
+
+
+#####################################
+#          Module View              #
+#####################################
+
 @login_required
 @user_passes_test(is_teacher)
 def module_view(request, module_id, year):
+    """
+    The overview function for a module.
+
+    Shows a summary of all the students in a module with the performance information.
+    """
     module_dict = functions.modules_for_menubar()
     modules = Module.objects.filter(code=module_id, year=year)
     module = modules[0]
@@ -30,7 +50,8 @@ def module_view(request, module_id, year):
         performance = Performance.objects.get(student=student, module=module)
         if performance.seminar_group > number_of_groups:
             number_of_groups = performance.seminar_group
-        performances[student] = performance
+        student_name = student.last_name + ", " + student.first_name
+        performances[student_name] = performance
          
 
     #create string to make it iterable
@@ -44,9 +65,19 @@ def module_view(request, module_id, year):
             context_instance = RequestContext(request)
             )
 
+
+#####################################
+#        Module Overview            #
+#####################################
+
 @login_required
 @user_passes_test(is_teacher)
 def module_overview(request, year):
+    """
+    Shows all modules for a particular year
+
+    This function is necessary to keep the menu clear of all past and future modules
+    """
     module_dict = functions.modules_for_menubar()
     modules = Module.objects.filter(year=year)
     return render_to_response('module_overview.html',
@@ -54,43 +85,106 @@ def module_overview(request, year):
             context_instance = RequestContext(request)
         )
 
+
+
+#####################################
+#       Edit Module                 #
+#####################################
+
 @login_required
 @user_passes_test(is_teacher)
-def year_view(request, year):
+def edit_module(request, module_id, year):
+    """
+    Opens and processes an edit form for an existing module
+    """
     module_dict = functions.modules_for_menubar()
-    students = Student.objects.filter(year=year)
-    ug = False
-    pg = False
-    phd = False
-    alumnus = False
-    if int(year) < 7:
-        ug = True
-    elif int(year) == 7:
-        pg = True
-    elif int(year) == 8:
-        phd = True
-    elif int(year) == 9:
-        alumnus = True
+    module = Module.objects.get(code=module_id, year=year)
+    number_of_assessments = functions.get_number_of_assessments(module)
+    print number_of_assessments
+    if request.method == 'POST':
+        form = ModuleForm(instance=module, data=request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(module.get_absolute_url())
+    else:
+        form = ModuleForm(instance=module)
+    return render_to_response(
+        'module_form.html', 
+        {'module_form': form, 'add': False, 'object': module, 
+            'assessments': number_of_assessments, 'module_dict': module_dict}, 
+        context_instance = RequestContext(request)
+    )
+
     
-    return render_to_response('year_view.html',
-            {'students': students, 'year': year, 
-            'ug': ug, 'pg':pg, 'phd': phd, 'alumnus': alumnus,
-            'module_dict': module_dict},
-            context_instance = RequestContext(request)
-        )
+#####################################
+#       Add Module                  #
+#####################################
+
+@login_required
+@user_passes_test(is_teacher)
+def add_module(request):
+    """
+    Function to add a new module
+    """
+    assessments = 0
+    module_dict = functions.modules_for_menubar()
+    if request.method == 'POST':
+        form = ModuleForm(data=request.POST)
+        if form.is_valid():
+            module = form.save()
+            return HttpResponseRedirect(module.get_absolute_url())
+    else:
+        form = ModuleForm()
+    return render_to_response(
+        'module_form.html', 
+        {'module_form': form, 'add': True, 
+        'assessments': assessments, 'module_dict': module_dict}, 
+        context_instance = RequestContext(request)
+    )
+
+
+###############################################################################
+###############################################################################
+#                       
+#                       Student Functions
+#
+###############################################################################
+###############################################################################
+
+#####################################
+#       Student View                #
+#####################################
 
 @login_required
 @user_passes_test(is_teacher)
 def student_view(request, student_id):
-    students = Student.objects.filter(student_id__icontains=student_id)
-    current_student = students[0]
+    """
+    Shows all information about a student.
+    """
     module_dict = functions.modules_for_menubar()
+    student = Student.objects.get(student_id=student_id)
+    all_performances = Performance.objects.filter(student = student)
+    sorted_performances = {}
+    for performance in all_performances:
+        year = performance.module.year
+        if sorted_performances.get(year):
+            sorted_performances[year].append(performance)
+        else:
+            sorted_performances[year] = [performance,]
+    print sorted_performances
+            
+
     return render_to_response('student_view.html',
-            {'current_student': current_student,'module_dict': module_dict},
+            {'current_student': student, 'years_performances': sorted_performances,
+                'module_dict': module_dict},
             context_instance = RequestContext(request)
         )
 
+# Mord unterm Nordlicht
 
+#####################################
+#       Search Student              #
+#####################################
 
 @login_required
 @user_passes_test(is_teacher)
@@ -98,7 +192,19 @@ def search_student(request):
     module_dict = functions.modules_for_menubar()
     if 'q' in request.GET and request.GET['q']:
         q = request.GET['q']
-        students = Student.objects.filter(last_name__icontains=q)
+        students = []
+        if len(q) > 1:
+            if "," in q:
+                search = q.split(",")
+                first_name = search[-1].strip()
+                last_name = search[0].strip()
+            else:
+                search = q.split()
+                first_name = search[0]
+                last_name = search[-1]
+            students = Student.objects.filter(last_name__icontains=last_name, first_name__icontains=first_name)
+        if len(students) == 0:
+            students = Student.objects.filter(Q(last_name__icontains=q) | Q(first_name__icontains=q))
         if len(students) == 1:
             student = students[0]
             return render_to_response('student_view.html',
@@ -112,6 +218,59 @@ def search_student(request):
                 )
     else:
         return HttpResponse('Please submit a search term.')
+
+
+#####################################
+#        Year View                  #
+#####################################
+
+@login_required
+@user_passes_test(is_teacher)
+def year_view(request, year):
+    """
+    Shows all students in a particular year
+    """
+    module_dict = functions.modules_for_menubar()
+    if year == "all":
+        students = Student.objects.all()
+    else:
+        students = Student.objects.filter(year=year)
+
+    ug = False
+    pg = False
+    phd = False
+    alumnus = False
+    if not year == "all":
+        if int(year) < 7:
+            ug = True
+        elif int(year) == 7:
+            pg = True
+        elif int(year) == 8:
+            phd = True
+        elif int(year) == 9:
+            alumnus = True
+
+    all_students = len(students)
+    llb_students = None
+    other_students = None
+    if ug:
+        llb = Course.objects.get(title__contains="LLB")
+        llb_students = Student.objects.filter(year=year, course=llb).count()
+        other_students = all_students - llb_students
+
+    
+    return render_to_response('year_view.html',
+            {'students': students, 'year': year, 
+            'ug': ug, 'pg':pg, 'phd': phd, 'alumnus': alumnus,
+            'all_students': all_students, 'llb_students': llb_students,
+            'other_students': other_students, 'module_dict': module_dict},
+            context_instance = RequestContext(request)
+        )
+
+ 
+#####################################
+#        Add Student                #
+#####################################
 
 @login_required
 @user_passes_test(is_teacher)
@@ -129,6 +288,11 @@ def add_student(request):
         {'student_form': form, 'add': True, 'module_dict': module_dict}, 
         context_instance = RequestContext(request)
     )
+
+
+#####################################
+#       Edit Student                #
+#####################################
 
 @login_required
 @user_passes_test(is_teacher)
@@ -150,42 +314,10 @@ def edit_student(request, student_id):
     )
 
 
-@login_required
-@user_passes_test(is_teacher)
-def edit_module(request, module_id, year):
-    module_dict = functions.modules_for_menubar()
-    modules = Module.objects.filter(code=module_id, year=year)
-    module = modules[0]
-    if request.method == 'POST':
-        form = ModuleForm(instance=module, data=request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(module.get_absolute_url())
-    else:
-        form = ModuleForm(instance=module)
-    return render_to_response(
-        'module_form.html', 
-        {'module_form': form, 'add': False, 'object': module, 'module_dict': module_dict}, 
-        context_instance = RequestContext(request)
-    )
 
-@login_required
-@user_passes_test(is_teacher)
-def add_module(request):
-    module_dict = functions.modules_for_menubar()
-    if request.method == 'POST':
-        form = ModuleForm(data=request.POST)
-        if form.is_valid():
-            module = form.save()
-            return HttpResponseRedirect(module.get_absolute_url())
-    else:
-        form = ModuleForm()
-    return render_to_response(
-        'module_form.html', 
-        {'module_form': form, 'add': True, 'module_dict': module_dict}, 
-        context_instance = RequestContext(request)
-    )
-
+#####################################
+#            Mark                   #
+#####################################
 
 @login_required
 @user_passes_test(is_teacher)
@@ -197,7 +329,8 @@ def mark(request, module_id, year, assessment):
     performances = {}
     for student in students:
         performance = Performance.objects.get(student=student, module=module)
-        performances[student] = performance
+        student_name = student.last_name + ", " + student.first_name 
+        performances[student_name] = performance
     if assessment == "exam":
         to_change = 9
     else:
@@ -237,6 +370,11 @@ def mark(request, module_id, year, assessment):
             context_instance = RequestContext(request)
         )
 
+
+#####################################
+#           Attendance              #
+#####################################
+
 @login_required
 @user_passes_test(is_teacher)
 def attendance(request, module_id, year, group):
@@ -244,6 +382,7 @@ def attendance(request, module_id, year, group):
     module = Module.objects.get(code=module_id, year=year)
     no_of_sessions = range(module.number_of_sessions)
     students = module.student_set.all()
+    students.order_by('last_name')
     if group == "all":
         students_in_group = students
         seminar_group = None
@@ -299,6 +438,9 @@ def attendance(request, module_id, year, group):
         )
 
 
+#####################################
+#        Seminar Groups             #
+#####################################
     
 @login_required
 @user_passes_test(is_teacher)
@@ -345,6 +487,10 @@ def seminar_groups(request, module_id, year):
         )
 
 
+#####################################
+#    Add Students to Module         #
+#####################################
+
 @login_required
 @user_passes_test(is_teacher)
 def add_students_to_module(request, module_id, year):
@@ -387,6 +533,11 @@ def add_students_to_module(request, module_id, year):
                 'students': students, 'llb': llb, 'module_dict': module_dict},
             context_instance = RequestContext(request)
         )
+
+
+#####################################
+#       Parse CSV File              #
+#####################################
 
 @login_required
 @user_passes_test(is_teacher)
@@ -561,6 +712,11 @@ def parse_csv(request):
             context_instance = RequestContext(request)
         )
 
+
+#####################################
+#       Upload CSV                  #
+#####################################
+
 @login_required
 @user_passes_test(is_teacher)
 def upload_csv(request):
@@ -580,6 +736,11 @@ def upload_csv(request):
     return render_to_response('upload_csv.html',
             {'form': form, 'module_dict': module_dict},
             context_instance=RequestContext(request))
+
+
+#####################################
+#       Import Success              #
+#####################################
 
 @login_required
 @user_passes_test(is_teacher)

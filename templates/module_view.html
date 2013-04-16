@@ -18,8 +18,8 @@
     <tr>
         <td><strong>Number of Students</strong></td>
         <td>{{ current_module.student_set.count }}</td>
-        <td></td>
-        <td></td>
+        <td><strong>Sessions so far<strong></td>
+        <td>{{ current_module.sessions_recorded }}</td>
 </table>
 </p>  
  <p align="right">
@@ -170,13 +170,13 @@
         </tr>
     </thead>
     <tbody>
-    {% for student, performance in performances.items %}
+    {% for student, performance in performances.items|sort %}
         <tr>
             <td>
                 {{ performance.seminar_group }}
             </td>
             <td>
-                <a href="/student/{{student.student_id}}">{{student}}</a>
+                <a href="/student/{{ performance.student.student_id }}">{{ student }}</a>
             </td>
             <td>
                 {{ performance.attendance | count_attendance }} / {{ current_module.sessions_recorded }}

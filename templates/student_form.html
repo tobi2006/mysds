@@ -18,10 +18,12 @@
 {% endif %}
 
 <form action="{{ action_url }}" method="post" accept-charset="utf-8">
-    <table>
+    {% csrf_token %}
+    <input 
+
+        {% comment %}
         {{ student_form.as_p }}
-        {% csrf_token %}
-    </table>
+        {% endcomment %}
     <input type = "submit" value="Save" class="btn btn-primary" align="right">
 </form>
 

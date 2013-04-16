@@ -6,8 +6,12 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    # ('Tobias Kliem', 'tobias.kliem@gmail.com'),
+    ('Tobias Kliem', 'tobias.kliem@gmail.com'),
 )
+
+# Hosts/domain names that are valid for this site; required if DEBUG is False
+# See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
+#ALLOWED_HOSTS = ['*']
 
 MANAGERS = ADMINS
 

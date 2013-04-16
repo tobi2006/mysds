@@ -5,19 +5,256 @@
 {% block content %}
 
 <h1>{% if add %} Add {% else %} Edit {% endif %} Module</h1>
-
+<br>
 {% if add %}
 {% url "add_module" as action_url %}
 {% else %}
-{% url "edit_module" object.pk as action_url %} #Das wird nicht gehen!
+{% url "edit_module" object.pk as action_url %}
 {% endif %}
 
 <form action="{{ action_url }}" method="post" accept-charset="utf-8">
-    <table>
-        {{ module_form.as_p }}
-        {% csrf_token %}
+    {% csrf_token %}
+
+    {% if module_form.errors %}
+    <em>{{ module_form.errors }}</em>
+    {% endif %}
+
+    <h4>Module Information</h4>
+
+    <table cellpadding="10">            
+        <tr>
+            <td>
+                <strong>Module title</strong>
+            </td>
+            <td>
+                {{ module_form.title }}
+            </td>
+            <td>
+                <strong>Year</strong>
+            </td>
+            <td>
+                {{ module_form.year }}
+            </td>
+        </tr>
+        {% if module_form.errors %}
+        <tr>
+            <td>
+            </td>
+            <td>
+                {{ module_form.title.errors }}
+            </td>
+            <td>
+            </td>
+            <td>
+                {{ module_form.year.errors }}
+            </td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td>
+                <strong>Code</strong>
+            </td>
+            <td>
+                {{ module_form.code }}
+            </td>
+            <td>
+                <strong>Number of Credits</strong>
+            </td>
+            <td>
+                {{ module_form.credits }}
+            </td>
+        </tr>
+        {% if module_form.errors %}
+        <tr>
+            <td>
+            </td>
+            <td>
+                {{ module_form.code.errors }}
+            </td>
+            <td>
+            </td>
+            <td>
+                {{ module_form.credits.errors }}
+            </td>
+        </tr>
+        {% endif %}
+        <tr> 
+            <td>
+                <strong>Who can/has to take this module?</strong>
+            </td>
+            <td>
+                {{ module_form.eligible }}
+            </td>
+            <td>
+                <strong>How many sessions?</strong>
+            </td>
+            <td>
+                {{ module_form.number_of_sessions }}
+            </td>
+        </tr>
+        {% if module_form.errors %}
+        <tr>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+                {{ module_form.number_of_sessions.errors }}
+            </td>
+        </tr>
+        {% endif %}
     </table>
+    <table cellpadding="10">
+        <tr>
+            <td>
+                {{ module_form.is_qld }}
+            </td>
+            <td>
+                This is a QLD module
+            </td>
+            <td>
+                {{ module_form.is_qld }}
+            </td>
+            <td>
+                This is a postgraduate module
+            </td>
+        </tr>
+    </table>
+
+    <hr>
+
+    <h4>Assessment</h4>
+
+    <table cellpadding="10">
+        <tr>
+            <td>
+                <strong>Number of Coursework Assessments</strong>
+            </td>
+            <td>
+                <select id="number_of_coursework" class="input-mini" onchange="put_assessment_forms()">
+                    {% if add %}
+                    <option value="0">0</option>
+                    <option value="1" selected>1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    {% else %}
+                    <option value="0"{% if assessments == 0 %} selected{% endif %}>0</option>
+                    <option value="1"{% if assessments == 1 %} selected{% endif %}>1</option>
+                    <option value="2"{% if assessments == 2 %} selected{% endif %}>2</option>
+                    <option value="3"{% if assessments == 3 %} selected{% endif %}>3</option>
+                    <option value="4"{% if assessments == 4 %} selected{% endif %}>4</option>
+                    <option value="5"{% if assessments == 5 %} selected{% endif %}>5</option>
+                    <option value="6"{% if assessments == 6 %} selected{% endif %}>6</option>
+                    {% endif %}
+                </select>
+            </td>
+            <td>
+                <strong>There will be an exam</strong>
+            </td>
+            <td>
+                <input type="checkbox" name="exam" id="exam" value="1" checked onclick="show_hide_exam(this)">
+            </td>
+        </tr>
+    </table>
+    <table cellpadding="10" id="assessment_forms">
+        <tr>
+            <td>Assessment Title</td>
+            <td>{{ module_form.assessment_1_title }}</td>
+            <td>Assessment Value</td>
+            <td>{{ module_form.assessment_1_value }}</td>
+        </tr>
+    </table>
+    <p id="exam_area">
+    <strong>Exam Value</strong>
+    {{ module_form.exam_value }}
+    </p>
+
     <input type = "submit" value="Save" class="btn btn-primary">
 </form>
+
+
+{% endblock %}
+
+{% block scripts %}
+
+<script type="text/javascript">
+    function put_assessment_forms(){
+        var element = document.getElementById("number_of_coursework");
+        var assessment_2 = '<tr><td><strong>Assessment 1:</strong></td>\
+                            <td>Title</td><td>\
+                            {{ module_form.assessment_1_title }}</td>\
+                            <td>Percentage</td><td>\
+                            {{ module_form.assessment_1_value }}</tr>\
+                            <tr><td><strong>Assessment 2:</strong></td>\
+                            <td>Title</td><td>\
+                            {{ module_form.assessment_2_title }}</td>\
+                            <td>Percentage</td><td>\
+                            {{ module_form.assessment_2_value }}</tr>';
+        var assessment_3 = '<tr><td><strong>Assessment 3:</strong></td>\
+                            <td>Title</td><td>\
+                            {{ module_form.assessment_3_title }}</td>\
+                            <td>Percentage</td><td>\
+                            {{ module_form.assessment_3_value }}</tr>';
+        var assessment_4 = '<tr><td><strong>Assessment 4:</strong></td>\
+                            <td>Title</td><td>\
+                            {{ module_form.assessment_4_title }}</td>\
+                            <td>Percentage</td><td>\
+                            {{ module_form.assessment_4_value }}</tr>';
+        var assessment_5 = '<tr><td><strong>Assessment 5:</strong></td>\
+                            <td>Title</td><td>\
+                            {{ module_form.assessment_5_title }}</td>\
+                            <td>Percentage</td><td>\
+                            {{ module_form.assessment_5_value }}</tr>';
+        var assessment_6 = '<tr><td><strong>Assessment 6:</strong></td>\
+                            <td>Title</td><td>\
+                            {{ module_form.assessment_6_title }}</td>\
+                            <td>Percentage</td><td>\
+                            {{ module_form.assessment_6_value }}</tr>';
+        if (element.value=="0"){
+            var toenter = '';
+        }
+        if(element.value=="1"){
+            var toenter = '<tr><td>Assessment Title</td><td>\
+                        {{ module_form.assessment_1_title }}\
+                        </td><td>Assessment Value</td><td>{{ module_form.assessment_1_value }}</td></tr>';
+        }
+        if(element.value=="2"){
+            var toenter = assessment_2;
+        }
+        if (element.value=="3"){
+            var toenter = assessment_2 + assessment_3;
+        }
+        if (element.value=="4"){
+            var toenter = assessment_2 + assessment_3 + assessment_4;
+        }
+        if (element.value=="5"){
+            var toenter = assessment_2 + assessment_3 + assessment_4 + assessment_5;
+        }
+        if (element.value=="6"){
+            var toenter = assessment_2 + assessment_3 + assessment_4 +
+                assessment_5 + assessment_6;
+        }
+
+        document.getElementById("assessment_forms").innerHTML = toenter; 
+    }
+    
+    function show_hide_exam(checkbox){
+        if (checkbox.checked == true){
+            toenter = '<strong>Exam Value</strong>{{ module_form.exam_value }}';
+        }
+        else{
+            toenter = '';
+        }
+        document.getElementById("exam_area").innerHTML = toenter;
+    }
+
+    window.onload = put_assessment_forms();
+
+</script>
 
 {% endblock %}

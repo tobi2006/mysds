@@ -24,17 +24,17 @@
 <body>
 
 {% block menubar %}
-<div class="navbar navbar-fixed-top navbar-inverse">
+<div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container">
             <a class="brand" href="/">CCCU Law DB</a>
             <ul class="nav">
                 <!-- <li><a href="">Form</a></li> -->
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Year<b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Students<b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li><a class="nav" href="{% url "na" %}"></a></li>
-                        <li><a href="{% url "na" %}">All Years</a></li>
+                        <li><a href="/year/all">All Years</a></li>
                         <li><a href="/year/1">Year 1</a></li>
                         <li><a href="/year/2">Year 2</a></li>
                         <li><a href="/year/3">Year 3</a></li>
@@ -42,30 +42,32 @@
                     </ul>
                 </li>
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Module<b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li><a class="nav" href="{% url "na" %}"></a></li>
                         {% for module in module_dict.current %}
                             <li><a href="{{ module.get_absolute_url }}">{{ module }}</a></li>
                         {% endfor %}
-                        <li class="divider"></li>
-                        {% if module_dict.past %}
-                            <li class="dropdown-submenu">
-                            <a tabindex="-1" href="#">Past Modules</a>
-                            <ul class = "dropdown-menu">
-                                {% for year in module_dict.past %}
-                                    <li><a href="/module_overview/{{ year }}">{{ year }}/{{ year|add:"1" }}</a></li>
-                                {% endfor %}
-                            </ul>
-                        {% endif %}
-                        {% if module_dict.future %}
-                            <li class="dropdown-submenu">
-                            <a tabindex="-1" href="#">Future Modules</a>
-                            <ul class = "dropdown-menu">
-                                {% for year in module_dict.future %}
-                                    <li><a href="/module_overview/{{ year }}">{{ year }}/{{ year|add:"1" }}</a></li>
-                                {% endfor %}
-                            </ul>
+                        {% if module_dict.past or module_dict.future %}
+                            <li class="divider"></li>
+                            {% if module_dict.past %}
+                                <li class="dropdown-submenu">
+                                <a tabindex="-1" href="#">Past Modules</a>
+                                <ul class = "dropdown-menu">
+                                    {% for year in module_dict.past %}
+                                        <li><a href="/module_overview/{{ year }}">{{ year }}/{{ year|add:"1" }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                            {% if module_dict.future %}
+                                <li class="dropdown-submenu">
+                                <a tabindex="-1" href="#">Future Modules</a>
+                                <ul class = "dropdown-menu">
+                                    {% for year in module_dict.future %}
+                                        <li><a href="/module_overview/{{ year }}">{{ year }}/{{ year|add:"1" }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
                         {% endif %}
                     </ul>
                 </li>
@@ -122,7 +124,6 @@
     $(document).ready(function() 
         { 
         $("#sortable_table").tablesorter({
-            sortForce: [[0,0]]            
             }); 
         } 
     ); 
@@ -131,20 +132,10 @@
             $("#markForm").validate();
             });
 
-{% comment %}
-    $(document).ready(function(){
-        $("#markForm").validate({
-            rules:{
-                field: {
-                    required: false,
-                    range: [0, 100]
-                }
-            }
-        });
-      });
-{% endcomment %}
-
 </script>
+
+{% block scripts %}
+{% endblock %}
 
 </body>
 </html>

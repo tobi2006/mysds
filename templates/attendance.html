@@ -27,7 +27,7 @@
     <tbody>
         <form action="{{ action_url }}" id="absenceForm" method="post"> 
         {% csrf_token %}
-    {% for student, attendance in attendances.items %}
+    {% for student, attendance in attendances.items|sort %}
         <tr>
             <td>
                 <label>{{ student.last_name }}, {{ student.first_name }}</label>
