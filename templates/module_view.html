@@ -127,6 +127,9 @@
                 Student
             </th>
             <th>
+                LSP
+            </th>
+            <th>
                 Attendance
             </th>
             {% if current_module.assessment_1_title %}
@@ -178,6 +181,8 @@
             <td>
                 <a href="/student/{{ performance.student.student_id }}">{{ student }}</a>
             </td>
+            <td>
+                {% if performance.student.lsp %}<a href="/lsp_view/{{ performance.student.student_id }}"><i class="icon-tag"></i></a>{% endif %}
             <td>
                 {{ performance.attendance | count_attendance }} / {{ current_module.sessions_recorded }}
             </td>

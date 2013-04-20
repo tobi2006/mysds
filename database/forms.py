@@ -5,6 +5,10 @@ from database.models import Student, Module, Performance
 class StudentForm(forms.ModelForm):
     class Meta:
         model = Student
+        fields = ('first_name', 'last_name', 'student_id', 'email',
+                'tutor', 'active', 'since', 'year', 'is_part_time',
+                'course', 'qld', 'nalp', 'notes', 'address',
+                'home_address', 'phone_no', 'permanent_email')
 
 class ModuleForm(forms.ModelForm):
     class Meta:

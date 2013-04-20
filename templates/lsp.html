@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load custom_filters %}
+
+{% block title %}CCCU Law - {{ student.first_name }} {{ student.last_name }}{% endblock %}
+
+{% block content %}
+
+    <h2>{{ student.first_name }} {{ student.last_name }}</h2>
+
+    Please be aware of the following Learning Support Plan:
+
+    <br><br>
+
+    {{ student.lsp }}
+
+{% endblock %}

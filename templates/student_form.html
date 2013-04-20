@@ -7,23 +7,160 @@
 <h1>{% if add %} Add {% else %} Edit {% endif %} Student</h1>
 
 {% if add %}
-
 <a class="btn btn-primary" href="{% url "upload_csv" %}" align="right">Add Students from Spreadsheet</a>
-
 <hr>
-
-{% url "add_student" as action_url %}
-{% else %}
-{% url "edit_student" object.pk as action_url %}
 {% endif %}
 
-<form action="{{ action_url }}" method="post" accept-charset="utf-8">
-    {% csrf_token %}
-    <input 
+{% comment %}
+{% url "add_student" as action_url %}
+{% else %}
+{% "edit_student/{{ student.student_id }}" as action_url %}
+{% endif %}
+{% endcomment %}
 
-        {% comment %}
-        {{ student_form.as_p }}
-        {% endcomment %}
+{% if add %}
+<form action="/add_student/" method="post" accept-charset="utf-8">
+{% else %}
+<form action="/edit_student/{{ student.student_id }}/" method="post" accept-charset="utf-8">
+{% endif %}
+
+
+    {% if student_form.errors %}
+    <em>{{ student_form.errors }}</em>
+    {% endif %}
+    {% csrf_token %}
+
+    <h4>Main Information</h4>
+    
+    <table cellpadding="10">
+        <tr>
+            <td>
+                First Name
+            </td>
+            <td>
+                {{ student_form.first_name }}
+            </td>
+            <td>
+                Last Name
+            </td>
+            <td>
+                {{ student_form.last_name }}
+            </td>
+            <td>
+                Student ID (required)
+            </td>
+            <td>
+                {{ student_form.student_id }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                University Email
+            </td>
+            <td>
+                {{ student_form.email }}
+            </td>
+            <td>
+                Personal Tutor
+            </td>
+            <td>
+                {{ student_form.tutor }}
+            </td>
+            <td>
+            </td>
+            <td>
+                {{ student_form.active }} Active
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Studying since
+            </td>
+            <td>
+                {{ student_form.since }}
+            </td>
+            <td>
+                Year
+            </td>
+            <td>
+                {{ student_form.year }}
+            </td>
+            <td>
+            </td>
+            <td>
+                {{ student_form.is_part_time }} Part time
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Course
+            </td>
+            <td>
+                {{ student_form.course }}
+            </td>
+            <td>
+            </td>
+            <td>
+                {{ student_form.qld }} QLD
+            </td>
+            <td>
+            </td>
+            <td>
+                {{ student_form.nalp }} Paralegal Pathway
+            </td>
+        </tr>
+    </table>
+
+    <hr>
+
+    <h4>Additional Information</h4>
+
+    Notes<br>
+    {{ student_form.notes }}
+
+    {% comment %}
+    <hr>
+
+    <h4>Modules</h4>
+
+    {% endcomment %}
+           
+    <hr>
+
+    <h4>Contact Details</h4>
+    
+    <table cellpadding="10">
+        <tr>
+            <td>
+                Address<br>
+                {{ student_form.address }}
+            </td>
+            <td>
+                Home Address<br>
+                {{ student_form.home_address }}
+            </td>
+            <td>
+                <table cellpadding="10">
+                    <tr>
+                        <td>
+                            Phone Number
+                        </td>
+                        <td>
+                            {{ student_form.phone_no }}
+                        </td>
+                    <tr>
+                        <td>
+                            Permanent Email
+                        </td>
+                        <td>
+                            {{ student_form.permanent_email }}            
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    
     <input type = "submit" value="Save" class="btn btn-primary" align="right">
 </form>
 

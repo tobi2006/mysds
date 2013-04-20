@@ -1,7 +1,13 @@
-Add enter marks form - on "submit", calculate average. Ideally do it with JS on the fly!
-Add absence form
+# Student View
+
 Add enter Notes form on student_view
 
 
-Add user system - link tutors to users - also change it in parse_csv!
+Put LSP in module overview
+
+
+#Seminar Groups
+
+Add LLB/Non-LLB distinction to seminar groups
+Maybe add "Only LLB" to slots
 

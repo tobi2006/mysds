@@ -31,7 +31,10 @@ class MetaData(models.Model):
     current_year = models.IntegerField(choices=ACADEMIC_YEARS)
 
 class Course(models.Model):
-    title = models.CharField(max_length = 50, unique=True)
+    title = models.CharField(max_length = 50, unique=True, verbose_name = "Official Course Title")
+#    short_title = models.CharField(max_length = 30, blank = True, verbose_name = "Short Title") 
+#    is_pg = models.BooleanField(verbose_name="Postgraduate Course")
+#    all_years = models.BooleanField(verbose_name="Course extends over all years (for example Erasmus)")
 
     def __unicode__(self):
         return u'%s' % (self.title)
@@ -165,7 +168,7 @@ class Student(models.Model):
     is_part_time = models.BooleanField(verbose_name = "Part Time")
     email = models.CharField(max_length = 50, blank=True)
     course = models.ForeignKey(Course, blank=True, null=True)
-    qld = models.BooleanField(verbose_name="QLD Status")
+    qld = models.BooleanField(verbose_name="QLD Status", default=True)
     tutor = models.ForeignKey(User, blank=True, null=True)
     modules = models.ManyToManyField(Module, blank=True)
     notes = models.TextField(blank=True)
@@ -175,7 +178,7 @@ class Student(models.Model):
     permanent_email = models.CharField(max_length = 50, blank=True)
     achieved_grade = models.CharField(editable=False, max_length=50, blank=True)
     address = models.TextField(blank=True, verbose_name="Term Time Address")
-    phone_no = models.CharField(max_length=20)
+    phone_no = models.CharField(max_length=20, blank=True)
     home_address = models.TextField(blank=True)
     nalp = models.BooleanField(verbose_name = "Paralegal Pathway")
 

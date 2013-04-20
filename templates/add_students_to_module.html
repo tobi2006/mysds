@@ -80,6 +80,10 @@ Please be patient - depending on the number of students you are adding, this can
 
 </form>
 
+{% endblock %}
+
+{%block scripts %}
+
 <script type="text/javascript">
     function selectAllItems() {  
         var selectAll = $("#select_all_items");  
@@ -99,23 +103,5 @@ Please be patient - depending on the number of students you are adding, this can
         });  
     }  
 </script>
-
-
-{% comment %}
-Original: 
-
-<script type="text/javascript">
-    function selectAllItems() {  
-        var selectAll = $("#select_all_items");  
-        $(".chkSelectItem").each(function (index, item) {  
-            if (selectAll.prop("checked") != $(item).prop('checked')) {  
-                $(item).trigger('click');  
-            }  
-        });  
-    }  
-</script>
-
-{% endcomment %}
-
 
 {% endblock %}

@@ -14,6 +14,10 @@ def count_attendance(attendancestring):
         sum = sum + int(week)
     return sum
 
+@register.filter
+def only_first_word(longer_string):
+    return longer_string.split()[0]
+
 @register.filter(name='sort')
 def listsort(value):
         if isinstance(value, dict):
