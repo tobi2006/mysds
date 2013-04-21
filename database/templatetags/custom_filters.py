@@ -1,5 +1,6 @@
 from django import template
 from django.utils.datastructures import SortedDict
+import re
 
 register = template.Library()
 
@@ -17,6 +18,14 @@ def count_attendance(attendancestring):
 @register.filter
 def only_first_word(longer_string):
     return longer_string.split()[0]
+
+@register.filter
+def md(md):
+    md = re.sub('<h2>','<h3>', md)
+    md = re.sub('</h2>','</h3>', md)
+    md = re.sub('<h1>','<h1>', md)
+    md = re.sub('</h1>','</h1>', md)
+    return md
 
 @register.filter(name='sort')
 def listsort(value):

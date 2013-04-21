@@ -6,10 +6,9 @@
 
 {% block content %}
 
-    <h2>Learning support plan for {{ student.first_name }} {{ student.last_name }}</h2>
+    <h2>Notes for {{ student.first_name }} {{ student.last_name }}</h2>
 
     <br><br>
-    {% if edit %}
     <p align="right">
         <button class="btn btn-small" type="button" id="md-helper">Help with Formatting</button>
     </p>
@@ -18,14 +17,11 @@
     {{ mdexplanation | safe }}
     </div><br>
 
-    <form action="/lsp_edit/{{ student.student_id }}/" method="post" accept-charset="utf-8">
+    <form action="/notes_edit/{{ student.student_id }}/" method="post" accept-charset="utf-8">
         {% csrf_token %}
-        {{ form.lsp }}<br>
+        {{ form.notes }}<br>
         <input type="submit" value="Save" class="btn btn-primary">
     </form>
-    {% else %}
-    {{ student.lsp | markdown}}
-    {% endif %}
 
 {% endblock %}
 

@@ -23,3 +23,4 @@ def menubar(request):
     return {
             'module_dict': module_dict
             }
+

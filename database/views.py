@@ -8,7 +8,8 @@ from django.db.models import Q
 from database import models
 from database.models import Student, Module, Course, Performance, MetaData
 from database import functions
-from database.forms import StudentForm, ModuleForm, CSVUploadForm, CSVParseForm
+from database.forms import *
+from database.strings import *
 
 def is_teacher(user):
     if user:
@@ -170,7 +171,7 @@ def student_view(request, student_id):
             
 
     return render_to_response('student_view.html',
-            {'current_student': student, 'years_performances': sorted_performances},
+            {'student': student, 'years_performances': sorted_performances},
             context_instance = RequestContext(request)
         )
 
@@ -198,10 +199,11 @@ def search_student(request):
             students = Student.objects.filter(Q(last_name__icontains=q) | Q(first_name__icontains=q))
         if len(students) == 1:
             student = students[0]
-            return render_to_response('student_view.html',
-                {'current_student': student},
-                context_instance = RequestContext(request)
-            )
+            return HttpResponseRedirect(student.get_absolute_url())
+#            return render_to_response('student_view.html',
+#                {'current_student': student},
+#                context_instance = RequestContext(request)
+#            )
         else:
             return render_to_response('search_results.html',
                     {'students': students, 'query': q},
@@ -517,15 +519,44 @@ def lsp_edit(request, student_id):
     """
     Allows to edit the Learning Support Plan for a student
     """
-
     student = Student.objects.get(student_id=student_id)
-    edit = True
+    if request.method == 'POST':
+        form = LSPForm(instance=student, data=request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(student.get_absolute_url())
+    else:
+        form = LSPForm(instance = student)
     return render_to_response(
             'lsp.html',
-            {'student': student, 'edit': edit},
+            {'form': form, 'student': student, 'edit': True, 'mdexplanation': MD_EXPLANATION},
             context_instance = RequestContext(request)
             )
 
+#####################################
+#          Notes Edit               #
+#####################################
+
+@login_required
+@user_passes_test(is_teacher)
+def notes_edit(request, student_id):
+
+    """
+    Allows to edit the Notes for a student
+    """
+    student = Student.objects.get(student_id=student_id)
+    if request.method == 'POST':
+        form = NotesForm(instance=student, data=request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(student.get_absolute_url())
+    else:
+        form = NotesForm(instance = student)
+    return render_to_response(
+            'student_notes.html',
+            {'form': form, 'student': student, 'edit': True, 'mdexplanation': MD_EXPLANATION},
+            context_instance = RequestContext(request)
+            )
 
 #####################################
 #    Add Students to Module         #

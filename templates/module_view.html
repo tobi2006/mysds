@@ -83,8 +83,6 @@
                 </li>
             {% endif %}
         </ul>
-    </div>
-    <div class="btn-group dropdown">
         <a class = "btn btn-primary dropdown-toggle" data-toggle="dropdown">Edit Attendance<span class="caret"></span></a>
         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
             <li>
@@ -179,7 +177,7 @@
                 {{ performance.seminar_group }}
             </td>
             <td>
-                <a href="/student/{{ performance.student.student_id }}">{{ student }}</a>
+                <a href="/student/{{ performance.student.student_id }}">{{ performance.student.last_name }}, {{ performance.student.first_name|only_first_word }}</a>
             </td>
             <td>
                 {% if performance.student.lsp %}<a href="/lsp_view/{{ performance.student.student_id }}"><i class="icon-tag"></i></a>{% endif %}

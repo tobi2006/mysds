@@ -7,14 +7,28 @@ class StudentForm(forms.ModelForm):
         model = Student
         fields = ('first_name', 'last_name', 'student_id', 'email',
                 'tutor', 'active', 'since', 'year', 'is_part_time',
-                'course', 'qld', 'nalp', 'notes', 'address',
+                'course', 'qld', 'nalp', 'address',
                 'home_address', 'phone_no', 'permanent_email')
+        widgets = {
+                'address': forms.Textarea(attrs={'rows': 6, 'cols': 20}),
+                'home_address': forms.Textarea(attrs={'rows': 6, 'cols': 20}),
+                }
 
 class ModuleForm(forms.ModelForm):
     class Meta:
         model = Module
         exclude = ('last_recorded_session',)
 
+
+class LSPForm(forms.ModelForm):
+    class Meta:
+        model = Student
+        fields = ('lsp',)
+
+class NotesForm(forms.ModelForm):
+    class Meta:
+        model = Student
+        fields = ('notes',)
 
 class CSVUploadForm(forms.Form):
     csvfile = forms.FileField(

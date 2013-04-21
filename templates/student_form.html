@@ -11,13 +11,6 @@
 <hr>
 {% endif %}
 
-{% comment %}
-{% url "add_student" as action_url %}
-{% else %}
-{% "edit_student/{{ student.student_id }}" as action_url %}
-{% endif %}
-{% endcomment %}
-
 {% if add %}
 <form action="/add_student/" method="post" accept-charset="utf-8">
 {% else %}
@@ -30,7 +23,7 @@
     {% endif %}
     {% csrf_token %}
 
-    <h4>Main Information</h4>
+    <h3>Main Information</h3>
     
     <table cellpadding="10">
         <tr>
@@ -113,21 +106,11 @@
 
     <hr>
 
-    <h4>Additional Information</h4>
+    <h3>Modules</h3>
 
-    Notes<br>
-    {{ student_form.notes }}
-
-    {% comment %}
     <hr>
 
-    <h4>Modules</h4>
-
-    {% endcomment %}
-           
-    <hr>
-
-    <h4>Contact Details</h4>
+    <h3>Contact Details</h3>
     
     <table cellpadding="10">
         <tr>
