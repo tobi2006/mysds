@@ -573,24 +573,26 @@ def add_students_to_module(request, module_id, year):
     else:
         more_than_one_year = False
     students = []
-    eligible = []
     years = []
-    if module.is_pg:
-        students_from_db = Student.objects.filter(year__gt=3, year__lt=9)
-    else:
-        students_from_db = Student.objects.filter(year__lte=3)
     for number in module.eligible:
         year = int(number) # Find out which students are eligible
+        years.append(year)
         meta_stuff = MetaData.objects.get(data_id=1)
         current_year = meta_stuff.current_year
         time_difference = module.year - current_year
         year = year - time_difference
-        years.append(year)
-    for student in students_from_db:
-        if student not in students_in_module:
-            students.append(student)
-        if student.year in years:
-            eligible.append(student.student_id)
+        students_in_year = Student.objects.filter(year = year)
+        for student in students_in_year:
+            if student not in students_in_module:
+                students.append(student)
+    if (len(years) == 3) or (module.is_p):
+        pass # All UG students already in the list or PG module
+    else:
+        other_students = []
+        all_ug_students = Student.objects.filter(year__lte=3)
+        for student in all_ug_students:
+            if student not in students:
+                other_students.append(student)
 
     if request.method == 'POST':
         students_to_add = request.POST.getlist('selected_student_id')
@@ -608,7 +610,7 @@ def add_students_to_module(request, module_id, year):
     return render_to_response(
             'add_students_to_module.html',
             {'module': module, 'more_than_one_year': more_than_one_year, 
-                'students': students, 'llb': llb, 'eligible': eligible},
+                'students': students, 'llb': llb, 'other_students': other_students},
             context_instance = RequestContext(request)
         )
 

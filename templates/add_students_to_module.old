@@ -8,9 +8,6 @@
 
 <h2>Add Students to {{ module }}</h2>
 
-<p align="right">
-    <button class="btn btn-small" type="button" id="show">Show non-eligible students</button>
-</p>
 
 <table>
     <tr>
@@ -47,21 +44,14 @@
     <form action = "", method="post">
     <tbody>
     {% for student in students %}
-        {% if student.student_id in eligible %}
-            <tr>
-        {% else %}
-            <tr class="not_eligible">
-        {% endif %}
+        <tr>
             <td>
-                {% if student.student_id in eligible %}
-                    {% if student.course == llb %}
-                        <input type="checkbox" name="selected_student_id" class="LLBCheckbox" value="{{ student.student_id }}">
-                    {% else %}
-                        <input type="checkbox" name="selected_student_id" class="NonLLBCheckbox" value="{{ student.student_id }}">
-                    {% endif %}
+                {% if student.course == llb %}
+                    <input type="checkbox" name="selected_student_id" class="LLBCheckbox" value="{{ student.student_id }}">
                 {% else %}
-                     <input type="checkbox" name="selected_student_id" value="{{ student.student_id }}">
-                {% endif %} 
+                    <input type="checkbox" name="selected_student_id" class="NonLLBCheckbox" value="{{ student.student_id }}">
+                {% endif %}
+
             </td>
             {% if more_than_one_year %}
                 <td>
@@ -112,20 +102,6 @@ Please be patient - depending on the number of students you are adding, this can
             }  
         });  
     }  
-</script>
-
-<script>
-
-    $(document).ready(function(){
-        $(".not_eligible").hide();
-    });
-
-    $(document).ready(function(){
-        $("#show").click(function(){
-            $(".not_eligible").toggle();
-        });
-    });
-
 </script>
 
 {% endblock %}
