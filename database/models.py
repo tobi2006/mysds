@@ -317,3 +317,12 @@ class Performance(models.Model):
         rounded = round(average)
         self.average = int(rounded)
         self.save()
+
+class AnonymousMark(models.Model):
+    student = models.ForeignKey(Student)
+    module = models.ForeignKey(Module)
+    exam_id = models.CharField(max_length = 15)
+    mark = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        unique_together = ('module', 'exam_id')

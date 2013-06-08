@@ -171,16 +171,6 @@
 <input type="submit" value="Save Marks" class="btn btn-primary" align=right>
 </form>
 
-{% comment %}
-
-Problem for Average: (65*40 + 56*60) / 100 = 59.6 but gets saved as 59!
-
-The below JS function validates the entry (number between 0 and 100) and calculates the average on the
-fly, so the marker sees what effect the mark will have. It might be a good idea to add more conditionals
-about the average to give warnings if the mark ends with 9 or is a failing grade.
-
-{% endcomment %}
-
 <script>
 function process(elem, student_id){
     var errortag = student_id + "_error"

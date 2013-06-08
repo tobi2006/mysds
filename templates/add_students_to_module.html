@@ -9,10 +9,10 @@
 <h2>Add Students to {{ module }}</h2>
 
 <p align="right">
-    <button class="btn btn-small" type="button" id="show">Show non-eligible students</button>
+    <button class="btn btn-small" type="button" id="show">Hide/Show non-eligible students</button>
 </p>
 
-<table>
+<table cellpadding="4">
     <tr>
         <td>
             <input type="checkbox" id="select_llb" onchange="selectLLBStudents()" name="select_llb " /> All LLB
@@ -23,7 +23,7 @@
     </tr>
 </table>
 
-<table id="sortable_table" class="table table-striped table-sortable">
+<table id="sortable_table" class="table table-hover table-sortable">
     <thead>
         <tr>
             <th>

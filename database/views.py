@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Q
 
 from database import models
-from database.models import Student, Module, Course, Performance, MetaData
+from database.models import Student, Module, Course, Performance, MetaData, AnonymousMark
 from database import functions
 from database.forms import *
 from database.strings import *
@@ -139,6 +139,26 @@ def add_module(request):
         context_instance = RequestContext(request)
     )
 
+#####################################
+#       Anonymous Marking           #
+#####################################
+
+@login_required
+@user_passes_test(is_teacher)
+def enter_anonymous_marks(request, module_id, year):
+
+    """
+    Function to enter marks according to the exam ID
+
+    With this function, the marks can be added to the corresponding exam ID.
+    Before, the exam IDs have to be added with the function XXX.
+    The marks get stored into a separate model (AnonymousMark) and can be matched
+    to the students DB entries with the function XXX.
+    """
+
+    module = Module.objects.get(code=module_id, year = year)
+    exam_ids = AnonymousMark.objects.filter(module = module)
+
 
 ###############################################################################
 ###############################################################################
@@ -196,7 +216,7 @@ def search_student(request):
                 last_name = search[-1]
             students = Student.objects.filter(last_name__icontains=last_name, first_name__icontains=first_name)
         if len(students) == 0:
-            students = Student.objects.filter(Q(last_name__icontains=q) | Q(first_name__icontains=q))
+            students = Student.objects.filter(Q(last_name__istartswith=q) | Q(first_name__istartswith=q))
         if len(students) == 1:
             student = students[0]
             return HttpResponseRedirect(student.get_absolute_url())
@@ -326,7 +346,6 @@ def edit_student(request, student_id):
 @login_required
 @user_passes_test(is_teacher)
 def mark(request, module_id, year, assessment):
-    pass
     module = Module.objects.get(code=module_id, year=year)
     students = module.student_set.all()
     performances = {}
@@ -830,3 +849,4 @@ def import_success(request):
             'blank.html', 
             {'printstring': printstring, 'title': title},
             context_instance = RequestContext(request))
+
