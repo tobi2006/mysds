@@ -4,6 +4,7 @@ from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import Template, Context, RequestContext
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Q
+from django.contrib.auth.models import User
 
 from database import models
 from database.models import Student, Module, Course, Performance, MetaData, AnonymousMark
@@ -14,6 +15,15 @@ from database.strings import *
 def is_teacher(user):
     if user:
         if user.groups.filter(name='teachers').count() == 1:
+            return True
+        else:
+            return False
+    else:
+        return False
+
+def is_admin(user):
+    if user:
+        if user.groups.filter(name='admins').count() == 1:
             return True
         else:
             return False
@@ -143,6 +153,43 @@ def add_module(request):
 #       Anonymous Marking           #
 #####################################
 
+
+@login_required
+@user_passes_test(is_teacher)
+def upload_anon_ids(request):
+    module_dict = functions.modules_for_menubar()
+    if request.method == 'POST':
+        form = CSVUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            f = request.FILES['csvfile']
+            f.read()
+            list_of_ids = []
+            for line in f:
+                row = line.split(',')
+                list_of_ids.append(row)
+            request.session['anon_ids'] = csv_list
+            return HttpResponseRedirect('/edit')
+    else:
+        form = CSVUploadForm()
+    return render_to_response('enter_anon_ids.html',
+            {'form': form},
+            context_instance=RequestContext(request))
+
+@login_required
+@user_passes_test(is_teacher)
+def edit_anon_ids(request):
+    try:
+        importdata = request.session.get('anon_ids')
+    except KeyError:
+        noimport = True
+    if request.method == 'POST':
+        pass
+    else:
+        pass
+    
+
+
+
 @login_required
 @user_passes_test(is_teacher)
 def enter_anonymous_marks(request, module_id, year):
@@ -159,6 +206,11 @@ def enter_anonymous_marks(request, module_id, year):
     module = Module.objects.get(code=module_id, year = year)
     exam_ids = AnonymousMark.objects.filter(module = module)
 
+
+@login_required
+@user_passes_test(is_admin)
+def put_anonymous_marks_in_db(request, module_id, year):
+    pass
 
 ###############################################################################
 ###############################################################################
@@ -241,8 +293,68 @@ def search_student(request):
 @user_passes_test(is_teacher)
 def year_view(request, year):
     """
-    Shows all students in a particular year
+    Shows all students in a particular year and allows making changes in bulk
     """
+    
+    if request.method == 'POST':
+        students_to_add = request.POST.getlist('selected_student_id')
+        selected_option = request.POST.__getitem__('modify')
+        selected = selected_option.split('_')
+        if selected[0] == 'tutor':
+            tutor = User.objects.get(id=selected[1])
+            for student_id in students_to_add:
+                student = Student.objects.get(student_id=student_id)
+                student.tutor = tutor
+                student.save()
+        elif selected[0] == 'qld':
+            if selected[1] == 'on':
+                for student_id in students_to_add:
+                    student = Student.objects.get(student_id=student_id)
+                    student.qld = True
+                    student.save()
+            elif selected[1] == 'off':
+                for student_id in students_to_add:
+                    student = Student.objects.get(student_id=student_id)
+                    student.qld = False
+                    student.save()
+        elif selected[0] == 'nalp':
+            if selected[1] == 'on':
+                for student_id in students_to_add:
+                    student = Student.objects.get(student_id=student_id)
+                    student.nalp = True
+                    student.save()
+            elif selected[1] == 'off':
+                for student_id in students_to_add:
+                    student = Student.objects.get(student_id=student_id)
+                    student.nalp = False
+                    student.save()
+        elif selected[0] == 'course':
+            course = Course.objects.get(title=selected[1])
+            for student_id in students_to_add:
+                student = Student.objects.get(student_id=student_id)
+                student.course = course
+                student.save()
+        elif selected[0] == 'since':
+            pass
+        elif selected[0] == 'year':
+            for student_id in students_to_add:
+                student = Student.objects.get(student_id=student_id)
+                student.year = selected[1]
+        elif selected[0] == 'active':
+            if selected[1] == 'on':
+                for student_id in students_to_add:
+                    student = Student.objects.get(student_id=student_id)
+                    student.active = True
+                    student.save()
+            elif selected[1] == 'off':
+                for student_id in students_to_add:
+                    student = Student.objects.get(student_id=student_id)
+                    student.active = False
+                    student.save()
+
+    else:
+        pass
+
     if year == "all":
         students = Student.objects.all()
     else:
@@ -257,7 +369,7 @@ def year_view(request, year):
         ug = True
         more_than_one_year = True
     else:
-        if int(year) < 7:
+        if int(year) < 4:
             ug = True
         elif int(year) == 7:
             pg = True
@@ -283,11 +395,14 @@ def year_view(request, year):
         other_students = all_students - llb_students
     if ug:
         courses = Course.objects.all
+    if alumnus:
+        courses = Course.objects.all
+    tutors = User.objects.filter(groups__name='teachers')
     
     return render_to_response('year_view.html',
             {'students': students, 'year': year, 
                 'ug': ug, 'pg':pg, 'phd': phd, 'alumnus': alumnus, 'llb': llb,
-                'more_than_one_year': more_than_one_year,
+                'more_than_one_year': more_than_one_year, 'tutors': tutors,
                 'academic_years': academic_years, 'courses': courses,
             'all_students': all_students, 'llb_students': llb_students,
             'other_students': other_students},
@@ -710,7 +825,7 @@ def parse_csv(request):
                     if 'qld' in result:
                         current.qld = result['qld']
                     if 'tutor' in result:
-                        tutor_results = Tutor.objects.filter(name = result['tutor'])
+                        tutor_results = User.objects.filter(name = result['tutor'])
                         tutor = tutors[0]
                         current.tutor = tutor
                     if 'notes' in result:
@@ -719,8 +834,8 @@ def parse_csv(request):
                         current.lsp = result['lsp']
                     if 'permanent_email' in result:
                         current.permanent_email = result['permanent_email']
-                    if 'achieved_grade' in result:
-                        current.achieved_grade = result['achieved_grade']
+#                    if 'achieved_grade' in result:
+#                        current.achieved_grade = result['achieved_grade']
                     if 'address' in result:
                         current.address = result['address']
                     if 'home_address' in result:
@@ -758,9 +873,10 @@ def parse_csv(request):
                     if 'qld' not in result:
                         result['qld'] = False
                     if 'tutor' not in result:
-                        result['tutor'] = ""
+                        result['tutor'] = None
                     else:
-                        tutors = Tutor.objects.filter(name = result['tutor'])
+                        tutorname
+                        tutors = User.objects.filter(name = result['tutor'])
                         tutor = tutors[0]
                         result['tutor'] = tutor
                     if 'notes' not in result:
@@ -771,8 +887,6 @@ def parse_csv(request):
                         result['lsp'] = ""
                     if 'permanent_email' not in result:
                         result['permanent_email'] = ""
-                    if 'achieved_grade' not in result:
-                        result['achieved_grade'] = ""
                     if 'address' not in result:
                         result['address'] = ""
                     if 'home_address' not in result:
@@ -792,7 +906,7 @@ def parse_csv(request):
                             active = result['active'],
                             lsp = result['lsp'],
                             permanent_email = result['permanent_email'],
-                            achieved_grade = result['achieved_grade'],
+#                            achieved_grade = result['achieved_grade'],
                             address = result['address'],
                             home_address = result['home_address']
                         )

@@ -2,6 +2,14 @@ from django.db import models
 from django.contrib.auth.models import User
 import datetime
 
+DEGREES = (
+        (1, 'First'),
+        (21, '2:1'),
+        (22, '2:2'),
+        (3, 'Third'),
+        (4, 'Fail')
+    )
+
 ACADEMIC_YEARS = (
         (2009, '2009/10'),
         (2010, '2010/11'),
@@ -24,6 +32,15 @@ ACADEMIC_YEARS = (
         (2027, '2027/28'),
         (2028, '2028/29'),
         (2029, '2029/30')
+    )
+
+POSSIBLE_YEARS = (
+        (1, '1'),
+        (2, '2'),
+        (3, '3'),
+        (7, 'Masters'),
+        (8, 'PhD'),
+        (9, 'Alumni')
     )
 
 class MetaData(models.Model):
@@ -58,13 +75,13 @@ class Module(models.Model):
     else:
         current_year = year + 1
     year = models.IntegerField(choices=ACADEMIC_YEARS, default=current_year)
-    is_qld = models.BooleanField(verbose_name="QLD Module")
+    is_foundational = models.BooleanField(verbose_name="Foundational Module")
     is_pg = models.BooleanField(verbose_name="Postgraduate Module")
     credits = models.IntegerField(default=20)
     eligible = models.CharField(
             max_length = 3,
             choices = ELIGIBLE,
-            default = '123',
+            default = '1',
             verbose_name = "Which students can (or have to) take this module?"
         )
     # Add: instructor = USER??
@@ -149,39 +166,31 @@ class Module(models.Model):
         unique_together = ('code', 'year')
 
 class Student(models.Model):
-    POSSIBLE_YEARS = (
-            (1, '1'),
-            (2, '2'),
-            (3, '3'),
-            (4, '4'),
-            (5, '5'),
-            (6, '6'), 
-            (7, 'Masters'),
-            (8, 'PhD'),
-            (9, 'Alumni')
-        )#Allowing for a 6 year Part time degree, Masters (7), PhD (8) and Alumni status (9)
     student_id = models.CharField(max_length = 15, unique = True)
+    anon_id = models.CharField(max_length = 15, blank=True)
     first_name = models.CharField(max_length = 30)
     last_name = models.CharField(max_length = 30)
     since = models.IntegerField(choices=ACADEMIC_YEARS, blank=True, null=True) 
     year = models.IntegerField(choices=POSSIBLE_YEARS, blank=True, null=True)
     is_part_time = models.BooleanField(verbose_name = "Part Time")
+#    second_part_time_year = models.BooleanField()   # This box has to be ticked when a part time student is in
+                                                    # the second half of a "year": student x might be in her second
+                                                    # year, but still takes year 1 modules for example
     email = models.CharField(max_length = 50, blank=True)
     course = models.ForeignKey(Course, blank=True, null=True)
     qld = models.BooleanField(verbose_name="QLD Status", default=True)
-    tutor = models.ForeignKey(User, blank=True, null=True)
+    tutor = models.ForeignKey(User, limit_choices_to={'groups__name': 'teachers'}, blank=True, null=True)
     modules = models.ManyToManyField(Module, blank=True)
     notes = models.TextField(blank=True)
     highlighted = models.BooleanField()
     active = models.BooleanField(default=True)
     lsp = models.TextField(blank=True)
     permanent_email = models.CharField(max_length = 50, blank=True)
-    achieved_grade = models.CharField(editable=False, max_length=50, blank=True)
+    achieved_grade = models.IntegerField(choices=DEGREES, blank=True, null=True)
     address = models.TextField(blank=True, verbose_name="Term Time Address")
     phone_no = models.CharField(max_length=20, blank=True)
     home_address = models.TextField(blank=True)
     nalp = models.BooleanField(verbose_name = "Paralegal Pathway")
-
 
     def __unicode__(self):
         return u'%s, %s' % (self.last_name, self.first_name)
@@ -319,7 +328,6 @@ class Performance(models.Model):
         self.save()
 
 class AnonymousMark(models.Model):
-    student = models.ForeignKey(Student)
     module = models.ForeignKey(Module)
     exam_id = models.CharField(max_length = 15)
     mark = models.IntegerField(blank=True, null=True)

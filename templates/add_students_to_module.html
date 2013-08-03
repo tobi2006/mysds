@@ -28,11 +28,9 @@
         <tr>
             <th>
             </th>
-            {% if more_than_one_year %}
-                <th>
-                    Year
-                </th>
-            {% endif %}
+            <th>
+                Year
+            </th>
             <th>
                 Student
             </th>
@@ -63,11 +61,9 @@
                      <input type="checkbox" name="selected_student_id" value="{{ student.student_id }}">
                 {% endif %} 
             </td>
-            {% if more_than_one_year %}
-                <td>
-                    {{ student.year }}
-                </td>
-            {% endif %}
+            <td>
+                {{ student.year }}
+            </td>
             <td>
                 <a href="/student/{{ student.student_id }}">{{ student }}</a>
             </td>

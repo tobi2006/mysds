@@ -15,17 +15,17 @@
         <td><strong>ID</strong></td>
         <td align="right">{{student.student_id}}</td>
         <td><strong>Course</strong></td>
-        <td align="right">{{student.course}} ({% if not student.qld %}No {% endif %}QLD)</td>
+        <td align="right">{{ student.course }} ({% if not student.qld %}No {% endif %}QLD)</td>
     </tr>
     <tr>
         <td><strong>Email</strong></td>
-        <td align="right"><a href="mailto:{{student.email}}">{{student.email}}</a></td>
+        <td align="right"><a href="mailto:{{ student.email }}">{{ student.email }}</a></td>
         <td><strong>Tutor</strong></td>
-        <td align="right"><a href="mailto:{{student.tutor.email}}?Subject={{student}}">{{student.tutor}}</a></td>
+        <td align="right"><a href="mailto:{{ student.tutor.email }}?Subject={{ student }}">{{ student.tutor.first_name }} {{ student.tutor.last_name }}</a></td>
     </tr>
     <tr>
         <td><strong>Year</strong></td>
-        <td align="right">{{student.year}} {% if student.since %} (Since {{student.since}}/{{student.since|add:"1"}}) {% endif %}</td>
+        <td align="right">{{ student.year }} {% if student.since %} (Since {{ student.since }}/{{ student.since|add:"1" }}) {% endif %}</td>
         <td><strong>LSP</strong></td>
         <td align="right">{% if student.lsp %}<a href="/lsp_view/{{ student.student_id }}">View</a> / <a href="/lsp_edit/{{ student.student_id }}">Edit</a>{% else %}No LSP - <a href="/lsp_edit/{{ student.student_id }}">Add</a>{% endif %}</a></td>
     </tr>

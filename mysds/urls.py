@@ -32,5 +32,7 @@ urlpatterns += patterns('database.views',
     url(r'^year/(\w+)/$', 'year_view', name = 'year_view'),
     url(r'^upload_csv/$', 'upload_csv', name = 'upload_csv'),
     url(r'^parse_csv/$', 'parse_csv', name = 'parse_csv'),
-    url(r'^import_success/$', 'import_success', name = 'import_success')
+    url(r'^import_success/$', 'import_success', name = 'import_success'),
+    url(r'^upload_anon_ids/$', 'upload_anon_ids', name = 'upload_anon_ids'),
+    url(r'^edit_anon_ids/$', 'edit_anon_ids', name = 'edit_anon_ids')
 )

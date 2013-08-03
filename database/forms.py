@@ -1,13 +1,29 @@
 from django import forms
 from bootstrap_toolkit.widgets import BootstrapTextInput, BootstrapUneditableInput
 from database.models import Student, Module, Performance
+from django.contrib.auth.models import User
+
+
+class UserModelChoiceField(forms.ModelChoiceField):
+    """
+    Extend ModelChoiceField for users so that the choices are
+    listed as 'first_name last_name (username)' instead of just
+    'username'.
+
+    """
+    def label_from_instance(self, obj):
+        return "%s" % (obj.get_full_name())
+
 
 class StudentForm(forms.ModelForm):
+
+    tutor = UserModelChoiceField(User.objects.filter(groups__name='teachers'))
+
     class Meta:
         model = Student
         fields = ('first_name', 'last_name', 'student_id', 'email',
-                'tutor', 'active', 'since', 'year', 'is_part_time',
-                'course', 'qld', 'nalp', 'address',
+                'active', 'since', 'year', 'is_part_time',
+                'tutor', 'course', 'qld', 'nalp', 'address',
                 'home_address', 'phone_no', 'permanent_email')
         widgets = {
                 'address': forms.Textarea(attrs={'rows': 6, 'cols': 20}),
