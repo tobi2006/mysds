@@ -67,6 +67,7 @@ class Module(models.Model):
         ) #With these kinds of strings, it should be possible to check "if 1 in eligible:"
     title = models.CharField(max_length = 50)
     code = models.CharField(max_length = 20)
+
     #Show next year as the default
     year = datetime.datetime.now().year
     month = datetime.datetime.now().month
@@ -75,6 +76,7 @@ class Module(models.Model):
     else:
         current_year = year + 1
     year = models.IntegerField(choices=ACADEMIC_YEARS, default=current_year)
+    successor_of = models.ForeignKey('self', blank = True, null=True)
     is_foundational = models.BooleanField(verbose_name="Foundational Module")
     is_pg = models.BooleanField(verbose_name="Postgraduate Module")
     credits = models.IntegerField(default=20)
@@ -153,7 +155,7 @@ class Module(models.Model):
             blank=True,
             null=True,
         )
-    exam_value = models.IntegerField(verbose_name="Percentage value for the exam", default=60)
+    exam_value = models.IntegerField(verbose_name="Percentage value for the exam", default=60, blank=True, null=True)
 
     def __unicode__(self):
         next_year = int(self.year) + 1
@@ -239,6 +241,7 @@ class Performance(models.Model):
     q_exam = models.IntegerField(blank=True, null=True)
 
     average = models.IntegerField(blank=True, null=True)
+    real_average = models.FloatField(blank=True, null=True)
 
     attendance = models.CharField(max_length=50, blank=True)
 
@@ -325,6 +328,7 @@ class Performance(models.Model):
         average = float(sum) / 100
         rounded = round(average)
         self.average = int(rounded)
+        self.real_average = average
         self.save()
 
 class AnonymousMark(models.Model):

@@ -21,14 +21,8 @@
 
     <h4>Module Information</h4>
 
-    <table cellpadding="10">            
+    <table cellpadding = "10">
         <tr>
-            <td>
-                <strong>Module title</strong>
-            </td>
-            <td>
-                {{ module_form.title }}
-            </td>
             <td>
                 <strong>Year</strong>
             </td>
@@ -38,16 +32,43 @@
         </tr>
         <tr>
             <td>
+                <strong>Successor of (essential for foundational modules)</strong>
+            </td>
+            <td>
+                {{ module_form.successor_of }}
+            </td>
+        </tr>
+    </table>
+
+    <br><br>
+
+    <table cellpadding="10">            
+        <tr>
+            <td>
+                <strong>Module title</strong>
+            </td>
+            <td>
+                {{ module_form.title }}
+            </td>
+            <td>
                 <strong>Code</strong>
             </td>
             <td>
                 {{ module_form.code }}
             </td>
+        </tr>
+        <tr>
             <td>
                 <strong>Number of Credits</strong>
             </td>
             <td>
                 {{ module_form.credits }}
+            </td>
+            <td>
+                <strong>Number of sessions for attendance record</strong>
+            </td>
+            <td>
+                {{ module_form.number_of_sessions }}
             </td>
         </tr>
         {% if module_form.errors %}
@@ -71,12 +92,6 @@
             <td>
                 {{ module_form.eligible }}
             </td>
-            <td>
-                <strong>Number of sessions for attendance record</strong>
-            </td>
-            <td>
-                {{ module_form.number_of_sessions }}
-            </td>
         </tr>
         {% if module_form.errors %}
         <tr>
@@ -98,10 +113,10 @@
                 {{ module_form.is_foundational }}
             </td>
             <td>
-                This is a QLD module
+                This is a foundational module
             </td>
             <td>
-                {{ module_form.is_foundational }}
+                {{ module_form.is_pg }}
             </td>
             <td>
                 This is a postgraduate module
@@ -169,6 +184,7 @@
 {% block scripts %}
 
 <script type="text/javascript">
+
     function put_assessment_forms(){
         var element = document.getElementById("number_of_coursework");
         var assessment_2 = '<tr><td><strong>Assessment 1:</strong></td>\
@@ -241,6 +257,95 @@
 
     window.onload = put_assessment_forms();
 
+    {% if add %}
+
+
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    function sameOrigin(url) {
+        // test that a given url is a same-origin URL
+        // url could be relative or scheme relative or absolute
+        var host = document.location.host; // host + port
+        var protocol = document.location.protocol;
+        var sr_origin = '//' + host;
+        var origin = protocol + sr_origin;
+        // Allow absolute or scheme relative URLs to same origin
+        return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+            (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+            // or any other URL that isn't scheme relative or absolute i.e relative.
+            !(/^(\/\/|http:|https:).*/.test(url));
+    }
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            var csrftoken = '{{ csrf_token }}';
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+                // Send the token to same-origin, relative URLs only.
+                // Send the token only if the method warrants CSRF protection
+                // Using the CSRFToken value acquired earlier
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+
+        $(document).ready(function(){
+            $('#id_year').bind('change', function (){
+                $.post("/add_module/",
+                    {'year':$(this).val()},
+                    function(data) {
+                        $("#id_successor_of").empty().append(data);
+                    });
+            });
+        });
+
+        $(document).ready(function(){
+            $('#id_successor_of').bind('change', function (){
+                $.post("/add_module/",
+                    {'successor_of':$(this).val()},
+                    function(data) {
+                        $('#id_title').val(data.title);
+                        $('#id_code').val(data.code);
+                        $('#id_credits').val(data.credits);
+                        $('#id_number_of_sessions').val(data.number_of_sessions);
+                        $('#id_eligible').empty().append(data.eligible);
+                        if (data.is_pg)
+                        {
+                            $('#id_is_pg').attr('checked', true);
+                        }
+                        else
+                        {
+                            $('#id_is_pg').attr('checked', false);
+                        }
+                        if (data.is_foundational)
+                        {
+                            $('#id_is_foundational').attr('checked', true);
+                        }
+                        else
+                        {
+                            $('#id_is_foundational').attr('checked', false);
+                        }
+                        $('#assessment_forms').empty().append(data.assessments);
+                        if (data.exam)
+                        {
+                            $('#id_exam').attr('checked', true);
+                            $('#id_exam_value').val(data.exam);
+                        }
+                        else
+                        {
+                            $('#exam').attr('checked', false);
+                            $('#exam_area').text('')
+                        }
+        if (element.value=="3"){
+            var toenter = assessment_2 + assessment_3;
+        }
+
+                    });
+            });
+        });
+
+    {% endif %}
 </script>
 
 {% endblock %}

@@ -5,6 +5,7 @@ from django.template import Template, Context, RequestContext
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Q
 from django.contrib.auth.models import User
+from django.utils import simplejson
 
 from database import models
 from database.models import Student, Module, Course, Performance, MetaData, AnonymousMark
@@ -135,6 +136,81 @@ def add_module(request):
     Function to add a new module
     """
     assessments = 0
+    if request.is_ajax():
+        if 'successor_of' not in request.POST:
+            year = int(request.POST['year'])
+            predecessor_year = year - 1
+            predecessor_modules = Module.objects.filter(year=predecessor_year)
+            new_options = '<option value="" selected="selected">---------</option>\n'
+            for module in predecessor_modules:
+                toadd = '<option value="' + str(module.id) +'">' + str(module) + '</option>\n'
+                new_options += toadd
+            return HttpResponse(new_options)
+        else:
+            successor_of = int(request.POST['successor_of'])
+            predecessor = Module.objects.get(id=successor_of)
+            suggestions = {}
+            suggestions['title'] = predecessor.title
+            suggestions['code'] = predecessor.code
+            suggestions['credits'] = predecessor.credits
+            suggestions['number_of_sessions'] = predecessor.number_of_sessions
+            eligible = ''
+            for entry in Module.ELIGIBLE:
+                if entry[0] == predecessor.eligible:
+                    eligible += '<option value="' + entry[0] + '" selected="selected">' + entry[1] + '</option>\n'
+                else:
+                    eligible += '<option value="' + entry[0] + '">' + entry[1] + '</option>\n'
+            suggestions['eligible'] = eligible
+            suggestions['is_foundational'] = predecessor.is_foundational
+            suggestions['is_pg'] = predecessor.is_pg
+            if predecessor.assessment_6_value:
+                no_of_assessments = 6
+            elif predecessor.assessment_5_value:
+                no_of_assessments = 5
+            elif predecessor.assessment_4_value:
+                no_of_assessments = 4
+            elif predecessor.assessment_3_value:
+                no_of_assessments = 3
+            elif predecessor.assessment_2_value:
+                no_of_assessments = 2
+            elif predecessor.assessment_1_value:
+                no_of_assessments = 1
+            else:
+                no_of_assessments = 0
+            assessments = ""
+            endcounter = no_of_assessments + 1
+            counter = 1
+            while counter < endcounter:
+                if counter == 1:
+                    title = predecessor.assessment_1_title
+                    value = str(predecessor.assessment_1_value)
+                elif counter == 2:
+                    title = predecessor.assessment_2_title
+                    value = str(predecessor.assessment_2_value)
+                elif counter == 3:
+                    title = predecessor.assessment_3_title
+                    value = str(predecessor.assessment_3_value)
+                elif counter == 4:
+                    title = predecessor.assessment_4_title
+                    value = str(predecessor.assessment_4_value)
+                elif counter == 5:
+                    title = predecessor.assessment_5_title
+                    value = str(predecessor.assessment_5_value)
+                elif counter == 6:
+                    title = predecessor.assessment_6_title
+                    value = str(predecessor.assessment_6_value)
+                count = str(counter)
+                assessments += '<tr><td><strong>Assessment ' + count + ':</strong></td>\n <td>Title</td><td>\n <input id="id_assessment_' + count + '_title" maxlength="30" name="assessment_' + count + '_title" type="text" value="' + title + '" /></td>\n <td>Percentage</td><td>\n <input id="id_assessment_' + count + '_value" name="assessment_' + count + '_value" type="text" value="' + value + '" /></tr>'
+                counter += 1
+            suggestions['number_of_assessments'] = no_of_assessments
+            suggestions['assessments'] = assessments
+            if predecessor.exam_value:
+                suggestions['exam'] = predecessor.exam_value
+        json = simplejson.dumps(suggestions)
+        return HttpResponse(json, mimetype='application/json')
+        #for module in predecessor_modules:
+        #    print module.title
+
     if request.method == 'POST':
         form = ModuleForm(data=request.POST)
         if form.is_valid():
@@ -875,7 +951,6 @@ def parse_csv(request):
                     if 'tutor' not in result:
                         result['tutor'] = None
                     else:
-                        tutorname
                         tutors = User.objects.filter(name = result['tutor'])
                         tutor = tutors[0]
                         result['tutor'] = tutor

@@ -1,6 +1,7 @@
 from django import forms
 from bootstrap_toolkit.widgets import BootstrapTextInput, BootstrapUneditableInput
-from database.models import Student, Module, Performance
+from database.models import Student, Module, Performance, ACADEMIC_YEARS
+
 from django.contrib.auth.models import User
 
 
@@ -31,9 +32,20 @@ class StudentForm(forms.ModelForm):
                 }
 
 class ModuleForm(forms.ModelForm):
+
+    #SUCCESSOR_OF_CHOICES = [('', 'Select the Predecessor'), (m, m) for m in Module.objects.all()]
+
+    #year = forms.ChoiceField(choices = ACADEMIC_YEARS, widgets=forms.Select(attrs={'class': 'year'}))
+    #successor_of = forms.ChoiceField(choices = SUCCESSOR_OF_CHOICES, widgets=forms.Select(attrs={'class': 'successor_of'}))
+
+
     class Meta:
         model = Module
         exclude = ('last_recorded_session',)
+        widgets = {
+                'year': forms.Select(attrs={'class': 'year'}),
+                'successor_of': forms.Select(attrs={'class': 'successor_of'})
+                }
 
 
 class LSPForm(forms.ModelForm):
