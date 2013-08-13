@@ -41,15 +41,19 @@
         });
     });
 
-    {% comment %}
     $(document).ready(function(){
-        $("#md-helper").hover(function(){
-            $("#md-helptext").show();
-        },
-        function(){
-            $("#md-helptext").hide();
-        });
-    });
-    {% endcomment %}
+            $('#md-helper').click(function(){
+                  if ($(this).text() == "Help with Formatting") 
+                  { 
+                     $(this).text("Hide Formatting Help"); 
+                  } 
+                  else 
+                  { 
+                     $(this).text("Help with Formatting"); 
+                  }; 
+                });
+            });
+
 </script>
+
 {% endblock %}

@@ -764,27 +764,27 @@ h3 {
 }
 
 h1 {
-  font-size: 38.5px;
-}
-
-h2 {
   font-size: 31.5px;
 }
 
-h3 {
+h2 {
   font-size: 24.5px;
 }
 
-h4 {
+h3 {
   font-size: 17.5px;
 }
 
+h4 {
+  font-size: 14.5px;
+}
+
 h5 {
-  font-size: 14px;
+  font-size: 11.9px;
 }
 
 h6 {
-  font-size: 11.9px;
+  font-size: 10px;
 }
 
 h1 small {
@@ -1058,7 +1058,7 @@ select,
 textarea {
   font-size: 14px;
   font-weight: normal;
-  line-height: 20px;
+  line-height: 50px;
 }
 
 input,
@@ -1106,7 +1106,7 @@ input[type="color"],
 input,
 textarea,
 .uneditable-input {
-  width: 206px;
+  width: 90%;
 }
 
 textarea {
@@ -1343,73 +1343,73 @@ textarea,
 input.span12,
 textarea.span12,
 .uneditable-input.span12 {
-  width: 926px;
+  width: 90%;
 }
 
 input.span11,
 textarea.span11,
 .uneditable-input.span11 {
-  width: 846px;
+  width: 90%;
 }
 
 input.span10,
 textarea.span10,
 .uneditable-input.span10 {
-  width: 766px;
+  width: 90%;
 }
 
 input.span9,
 textarea.span9,
 .uneditable-input.span9 {
-  width: 686px;
+  width: 90%;
 }
 
 input.span8,
 textarea.span8,
 .uneditable-input.span8 {
-  width: 606px;
+  width: 90%;
 }
 
 input.span7,
 textarea.span7,
 .uneditable-input.span7 {
-  width: 526px;
+  width: 90%;
 }
 
 input.span6,
 textarea.span6,
 .uneditable-input.span6 {
-  width: 446px;
+  width: 90%;
 }
 
 input.span5,
 textarea.span5,
 .uneditable-input.span5 {
-  width: 366px;
+  width: 90%;
 }
 
 input.span4,
 textarea.span4,
 .uneditable-input.span4 {
-  width: 286px;
+  width: 90%;
 }
 
 input.span3,
 textarea.span3,
 .uneditable-input.span3 {
-  width: 206px;
+  width: 90%;
 }
 
 input.span2,
 textarea.span2,
 .uneditable-input.span2 {
-  width: 126px;
+  width: 90%;
 }
 
 input.span1,
 textarea.span1,
 .uneditable-input.span1 {
-  width: 46px;
+  width: 90%;
 }
 
 .controls-row {
@@ -6123,7 +6123,7 @@ a.badge:focus {
 
 .hero-unit h1 {
   margin-bottom: 0;
-  font-size: 60px;
+  font-size: 35px;
   line-height: 1;
   letter-spacing: -1px;
   color: inherit;

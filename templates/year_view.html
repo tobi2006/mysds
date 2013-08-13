@@ -65,6 +65,7 @@
             <option value="since">Set begin of studies</option>
             <option value="year">Set year of study</option>
             <option value="inactive">Set students inactive</option>
+            <option value="delete">Delete students</option>
         </select>
     </tr>
     <tr id="second_option">
@@ -74,6 +75,8 @@
 {% endblock %}
 
 {% block content %}
+
+{% if students %}
 
 <h1>Student Overview</h1>
 
@@ -113,6 +116,7 @@
     </thead>
     <tbody>
     {% for student in students %}
+    {% if student.active or alumni or show_inactive %}
         <tr>
             <td>
                 {% if student.course == llb %}
@@ -137,6 +141,7 @@
                 {{ student.course }}{% if student.qld %} (QLD){% endif %}
             </td>
         </tr>
+    {% endif %}
     {% endfor %}
     </tbody>
 </table>
@@ -144,6 +149,13 @@
 {% csrf_token %}
 
 </form>
+
+{% else %}
+
+There are currently no students in this category.
+
+{% endif %}
+
 
 {% endblock %}
 
@@ -212,13 +224,22 @@
                 break;
             case "inactive":
                 var toenter = '<br>Mark selected as...<br>\
-                              <input type="radio" name="modify" value="active" checked>\
+                              <input type="radio" name="modify" value="active_yes" checked>\
                               Active<br>\
-                              <input type="radio" name="modify" value="inactive">\
+                              <input type="radio" name="modify" value="active_no">\
                               Inactive<br>\
                               <br><br><input type="submit" value="Apply" class="btn btn-primary">';
                 break;
-                var toenter = 'Not available yet';
+            case "delete":
+                var toenter = '<br>This action cannot be undone.<br>\
+                              All records about these students<br>will be deleted.\
+                              <br>If a student is intermitting,<br>it is better to mark him/her as inactive.\
+                              <br><br>Are you sure you want to do this?<br><br>\
+                              <input type="radio" name="modify" value="delete_yes">\
+                              Yes<br>\
+                              <input type="radio" name="modify" value="delete_no" checked>\
+                              No<br>\
+                              <br><br><input type="submit" value="Apply" class="btn btn-primary">';
                 break;
         }
         document.getElementById("second_option").innerHTML = toenter;

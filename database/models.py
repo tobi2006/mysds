@@ -79,6 +79,7 @@ class Module(models.Model):
     successor_of = models.ForeignKey('self', blank = True, null=True)
     is_foundational = models.BooleanField(verbose_name="Foundational Module")
     is_pg = models.BooleanField(verbose_name="Postgraduate Module")
+    is_nalp = models.BooleanField(verbose_name="Module is required for the NALP Qualification")
     credits = models.IntegerField(default=20)
     eligible = models.CharField(
             max_length = 3,
@@ -169,13 +170,13 @@ class Module(models.Model):
 
 class Student(models.Model):
     student_id = models.CharField(max_length = 15, unique = True)
-    anon_id = models.CharField(max_length = 15, blank=True)
+    exam_id = models.CharField(max_length = 15, blank=True)
     first_name = models.CharField(max_length = 30)
     last_name = models.CharField(max_length = 30)
     since = models.IntegerField(choices=ACADEMIC_YEARS, blank=True, null=True) 
     year = models.IntegerField(choices=POSSIBLE_YEARS, blank=True, null=True)
     is_part_time = models.BooleanField(verbose_name = "Part Time")
-#    second_part_time_year = models.BooleanField()   # This box has to be ticked when a part time student is in
+    second_part_time_year = models.BooleanField()   # This box has to be ticked when a part time student is in
                                                     # the second half of a "year": student x might be in her second
                                                     # year, but still takes year 1 modules for example
     email = models.CharField(max_length = 50, blank=True)
@@ -331,10 +332,32 @@ class Performance(models.Model):
         self.real_average = average
         self.save()
 
-class AnonymousMark(models.Model):
+class AnonymousMarks(models.Model):
     module = models.ForeignKey(Module)
     exam_id = models.CharField(max_length = 15)
-    mark = models.IntegerField(blank=True, null=True)
+    assessment_1 = models.IntegerField(blank=True, null=True)
+    assessment_2 = models.IntegerField(blank=True, null=True)
+    assessment_3 = models.IntegerField(blank=True, null=True)
+    assessment_4 = models.IntegerField(blank=True, null=True)
+    assessment_5 = models.IntegerField(blank=True, null=True)
+    assessment_6 = models.IntegerField(blank=True, null=True)
+    exam = models.IntegerField(blank=True, null=True)
+    r_assessment_1 = models.IntegerField(blank=True, null=True)
+    r_assessment_2 = models.IntegerField(blank=True, null=True)
+    r_assessment_3 = models.IntegerField(blank=True, null=True)
+    r_assessment_4 = models.IntegerField(blank=True, null=True)
+    r_assessment_5 = models.IntegerField(blank=True, null=True)
+    r_assessment_6 = models.IntegerField(blank=True, null=True)
+    r_exam = models.IntegerField(blank=True, null=True)
 
     class Meta:
         unique_together = ('module', 'exam_id')
+
+class Tutee_Session(models.Model):
+    tutee = models.ForeignKey(Student)
+    tutor = models.ForeignKey(User, limit_choices_to={'groups__name': 'teachers'})
+    date_of_meet = models.DateField()
+    notes = models.TextField()
+
+    class Meta:
+        ordering = ['date_of_meet', 'tutor']

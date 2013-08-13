@@ -32,7 +32,7 @@
 <div class="btn-group">
     <div class="btn-group dropdown">
         <a class = "btn btn-primary dropdown-toggle" data-toggle="dropdown">Enter/Change Marks <span class="caret"></span></a>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+        <ul class="dropdown-menu" role="menu">
             {% if current_module.assessment_1_title %}
                 <li>
                     <a href="/mark/{{ current_module.code }}/{{ current_module.year }}/assessment_1">
@@ -83,8 +83,10 @@
                 </li>
             {% endif %}
         </ul>
+    </div>
+    <div class="btn-group dropdown">
         <a class = "btn btn-primary dropdown-toggle" data-toggle="dropdown">Edit Attendance<span class="caret"></span></a>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+        <ul class="dropdown-menu" role="menu">
             <li>
                 <a href="/attendance/{{ current_module.code }}/{{ current_module.year }}/all">
                     For all Groups

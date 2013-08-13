@@ -34,5 +34,9 @@ urlpatterns += patterns('database.views',
     url(r'^parse_csv/$', 'parse_csv', name = 'parse_csv'),
     url(r'^import_success/$', 'import_success', name = 'import_success'),
     url(r'^upload_anon_ids/$', 'upload_anon_ids', name = 'upload_anon_ids'),
-    url(r'^edit_anon_ids/$', 'edit_anon_ids', name = 'edit_anon_ids')
+    url(r'^edit_anon_ids/$', 'edit_anon_ids', name = 'edit_anon_ids'),
+    url(r'^tutee_list/$', 'tutee_list', name='tutee_list'),
+    url(r'^tutee/(\w+)/$', 'tutee_edit', name='tutee_edit'),
+    url(r'^tutee/(\w+)/(\d+)/$', 'tutee_edit', name='edit_tutee_meeting'),
+    url(r'^delete_tutee_meeting/(\d+)/$', 'delete_tutee_meeting', name='delete_tutee_meeting')
 )

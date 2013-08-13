@@ -2,12 +2,12 @@
 {% load custom_filters %}
 {% load markup %}
 
-{% block title %}CCCU Law - {{student.first_name}} {{student.last_name}}{% endblock %}
+{% block title %}CCCU Law - Tutees{% endblock %}
 
 {% block content %}
 
 <div class="hero-unit">
-    <h1>{{student.first_name}} {{student.last_name}} {% if not student.active %}(Inactive){% endif %}</h1>
+    <h1>{{student.first_name}} {{student.last_name}}</h1>
 <p>
 <!--<table cellpadding="5">-->
 <table class="table">
@@ -20,33 +20,37 @@
     <tr>
         <td><strong>Email</strong></td>
         <td align="right"><a href="mailto:{{ student.email }}">{{ student.email }}</a></td>
-        <td><strong>Tutor</strong></td>
-        <td align="right"><a href="mailto:{{ student.tutor.email }}?Subject={{ student }}">{{ student.tutor.first_name }} {{ student.tutor.last_name }}</a></td>
-    </tr>
-    <tr>
         <td><strong>Year</strong></td>
         <td align="right">{{ student.year }} {% if student.since %} (Since {{ student.since }}/{{ student.since|add:"1" }}) {% endif %}</td>
+    </tr>
+    <tr>
         <td><strong>LSP</strong></td>
         <td align="right">{% if student.lsp %}<a href="/lsp_view/{{ student.student_id }}">View</a> / <a href="/lsp_edit/{{ student.student_id }}">Edit</a>{% else %}No LSP - <a href="/lsp_edit/{{ student.student_id }}">Add</a>{% endif %}</a></td>
     </tr>
 </table>
 </p>  
- <p align="right">
- <a class="btn btn-primary" href="/edit_student/{{ student.student_id }}">
-        Edit
-    </a>
-</p>
+
 </div>
 
+<p align="right">
+
+<button class="btn btn-primary" type="button" id="show_hide_performances">Show Performance</button>
+
+
+</p>
+
+<div id="performance">
+
+<h2>Performance</h2>
 
 {% for year, performances_per_year in years_performances.items|sort_reverse %}
 
     <hr>
-    <h2>{{ year }}/{{ year|add:"1" }}</h2>
+    <h3>{{ year }}/{{ year|add:"1" }}</h3>
     
     {% for performance in performances_per_year|sort %}
 
-    <h3>{{ performance.module }}</h3>
+    <h4>{{ performance.module }}</h4>
 
     <table class="table table-bordered">
         <tr>
@@ -187,22 +191,123 @@
 
     {% endfor %}
 {% endfor %}
+</div>
 
-<h2>Notes</h2>
+<h2>Meeting Records</h2>
 
-{% if student.notes %}
-    <p>
-        {{ student.notes | markdown }}
-    </p>  
-{% else %}
-    <em>
-        No notes for this student.
-    </em>
-{% endif %}
-<p align="right">
-    <a class="btn btn-primary" href="/notes_edit/{{ student.student_id }}">
-        Edit
-    </a>
+{% if meetings %}
+
+{% for meeting in meetings %}
+
+<h3>{{ meeting.date_of_meet }} {% if meeting.tutor != user %} (with {{ meeting.tutor }}){% endif %}</h3>
+
+<p>
+{{ meeting.notes | markdown }}
 </p>
+
+{% if meeting.tutor == user %}
+    <p align="right">
+    <small><a href="/tutee/{{ student.student_id }}/{{ meeting.id }}">Edit</a> | 
+        <a href="/delete_tutee_meeting/{{ meeting.id }}" data-confirm="Are you sure you want to delete this meeting record?">Delete</a></small>
+    </p>
+{% endif %}
+
+{% endfor %}
+
+{% else %}
+
+No meetings recorded yet.
+
+{% endif %}
+
+{% if student.tutor == user %}
+
+    <p align="right">
+        <button class="btn btn-small" type="button" id="md-helper">Help with Formatting</button>
+    </p>
+
+    <div id="md-helptext">
+    {{ mdexplanation | safe }}
+    </div><br>
+
+    <form action="/tutee/{{ student.student_id }}/{% if edit %}{{ edit }}/{% endif %}" method="post" accept-charset="utf-8">
+        {% csrf_token %}
+        {{ form.date_of_meet }}<br><br>
+        {{ form.notes }}<br>
+        <input type="submit" value="Save" class="btn btn-primary">
+    </form>
+
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+
+<script type="text/javascript">
+
+    $(document).ready(function(){
+        $("#md-helptext").hide();
+    });
+
+    $(document).ready(function(){
+        $("#performance").hide();
+    });
+    
+    $(document).ready(function(){
+        $("#show_hide_performances").click(function(){
+            $("#performance").toggle();
+          });
+    });  
+    
+    $(document).ready(function(){
+            $('#show_hide_performances').click(function(){
+                  if ($(this).text() == "Show Performance") 
+                  { 
+                     $(this).text("Hide Performance"); 
+                  } 
+                  else 
+                  { 
+                     $(this).text("Show Performance"); 
+                  }; 
+                });
+            });
+
+    $(document).ready(function(){
+        $("#md-helper").click(function(){
+            $("#md-helptext").toggle();
+        });
+    });
+
+    $(document).ready(function(){
+            $('#md-helper').click(function(){
+                  if ($(this).text() == "Help with Formatting") 
+                  { 
+                     $(this).text("Hide Formatting Help"); 
+                  } 
+                  else 
+                  { 
+                     $(this).text("Help with Formatting"); 
+                  }; 
+                });
+            });
+
+    $(document).ready(function(){
+        $( "#id_date_of_meet" ).datepicker();
+    });
+
+    $(document).ready(function() {
+        $('a[data-confirm]').click(function(ev) {
+            var href = $(this).attr('href');
+            if (!$('#dataConfirmModal').length) {
+                $('body').append('<div id="dataConfirmModal" class="modal" role="dialog" aria-labelledby="dataConfirmLabel" aria-hidden="true"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button><h3 id="dataConfirmLabel">Please Confirm</h3></div><div class="modal-body"></div><div class="modal-footer"><button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button><a class="btn btn-primary" id="dataConfirmOK">OK</a></div></div>');
+            } 
+            $('#dataConfirmModal').find('.modal-body').text($(this).attr('data-confirm'));
+            $('#dataConfirmOK').attr('href', href);
+            $('#dataConfirmModal').modal({show:true});
+            return false;
+        });
+    });
+
+</script>
 
 {% endblock %}

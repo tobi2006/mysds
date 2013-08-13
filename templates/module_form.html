@@ -116,12 +116,17 @@
                 This is a foundational module
             </td>
             <td>
+                {{ module_form.is_nalp }}
+            </td>
+            <td>
+                Module is required for the Paralegal Qualification
+            </td>
+            <td>
                 {{ module_form.is_pg }}
             </td>
             <td>
                 This is a postgraduate module
             </td>
-        </tr>
     </table>
 
     <hr>
@@ -164,11 +169,12 @@
     </table>
     <table cellpadding="10" id="assessment_forms">
         <tr>
-            <td>Assessment Title</td>
+            <td>Title</td>
             <td>{{ module_form.assessment_1_title }}</td>
             <td>Assessment Value</td>
             <td>{{ module_form.assessment_1_value }}</td>
         </tr>
+
     </table>
     <p id="exam_area">
     <strong>Exam Value</strong>
@@ -257,6 +263,45 @@
 
     window.onload = put_assessment_forms();
 
+    $(document).ready(function(){
+            $('.assessment_value').change(function(){
+                var sum = 0;
+                var max_exam = 100;
+                if ($('#id_assessment_1_value').length){
+                    if ($('#id_assessment_1_value').val().length){
+                        sum = sum + parseInt($('#id_assessment_1_value').val());
+                        }
+                    };
+                if ($('#id_assessment_2_value').length){
+                    if ($('#id_assessment_2_value').val().length){
+                        sum = sum + parseInt($('#id_assessment_2_value').val());
+                        }
+                    };
+                if ($('#id_assessment_3_value').length){
+                    if ($('#id_assessment_3_value').val().length){
+                        sum = sum + parseInt($('#id_assessment_3_value').val());
+                        }
+                    };
+                if ($('#id_assessment_4_value').length){
+                    if ($('#id_assessment_4_value').val().length){
+                        sum = sum + parseInt($('#id_assessment_4_value').val());
+                        }
+                    };
+                if ($('#id_assessment_5_value').length){
+                    if ($('#id_assessment_5_value').val().length){
+                        sum = sum + parseInt($('#id_assessment_5_value').val());
+                        }
+                    };
+                if ($('#id_assessment_6_value').length){
+                    if ($('#id_assessment_6_value').val().length){
+                        sum = sum + parseInt($('#id_assessment_6_value').val());
+                        }
+                    };
+                max_exam = max_exam - sum;
+                $('#id_exam_value').val(max_exam);
+            });
+        });
+
     {% if add %}
 
 
@@ -344,6 +389,9 @@
                     });
             });
         });
+
+
+
 
     {% endif %}
 </script>

@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.utils import simplejson
 
 from database import models
-from database.models import Student, Module, Course, Performance, MetaData, AnonymousMark
+from database.models import *
 from database import functions
 from database.forms import *
 from database.strings import *
@@ -109,7 +109,6 @@ def edit_module(request, module_id, year):
     """
     module = Module.objects.get(code=module_id, year=year)
     number_of_assessments = functions.get_number_of_assessments(module)
-    print number_of_assessments
     if request.method == 'POST':
         form = ModuleForm(instance=module, data=request.POST)
         if form.is_valid():
@@ -275,12 +274,12 @@ def enter_anonymous_marks(request, module_id, year):
 
     With this function, the marks can be added to the corresponding exam ID.
     Before, the exam IDs have to be added with the function XXX.
-    The marks get stored into a separate model (AnonymousMark) and can be matched
+    The marks get stored into a separate model (AnonymousMarks) and can be matched
     to the students DB entries with the function XXX.
     """
 
     module = Module.objects.get(code=module_id, year = year)
-    exam_ids = AnonymousMark.objects.filter(module = module)
+    exam_ids = AnonymousMarks.objects.filter(module = module)
 
 
 @login_required
@@ -290,9 +289,9 @@ def put_anonymous_marks_in_db(request, module_id, year):
 
 ###############################################################################
 ###############################################################################
-#                       
-#                       Student Functions
-#
+#                                                                             #
+#                       Student Functions                                     #
+#                                                                             #
 ###############################################################################
 ###############################################################################
 
@@ -315,7 +314,6 @@ def student_view(request, student_id):
             sorted_performances[year].append(performance)
         else:
             sorted_performances[year] = [performance,]
-    print sorted_performances
             
 
     return render_to_response('student_view.html',
@@ -371,7 +369,6 @@ def year_view(request, year):
     """
     Shows all students in a particular year and allows making changes in bulk
     """
-    
     if request.method == 'POST':
         students_to_add = request.POST.getlist('selected_student_id')
         selected_option = request.POST.__getitem__('modify')
@@ -416,23 +413,40 @@ def year_view(request, year):
             for student_id in students_to_add:
                 student = Student.objects.get(student_id=student_id)
                 student.year = selected[1]
+                student.save()
         elif selected[0] == 'active':
-            if selected[1] == 'on':
+            if selected[1] == 'yes':
                 for student_id in students_to_add:
                     student = Student.objects.get(student_id=student_id)
                     student.active = True
                     student.save()
-            elif selected[1] == 'off':
+            elif selected[1] == 'no':
                 for student_id in students_to_add:
                     student = Student.objects.get(student_id=student_id)
                     student.active = False
                     student.save()
-
-    else:
-        pass
+        elif selected[0] == 'delete':
+            if selected[1] == 'yes':
+                for student_id in students_to_add:
+                    student = Student.objects.get(student_id=student_id)
+                    performances = Performance.objects.filter(student=student)
+                    for performance in performances:
+                        performance.delete()
+                    tutee_sessions = Tutee_Session.objects.filter(tutee=student)
+                    for tutee_session in tutee_sessions:
+                        tutee_session.delete()
+                    student.delete()
+            if selected[1] == 'no':
+                pass
+        url = '/year/' + year
+        return HttpResponseRedirect(url)
 
     if year == "all":
         students = Student.objects.all()
+    elif year == "unassigned":
+        students = Student.objects.filter(year=None)
+    elif year == "inactive":
+        students = Student.objects.filter(active=False)
     else:
         students = Student.objects.filter(year=year)
 
@@ -441,9 +455,15 @@ def year_view(request, year):
     phd = False
     alumnus = False
     more_than_one_year = False
+    inactive = False
+    unassigned = False
     if year == "all":
         ug = True
         more_than_one_year = True
+    elif year == "unassigned":
+        unassigned = True
+    elif year == "inactive":
+        inactive = True
     else:
         if int(year) < 4:
             ug = True
@@ -455,7 +475,7 @@ def year_view(request, year):
             alumnus = True
 
     academic_years = []
-    for academic_year in models.ACADEMIC_YEARS:
+    for academic_year in ACADEMIC_YEARS:
         academic_years.append(academic_year[0])
     llb = Course.objects.get(title="LLB (Hons) Bachelor Of Law")
     all_students = len(students)
@@ -469,23 +489,93 @@ def year_view(request, year):
         llb = Course.objects.get(title__contains="LLB")
         llb_students = Student.objects.filter(year=year, course=llb).count()
         other_students = all_students - llb_students
-    if ug:
-        courses = Course.objects.all
-    if alumnus:
+    if ug or alumnus or unassigned or inactive:
         courses = Course.objects.all
     tutors = User.objects.filter(groups__name='teachers')
     
     return render_to_response('year_view.html',
             {'students': students, 'year': year, 
-                'ug': ug, 'pg':pg, 'phd': phd, 'alumnus': alumnus, 'llb': llb,
-                'more_than_one_year': more_than_one_year, 'tutors': tutors,
-                'academic_years': academic_years, 'courses': courses,
+            'ug': ug, 'pg':pg, 'phd': phd, 'alumnus': alumnus, 'llb': llb,
+            'more_than_one_year': more_than_one_year, 'tutors': tutors,
+            'academic_years': academic_years, 'courses': courses,
             'all_students': all_students, 'llb_students': llb_students,
+            'show_inactive': inactive,
             'other_students': other_students},
             context_instance = RequestContext(request)
         )
 
- 
+
+#####################################
+#        Tutor Stuff                #
+#####################################
+
+
+@login_required
+@user_passes_test(is_teacher)
+def tutee_list(request):
+    tutees = Student.objects.filter(tutor=request.user)
+    return render_to_response('tutee_list.html',
+            {'tutees': tutees},
+            context_instance=RequestContext(request)
+        )
+
+@login_required
+@user_passes_test(is_teacher)
+def tutee_edit(request, student_id, meeting_id=None):
+    student = Student.objects.get(student_id=student_id)
+    if meeting_id:
+        tutee_session = Tutee_Session.objects.get(id=meeting_id)
+        edit = meeting_id
+    else:
+        tutee_session = Tutee_Session(tutee=student, tutor=request.user)
+        edit = False
+    if request.method == 'POST':
+        form = TuteeForm(instance = tutee_session, data = request.POST)
+        if form.is_valid():
+            if meeting_id:
+                print "Ja"
+                to_delete = Tutee_Session.objects.get(id=meeting_id)
+                to_delete.delete()
+            form.save()
+            url = '/tutee/' + student.student_id
+            return HttpResponseRedirect(url)
+    else:
+        form = TuteeForm(instance=tutee_session)
+    all_performances = Performance.objects.filter(student = student)
+    sorted_performances = {}
+    for performance in all_performances:
+        year = performance.module.year
+        if sorted_performances.get(year):
+            sorted_performances[year].append(performance)
+        else:
+            sorted_performances[year] = [performance,]
+    tutee_sessions = Tutee_Session.objects.filter(tutee=student)
+
+    return render_to_response('tutee_edit.html',
+            {'form': form, 'student': student, 'years_performances': sorted_performances,
+                'edit': edit, 'meetings': tutee_sessions, 'mdexplanation': MD_EXPLANATION},
+            context_instance = RequestContext(request)
+        )
+
+@login_required
+@user_passes_test(is_teacher)
+def delete_tutee_meeting(request, meeting_id):
+    meeting = Tutee_Session.objects.get(id=meeting_id)
+    if request.user == meeting.tutor or is_admin(request.user):
+        tutee = meeting.tutee
+        url = '/tutee/' + tutee.student_id
+        meeting.delete()
+        return HttpResponseRedirect(url)
+    else:
+        printstring = 'Only the tutor in question or an administrator can delete this.'
+        title = 'CCCU Law DB: Not allowed'
+        return render_to_response(
+                'blank.html', 
+                {'printstring': printstring, 'title': title},
+                context_instance = RequestContext(request))
+
+
+
 #####################################
 #        Add Student                #
 #####################################
@@ -767,6 +857,7 @@ def notes_edit(request, student_id):
             {'form': form, 'student': student, 'edit': True, 'mdexplanation': MD_EXPLANATION},
             context_instance = RequestContext(request)
             )
+
 
 #####################################
 #    Add Students to Module         #

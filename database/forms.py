@@ -1,6 +1,6 @@
 from django import forms
-from bootstrap_toolkit.widgets import BootstrapTextInput, BootstrapUneditableInput
-from database.models import Student, Module, Performance, ACADEMIC_YEARS
+#from bootstrap_toolkit.widgets import BootstrapTextInput, BootstrapUneditableInput
+from database.models import *
 
 from django.contrib.auth.models import User
 
@@ -44,7 +44,14 @@ class ModuleForm(forms.ModelForm):
         exclude = ('last_recorded_session',)
         widgets = {
                 'year': forms.Select(attrs={'class': 'year'}),
-                'successor_of': forms.Select(attrs={'class': 'successor_of'})
+                'successor_of': forms.Select(attrs={'class': 'successor_of'}),
+                'assessment_1_value': forms.TextInput(attrs={'class': 'assessment_value'}),
+                'assessment_2_value': forms.TextInput(attrs={'class': 'assessment_value'}),
+                'assessment_3_value': forms.TextInput(attrs={'class': 'assessment_value'}),
+                'assessment_4_value': forms.TextInput(attrs={'class': 'assessment_value'}),
+                'assessment_5_value': forms.TextInput(attrs={'class': 'assessment_value'}),
+                'assessment_6_value': forms.TextInput(attrs={'class': 'assessment_value'}),
+                'exam_value': forms.TextInput(attrs={'class': 'input-small'})
                 }
 
 
@@ -57,6 +64,14 @@ class NotesForm(forms.ModelForm):
     class Meta:
         model = Student
         fields = ('notes',)
+
+class TuteeForm(forms.ModelForm):
+    class Meta:
+        model = Tutee_Session
+        fields = ('date_of_meet', 'notes', )
+        widgets = {
+                'date_of_meet': forms.DateInput(attrs={'data-date-format': 'dd/mm/yyyy', 'class': 'input-small'}),
+                }
 
 class CSVUploadForm(forms.Form):
     csvfile = forms.FileField(
@@ -93,104 +108,3 @@ class CSVParseForm(forms.Form):
     column_10 = forms.ChoiceField(choices=ATTRIBUTES, required = False)
     column_11 = forms.ChoiceField(choices=ATTRIBUTES, required = False)
     column_12 = forms.ChoiceField(choices=ATTRIBUTES, required = False)
-
-#def generate_mark_form(no_of_assessments, noexam=False, to_mark='all', *args, **kwargs):
-#    if to_mark == 'all':
-#        use_widgets = {
-#                #'student': BootstrapUneditableInput(),
-#                'average': BootstrapUneditableInput()
-#            }
-#    elif to_mark == 'exam':
-#        use_widgets = {
-#                #'student': BootstrapUneditableInput(),
-#                'average': BootstrapUneditableInput(),
-#                'assessment_1': BootstrapUneditableInput(),
-#                'assessment_2': BootstrapUneditableInput(),
-#                'assessment_3': BootstrapUneditableInput(),
-#                'assessment_4': BootstrapUneditableInput(),
-#                'assessment_5': BootstrapUneditableInput(),
-#                'assessment_6': BootstrapUneditableInput()
-#            }
-#    else:
-#        if to_mark == '1':
-#            use_widgets = {
-#                #    'student': BootstrapUneditableInput(),
-#                    'average': BootstrapUneditableInput(),
-#                    'assessment_2': BootstrapUneditableInput(),
-#                    'assessment_3': BootstrapUneditableInput(),
-#                    'assessment_4': BootstrapUneditableInput(),
-#                    'assessment_5': BootstrapUneditableInput(),
-#                    'assessment_6': BootstrapUneditableInput(),
-#                    'exam': BootstrapUneditableInput()
-#                }
-#        if to_mark == '2':
-#            use_widgets = {
-#                #    'student': BootstrapUneditableInput(),
-#                    'average': BootstrapUneditableInput(),
-#                    'assessment_1': BootstrapUneditableInput(),
-#                    'assessment_3': BootstrapUneditableInput(),
-#                    'assessment_4': BootstrapUneditableInput(),
-#                    'assessment_5': BootstrapUneditableInput(),
-#                    'assessment_6': BootstrapUneditableInput(),
-#                    'exam': BootstrapUneditableInput()
-#                }
-#        if to_mark == '3':
-#            use_widgets = {
-#                #    'student': BootstrapUneditableInput(),
-#                    'average': BootstrapUneditableInput(),
-#                    'assessment_1': BootstrapUneditableInput(),
-#                    'assessment_2': BootstrapUneditableInput(),
-#                    'assessment_4': BootstrapUneditableInput(),
-#                    'assessment_5': BootstrapUneditableInput(),
-#                    'assessment_6': BootstrapUneditableInput(),
-#                    'exam': BootstrapUneditableInput()
-#                }
-#        if to_mark == '4':
-#            use_widgets = {
-#                #    'student': BootstrapUneditableInput(),
-#                    'average': BootstrapUneditableInput(),
-#                    'assessment_1': BootstrapUneditableInput(),
-#                    'assessment_2': BootstrapUneditableInput(),
-#                    'assessment_3': BootstrapUneditableInput(),
-#                    'assessment_5': BootstrapUneditableInput(),
-#                    'assessment_6': BootstrapUneditableInput(),
-#                    'exam': BootstrapUneditableInput()
-#                }
-#        if to_mark == '5':
-#            use_widgets = {
-#                #    'student': BootstrapUneditableInput(),
-#                    'average': BootstrapUneditableInput(),
-#                    'assessment_1': BootstrapUneditableInput(),
-#                    'assessment_2': BootstrapUneditableInput(),
-#                    'assessment_3': BootstrapUneditableInput(),
-#                    'assessment_4': BootstrapUneditableInput(),
-#                    'assessment_6': BootstrapUneditableInput(),
-#                    'exam': BootstrapUneditableInput()
-#                }
-#        if to_mark == '6':
-#            use_widgets = {
-#                #    'student': BootstrapUneditableInput(),
-#                    'average': BootstrapUneditableInput(),
-#                    'assessment_1': BootstrapUneditableInput(),
-#                    'assessment_2': BootstrapUneditableInput(),
-#                    'assessment_3': BootstrapUneditableInput(),
-#                    'assessment_4': BootstrapUneditableInput(),
-#                    'assessment_5': BootstrapUneditableInput(),
-#                    'exam': BootstrapUneditableInput()
-#                }
-#    
-#    alwaysexclude = ('module', 'seminar_group', 'absences')
-#    excluded_assessments = ['assessment_1', 'assessment_2', 'assessment_3', 'assessment_4', 'assessment_5', 'assessment_6']
-#    if noexam:
-#        excluded_assessments.append('exam')
-#    for i in range(no_of_assessments):
-#        del excluded_assessments[0]
-#    excludes = alwaysexclude + tuple(excluded_assessments)
-#
-#    class MarkForm(forms.ModelForm):
-#        class Meta:
-#            model = Performance
-#            exclude = excludes
-#            widgets = use_widgets
-#
-#    return MarkForm

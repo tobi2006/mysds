@@ -1,4 +1,5 @@
 from database.models import Module, MetaData
+from django.contrib.auth.models import Group
 
 def menubar(request):
     future = []
@@ -19,8 +20,13 @@ def menubar(request):
     current.sort(key = lambda x: x.title)
     future.sort()
     past.sort()
+    admins = Group.objects.get(name="admins").user_set.all()
+    if request.user in admins:
+        admin = True
+    else:
+        admin = False
     module_dict = {'current': current, 'past': past, 'future': future}
     return {
-            'module_dict': module_dict
+            'module_dict': module_dict, 'admin': admin
             }
 
