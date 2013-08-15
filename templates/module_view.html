@@ -82,6 +82,74 @@
                     </a>
                 </li>
             {% endif %}
+            {% if current_module.exam_value %}
+                <li>
+                    <a href="/mark_anonymously/{{ current_module.code }}/{{ current_module.year }}/exam">
+                        Anonymous Exam Marks
+                    </a>
+                </li>
+            {% endif %}
+            
+
+
+            {% comment %}
+
+            Uncomment this part if you want to anonymise marking for all assessments
+
+            <li class="dropdown-submenu">
+            <a tabindex="-1" href="#">Enter/Change Marks Anonymously</a>
+            <ul class = "dropdown-menu">
+                {% if current_module.assessment_1_title %}
+                    <li>
+                        <a href="/mark_anonymously/{{ current_module.code }}/{{ current_module.year }}/assessment_1">
+                            {{ current_module.assessment_1_title }}
+                        </a>
+                    </li>
+                {% endif %}
+                {% if current_module.assessment_2_title %}
+                    <li>
+                        <a href="/mark_anonymously/{{ current_module.code }}/{{ current_module.year }}/assessment_2">
+                            {{ current_module.assessment_2_title }}
+                        </a>
+                    </li>
+                {% endif %}
+                {% if current_module.assessment_3_title %}
+                    <li>
+                        <a href="/mark_anonymously/{{ current_module.code }}/{{ current_module.year }}/assessment_3">
+                            {{ current_module.assessment_3_title }}
+                        </a>
+                    </li>
+                {% endif %}
+                {% if current_module.assessment_4_title %}
+                    <li>
+                        <a href="/mark_anonymously/{{ current_module.code }}{{ current_module.year }}/assessment_4">
+                            {{ current_module.assessment_4_title }}
+                        </a>
+                    </li>
+                {% endif %}
+                {% if current_module.assessment_5_title %}
+                    <li>
+                        <a href="/mark_anonymously/{{ current_module.code }}/{{ current_module.year }}/assessment_5">
+                            {{ current_module.assessment_5_title }}
+                        </a>
+                    </li>
+                {% endif %}
+                {% if current_module.assessment_6_title %}
+                    <li>
+                        <a href="/mark_anonymously/{{ current_module.code }}/{{ current_module.year }}/assessment_6">
+                            {{ current_module.assessment_6_title }}
+                        </a>
+                    </li>
+                {% endif %}
+                {% if current_module.exam_value %}
+                    <li>
+                        <a href="/mark_anonymously/{{ current_module.code }}/{{ current_module.year }}/exam">
+                            Exam
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+            {% endcomment %}
         </ul>
     </div>
     <div class="btn-group dropdown">

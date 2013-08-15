@@ -222,13 +222,19 @@ No meetings recorded yet.
 
 {% if student.tutor == user %}
 
+<br><hr><br>
+
+<h2>Add New Meeting Record</h2>
+
     <p align="right">
         <button class="btn btn-small" type="button" id="md-helper">Help with Formatting</button>
     </p>
 
+
     <div id="md-helptext">
     {{ mdexplanation | safe }}
     </div><br>
+
 
     <form action="/tutee/{{ student.student_id }}/{% if edit %}{{ edit }}/{% endif %}" method="post" accept-charset="utf-8">
         {% csrf_token %}
@@ -242,8 +248,6 @@ No meetings recorded yet.
 {% endblock %}
 
 {% block scripts %}
-
-<script type="text/javascript">
 
     $(document).ready(function(){
         $("#md-helptext").hide();
@@ -307,7 +311,5 @@ No meetings recorded yet.
             return false;
         });
     });
-
-</script>
 
 {% endblock %}

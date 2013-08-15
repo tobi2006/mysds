@@ -98,7 +98,7 @@
                         <li class="dropdown-submenu">
                         <a tabindex="-1" href="#">Anonymous Marking</a>
                         <ul class = "dropdown-menu">
-                            <li><a href="{% url "na" %}">Set anonymous IDs</a></li>
+                            <li><a href="{% url "edit_anon_ids" %}">Set anonymous IDs</a></li>
                             <li><a href="{% url "na" %}">De-Anonymise Marks</a></li>
                         </ul>
                     </ul>
@@ -148,14 +148,16 @@
         } 
     ); 
 
+{% comment %}
     $(document).ready(function(){
             $("#markForm").validate();
             });
-
-</script>
+{% endcomment %}
 
 {% block scripts %}
 {% endblock %}
+
+</script>
 
 </body>
 </html>

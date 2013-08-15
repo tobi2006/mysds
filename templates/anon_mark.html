@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% load custom_filters %}
+
+{% block title %}CCCU Law - {{current_module}}{% endblock %}
+
+{% block content %}
+
+<h2>
+    Marks for {{ current_module.title }} ({{ current_module.year }}/{{ current_module.year | add:1 }})
+</h2>
+
+{% if to_mark != 9 %}
+    <form action="mark_anonymously/{{ current_module.code }}/{{ current_module.year }}/{{ to_mark }}" id="markForm" method="post"> 
+{% else %}
+    <form action="mark_anonymously/{{ current_module.code }}/{{ current_module.year }}/exam" id="markForm" method="post"> 
+{% endif %} 
+{% csrf_token %}
+
+<table id ="sortable_table" class="table table-striped table-sortable">
+    <thead>
+        <tr>
+            <th>
+                Exam ID
+            </th>
+            {% if to_mark == 1 %}
+                <th>
+                    {{ current_module.assessment_1_title }}
+                </th>
+            {% elif to_mark == 2 %}
+                <th>
+                    {{ current_module.assessment_2_title }}
+                </th>
+            {% elif to_mark == 3 %}
+                <th>
+                    {{ current_module.assessment_3_title }}
+                </th>
+            {% elif to_mark == 4 %}
+                <th>
+                    {{ current_module.assessment_4_title }}
+                </th>
+            {% elif to_mark == 5 %}
+                <th>
+                    {{ current_module.assessment_5_title }}
+                </th>
+            {% elif to_mark == 6 %}
+                <th>
+                    {{ current_module.assessment_6_title }}
+                </th>
+            {% elif to_mark == 9 %}
+                <th>
+                    Exam
+                </th>
+            {% endif %}
+            <th>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for exam_id, performance in performances.items|sort %}
+        <tr>
+            <td>
+                <label>{{ exam_id }}</label>
+            </td>
+            {% if to_mark == 1 %}
+            <td>
+                {% if performance.assessment_1 %}
+                <input type="text" class="input-mini" name="{{ exam_id }}" value="{{ performance.assessment_1 }}">
+                {% else %}
+                <input type="text" class="input-mini"  name="{{ exam_id }}"">
+                {% endif %}
+            </td>
+            {% elif to_mark == 2 %}
+            <td>
+                {% if performance.assessment_2 %}
+                <input type="text" class="input-mini" name="{{ exam_id }}" value="{{ performance.assessment_2 }}">
+                {% else %}
+                <input type="text" class="input-mini" name="{{ exam_id }}">
+                {% endif %}
+            </td>
+            {% elif to_mark == 3 %}
+            <td>
+                {% if performance.assessment_3 %}
+                <input type="text" class="input-mini" name="{{ exam_id }}" value="{{ performance.assessment_3 }}">
+                {% else %}
+                <input type="text" class="input-mini" name="{{ exam_id }}">
+                {% endif %}
+            </td>
+            {% elif to_mark == 4 %}
+            <td>
+                {% if performance.assessment_4 %}
+                <input type="text" class="input-mini" name="{{ exam_id }}" value="{{ performance.assessment_4 }}">
+                {% else %}
+                <input type="text" class="input-mini" name="{{ exam_id }}">
+                {% endif %}
+            </td>
+            {% elif to_mark == 5 %}
+            <td>
+                {% if performance.assessment_5 %}
+                <input type="text" class="input-mini" name="{{ exam_id }}" value="{{ performance.assessment_5 }}">
+                {% else %}
+                <input type="text" class="input-mini" name="{{ exam_id }}">
+                {% endif %}
+            </td>
+            {% elif to_mark == 6 %}
+            <td>
+                {% if performance.assessment_6 %}
+                <input type="text" class="input-mini" name="{{ exam_id }}" value="{{ performance.assessment_6 }}">
+                {% else %}
+                <input type="text" class="input-mini" name="{{ exam_id }}">
+                {% endif %}
+            </td>
+            {% elif to_mark == 9 %}
+            <td>
+                {% if performance.exam %}
+                <input type="text" class="input-mini" name="{{ exam_id }}" value="{{ performance.exam }}">
+                {% else %}
+                <input type="text" class="input-mini" name="{{ exam_id }}">
+                {% endif %}
+            </td>
+            {% endif %}
+            <td id="{{ exam_id }}_error">
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<input type="submit" value="Save Marks" class="btn btn-primary" align="right">
+</form>
+
+{% endblock %}
+
+{% block scripts %}
+    $(document).ready(function(){
+        $(".input-mini").change(function(){
+            value = $(this).val()
+            var errortag = '#' + $(this).prop("name") + '_error';
+            if ($.isNumeric(value)){
+                value = parseInt(value);
+                if (value < 0 || value > 100){
+                    $(errortag).text('Please enter a number between 0 and 100');
+                }
+                else{
+                    $(errortag).text('');
+                }
+            }
+            else {
+                $(errortag).text('Please enter a number between 0 and 100');
+            }
+        });
+    });
+
+{% endblock %}

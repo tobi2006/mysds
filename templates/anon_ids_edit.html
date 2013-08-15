@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Enter Anonymous IDs{% endblock %}
+
+{% block content %}
+
+<h1>Edit Anonymous IDs</h1>
+
+<a class="btn btn-primary" href="{% url "upload_anon_ids" %}" align="right">Upload Anonymous IDs via Spreadsheet</a>
+<hr>
+
+<form action="{% url "edit_anon_ids" %}" method="post" enctype="multipart/form-data">
+{% csrf_token %}
+
+<table id ="sortable_table" class="table table-striped table-sortable">
+    <thead>
+        <tr>
+            <th>
+                Year
+            </th>
+            <th>
+                Name
+            </th>
+            <th>
+                Student ID
+            </th>
+            <th>
+                Anonymous ID
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for student in students %}
+        <tr>
+            <td>
+                {{ student.year }}
+            </td>
+            <td>
+                {{ student.last_name }}, {{ student.first_name }}
+            </td>
+            <td>
+                {{ student.student_id }}
+            </td>
+            <td>
+                {% if student.exam_id %}
+                    <input type="text" class="input-medium" name="{{ student.student_id }}" value="{{ student.exam_id }}">
+                {% else %}
+                    <input type="text" class="input-medium" name="{{ student.student_id }}">
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<input type = "submit" value="Save IDs" class="btn btn-primary" align="right">
+</form>
+
+{% endblock %}

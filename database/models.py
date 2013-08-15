@@ -169,8 +169,8 @@ class Module(models.Model):
         unique_together = ('code', 'year')
 
 class Student(models.Model):
-    student_id = models.CharField(max_length = 15, unique = True)
-    exam_id = models.CharField(max_length = 15, blank=True)
+    student_id = models.CharField(max_length = 15, primary_key = True)
+    exam_id = models.CharField(max_length = 15, blank=True, null=True, unique = True, default=None)
     first_name = models.CharField(max_length = 30)
     last_name = models.CharField(max_length = 30)
     since = models.IntegerField(choices=ACADEMIC_YEARS, blank=True, null=True) 
@@ -349,6 +349,13 @@ class AnonymousMarks(models.Model):
     r_assessment_5 = models.IntegerField(blank=True, null=True)
     r_assessment_6 = models.IntegerField(blank=True, null=True)
     r_exam = models.IntegerField(blank=True, null=True)
+    q_assessment_1 = models.IntegerField(blank=True, null=True)
+    q_assessment_2 = models.IntegerField(blank=True, null=True)
+    q_assessment_3 = models.IntegerField(blank=True, null=True)
+    q_assessment_4 = models.IntegerField(blank=True, null=True)
+    q_assessment_5 = models.IntegerField(blank=True, null=True)
+    q_assessment_6 = models.IntegerField(blank=True, null=True)
+    q_exam = models.IntegerField(blank=True, null=True)
 
     class Meta:
         unique_together = ('module', 'exam_id')

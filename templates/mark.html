@@ -171,7 +171,9 @@
 <input type="submit" value="Save Marks" class="btn btn-primary" align=right>
 </form>
 
-<script>
+{% endblock %}
+{% block scripts %}
+
 function process(elem, student_id){
     var errortag = student_id + "_error"
 	var numericExpression = /^[0-9]+$/;
@@ -313,7 +315,5 @@ function process(elem, student_id){
 		elem.focus();
 	}
 }
-</script>
-
 
 {% endblock %}
