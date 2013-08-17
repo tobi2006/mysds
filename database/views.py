@@ -9,6 +9,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
 from django.utils import simplejson
 
+from reportlab.pdfgen import canvas
+
 from database import models
 from database.models import *
 from database import functions
@@ -229,7 +231,7 @@ def add_module(request):
 
 
 @login_required
-@user_passes_test(is_teacher)
+@user_passes_test(is_admin)
 def upload_anon_ids(request):
     module_dict = functions.modules_for_menubar()
     if request.method == 'POST':
@@ -276,7 +278,7 @@ def upload_anon_ids(request):
             context_instance=RequestContext(request))
 
 @login_required
-@user_passes_test(is_teacher)
+@user_passes_test(is_admin)
 def edit_anon_ids(request):
     students = Student.objects.filter(active=True)
     if request.method == 'POST':
@@ -315,6 +317,16 @@ def edit_anon_ids(request):
 @login_required
 @user_passes_test(is_teacher)
 def mark_anonymously(request, module_id, year, assessment):
+
+    """
+    Function to enter marks according to the exam ID
+
+    With this function, the marks can be added to the corresponding exam ID.
+    Before, the exam IDs have to be added with the function edit_anon_ids.
+    The marks get stored into a separate model (AnonymousMarks) and can be matched
+    to the students DB entries with the function put_anonymous_marks_in_db.
+    """
+
     module = Module.objects.get(code=module_id, year=year)
     students = module.student_set.all()
     exam_ids = []
@@ -342,7 +354,11 @@ def mark_anonymously(request, module_id, year, assessment):
                 try:
                     mark = int(tmp)
                     if mark in range(0, 100):
-                        performance = AnonymousMarks.objects.get(exam_id=exam_id, module=module)
+                        print student.exam_id + ": " + str(mark)
+                        try:
+                            performance = AnonymousMarks.objects.get(exam_id=student.exam_id, module=module)
+                        except ObjectDoesNotExist:
+                            performance = AnonymousMarks(exam_id = student.exam_id, module = module)
                         if to_change == 1:
                             performance.assessment_1 = mark
                         elif to_change == 2:
@@ -357,7 +373,7 @@ def mark_anonymously(request, module_id, year, assessment):
                             performance.assessment_6 = mark
                         elif to_change == 9:
                             performance.exam = mark
-                    performance.save()
+                        performance.save()
                 except ValueError:
                     pass
         return HttpResponseRedirect(module.get_absolute_url())
@@ -366,29 +382,190 @@ def mark_anonymously(request, module_id, year, assessment):
             {'current_module': module, 'performances': performances, 'to_mark': to_change},
             context_instance = RequestContext(request)
         )
-
-
-@login_required
-@user_passes_test(is_teacher)
-def enter_anonymous_marks(request, module_id, year):
-
-    """
-    Function to enter marks according to the exam ID
-
-    With this function, the marks can be added to the corresponding exam ID.
-    Before, the exam IDs have to be added with the function XXX.
-    The marks get stored into a separate model (AnonymousMarks) and can be matched
-    to the students DB entries with the function XXX.
-    """
-
-    module = Module.objects.get(code=module_id, year = year)
-    exam_ids = AnonymousMarks.objects.filter(module = module)
-
-
+    
 @login_required
 @user_passes_test(is_admin)
-def put_anonymous_marks_in_db(request, module_id, year):
-    pass
+def write_anonymous_marks_to_db (request, confirmation):
+    if confirmation == 'confirm':
+        printstring = """
+            This function will write the anonymous marks entered so far into the database. After this, the marks of all students
+            will be visible, and the anonymous records will be deleted.
+            <br><br>
+            Are you sure you want to go ahead?<br><br>
+            <a href="/write_anonymous_marks_to_db/create_pdf" class="btn btn-primary" type="button">Go ahead</a>
+            """
+        title = "Confirm De-Anonymisation"
+    elif confirmation == 'create_pdf':
+        metadata = MetaData.objects.get(id=1)
+        current_year = metadata.current_year
+        modules = Module.objects.filter(year=current_year)
+        for module in modules:
+            data = []
+            anonymous_marks = AnonymousMarks.objects.filter(module=module)
+            columns = ['Anonymous ID',]
+            for marks in anonymous_marks:
+                row = {}
+                row['id'] = marks.exam_id
+                if marks.assessment_1:
+                    if 'assessment_1' not in columns:
+                        columns.append('assessment_1')
+                    row['assessment_1'] = marks.assessment_1
+                if marks.assessment_2:
+                    if 'assessment_2' not in columns:
+                        columns.append('assessment_2')
+                    row['assessment_2'] = marks.assessment_2
+                if marks.assessment_3:
+                    if 'assessment_3' not in columns:
+                        columns.append('assessment_3')
+                    row['assessment_3'] = marks.assessment_3
+                if marks.assessment_4:
+                    if 'assessment_4' not in columns:
+                        columns.append('assessment_4')
+                    row['assessment_4'] = marks.assessment_4
+                if marks.assessment_5:
+                    if 'assessment_5' not in columns:
+                        columns.append('assessment_5')
+                    row['assessment_5'] = marks.assessment_5
+                if marks.assessment_6:
+                    if 'assessment_6' not in columns:
+                        columns.append('assessment_6')
+                    row['assessment_6'] = marks.assessment_6
+                if marks.exam:
+                    if 'exam' not in columns:
+                        columns.append('exam')
+                    row['exam'] = marks.exam
+                if marks.r_assessment_1:
+                    if 'r_assessment_1' not in columns:
+                        columns.append('r_assessment_1')
+                    row['r_assessment_1'] = marks.r_assessment_1
+                if marks.r_assessment_2:
+                    if 'r_assessment_2' not in columns:
+                        columns.append('r_assessment_2')
+                    row['r_assessment_2'] = marks.r_assessment_2
+                if marks.r_assessment_3:
+                    if 'r_assessment_3' not in columns:
+                        columns.append('r_assessment_3')
+                    row['r_assessment_3'] = marks.r_assessment_3
+                if marks.r_assessment_4:
+                    if 'r_assessment_4' not in columns:
+                        columns.append('r_assessment_4')
+                    row['r_assessment_4'] = marks.r_assessment_4
+                if marks.r_assessment_5:
+                    if 'r_assessment_5' not in columns:
+                        columns.append('r_assessment_5')
+                    row['r_assessment_5'] = marks.r_assessment_5
+                if marks.r_assessment_6:
+                    if 'r_assessment_6' not in columns:
+                        columns.append('r_assessment_6')
+                    row['r_assessment_6'] = marks.r_assessment_6
+                if marks.r_exam:
+                    if 'r_exam' not in columns:
+                        columns.append('r_exam')
+                    row['r_exam'] = marks.r_exam
+                if marks.q_assessment_1:
+                    if 'q_assessment_1' not in columns:
+                        columns.append('q_assessment_1')
+                    row['q_assessment_1'] = marks.q_assessment_1
+                if marks.q_assessment_2:
+                    if 'q_assessment_2' not in columns:
+                        columns.append('q_assessment_2')
+                    row['q_assessment_2'] = marks.q_assessment_2
+                if marks.q_assessment_3:
+                    if 'q_assessment_3' not in columns:
+                        columns.append('q_assessment_3')
+                    row['q_assessment_3'] = marks.q_assessment_3
+                if marks.q_assessment_4:
+                    if 'q_assessment_4' not in columns:
+                        columns.append('q_assessment_4')
+                    row['q_assessment_4'] = marks.q_assessment_4
+                if marks.q_assessment_5:
+                    if 'q_assessment_5' not in columns:
+                        columns.append('q_assessment_5')
+                    row['q_assessment_5'] = marks.q_assessment_5
+                if marks.q_assessment_6:
+                    if 'q_assessment_6' not in columns:
+                        columns.append('q_assessment_6')
+                    row['q_assessment_6'] = marks.q_assessment_6
+                if marks.q_exam:
+                    if 'q_exam' not in columns:
+                        columns.append('q_exam')
+                    row['q_exam'] = marks.q_exam
+                data.append(row)
+            table = []
+            header = []
+            for item in columns:
+                if item == "id":
+                    header.append("Anonymous ID")
+                elif item == "assessment_1":
+                    header.append(module.assessment_1_title)
+                elif item == "assessment_2":
+                    header.append(module.assessment_2_title)
+                elif item == "assessment_3":
+                    header.append(module.assessment_3_title)
+                elif item == "assessment_4":
+                    header.append(module.assessment_4_title)
+                elif item == "assessment_5":
+                    header.append(module.assessment_5_title)
+                elif item == "assessment_6":
+                    header.append(module.assessment_6_title)
+                elif item == "exam":
+                    header.append("Exam")
+                elif item == "r_assessment_1":
+                    title = module.assessment_1_title + " ([Re]sit)
+                    header.append(title)
+                elif item == "r_assessment_2":
+                    title = module.assessment_2_title + " ([Re]sit)
+                    header.append(title)
+                elif item == "r_assessment_3":
+                    title = module.assessment_3_title + " ([Re]sit)
+                    header.append(title)
+                elif item == "r_assessment_4":
+                    title = module.assessment_4_title + " ([Re]sit)
+                    header.append(title)
+                elif item == "r_assessment_5":
+                    title = module.assessment_5_title + " ([Re]sit)
+                    header.append(title)
+                elif item == "r_assessment_6":
+                    title = module.assessment_6_title + " ([Re]sit)
+                    header.append(title)
+                elif item == "r_exam":
+                    header.append("Exam ([Re]sit)")
+                elif item == "q_assessment_1":
+                    title = module.assessment_1_title + " (QLD [Re]sit)
+                    header.append(title)
+                elif item == "q_assessment_2":
+                    title = module.assessment_2_title + " (QLD [Re]sit)
+                    header.append(title)
+                elif item == "q_assessment_3":
+                    title = module.assessment_3_title + " (QLD [Re]sit)
+                    header.append(title)
+                elif item == "q_assessment_4":
+                    title = module.assessment_4_title + " (QLD [Re]sit)
+                    header.append(title)
+                elif item == "q_assessment_5":
+                    title = module.assessment_5_title + " (QLD [Re]sit)
+                    header.append(title)
+                elif item == "q_assessment_6":
+                    title = module.assessment_6_title + " (QLD [Re]sit)
+                    header.append(title)
+                elif item == "q_exam":
+                    header.append("Exam (QLD [Re]sit)")
+
+            table.append(columns)
+            for row in data:
+                table_row = []
+                for item in columns:
+                    table_row.append(row[item])
+                table.append(table_row)
+            print table
+        printstring = "juppie"
+        title = "juppie"
+
+    return render_to_response(
+            'blank.html', 
+            {'printstring': printstring, 'title': title},
+            context_instance = RequestContext(request))
+
 
 ###############################################################################
 ###############################################################################
