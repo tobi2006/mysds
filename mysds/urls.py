@@ -33,12 +33,19 @@ urlpatterns += patterns('database.views',
     url(r'^upload_csv/$', 'upload_csv', name = 'upload_csv'),
     url(r'^parse_csv/$', 'parse_csv', name = 'parse_csv'),
     url(r'^import_success/$', 'import_success', name = 'import_success'),
-    url(r'^upload_anon_ids/$', 'upload_anon_ids', name = 'upload_anon_ids'),
-    url(r'^edit_anon_ids/$', 'edit_anon_ids', name = 'edit_anon_ids'),
-    url(r'^mark_anonymously/(\w+)/(\d{4})/(\w+)/$', 'mark_anonymously', name = 'mark_anonymously'),
-    url(r'^write_anonymous_marks_to_db/(\w+)/$', 'write_anonymous_marks_to_db', name = 'write_anonymous_marks_to_db'),
     url(r'^tutee_list/$', 'tutee_list', name='tutee_list'),
     url(r'^tutee/(\w+)/$', 'tutee_edit', name='tutee_edit'),
     url(r'^tutee/(\w+)/(\d+)/$', 'tutee_edit', name='edit_tutee_meeting'),
     url(r'^delete_tutee_meeting/(\d+)/$', 'delete_tutee_meeting', name='delete_tutee_meeting')
+)
+
+urlpatterns += patterns('export.views',
+    url(r'^export_mark_overview/(\d+)/$', 'export_mark_overview', name = 'export_mark_overview'),
+)
+
+urlpatterns += patterns('anonymous_marking.views',
+    url(r'^upload_anon_ids/$', 'upload_anon_ids', name = 'upload_anon_ids'),
+    url(r'^edit_anon_ids/$', 'edit_anon_ids', name = 'edit_anon_ids'),
+    url(r'^mark_anonymously/(\w+)/(\d{4})/(\w+)/$', 'mark_anonymously', name = 'mark_anonymously'),
+    url(r'^write_anonymous_marks_to_db/(\w+)/$', 'write_anonymous_marks_to_db', name = 'write_anonymous_marks_to_db')
 )

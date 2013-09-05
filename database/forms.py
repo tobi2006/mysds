@@ -15,6 +15,15 @@ class UserModelChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
         return "%s" % (obj.get_full_name())
 
+class UserModelMultipleChoiceField(forms.ModelMultipleChoiceField):
+    """
+    Extend MultipleChoiceField for users so that the choices are
+    listed as 'first_name last_name (username)' instead of just
+    'username'.
+
+    """
+    def label_from_instance(self, obj):
+        return "%s" % (obj.get_full_name())
 
 class StudentForm(forms.ModelForm):
 
@@ -37,7 +46,6 @@ class ModuleForm(forms.ModelForm):
 
     #year = forms.ChoiceField(choices = ACADEMIC_YEARS, widgets=forms.Select(attrs={'class': 'year'}))
     #successor_of = forms.ChoiceField(choices = SUCCESSOR_OF_CHOICES, widgets=forms.Select(attrs={'class': 'successor_of'}))
-
 
     class Meta:
         model = Module
@@ -91,7 +99,7 @@ class CSVParseForm(forms.Form):
             ('email', 'University email'),
             ('course', 'Course'),
             ('tutor', 'Tutor'),
-            ('permanent_email', 'Permanent email'),
+            ('permanent_email', 'Private email'),
             ('achieved_grade', 'Achieved grade'),
             ('address', 'Term time address'),
             ('home_address', 'Home address')

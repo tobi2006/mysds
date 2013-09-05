@@ -38,6 +38,22 @@
 </p>
 </div>
 
+<h2>Notes</h2>
+
+{% if student.notes %}
+    <p>
+        {{ student.notes | markdown }}
+    </p>  
+{% else %}
+    <em>
+        No notes for this student.
+    </em>
+{% endif %}
+<p align="right">
+    <a class="btn btn-primary" href="/notes_edit/{{ student.student_id }}">
+        Edit
+    </a>
+</p>
 
 {% for year, performances_per_year in years_performances.items|sort_reverse %}
 
@@ -188,21 +204,5 @@
     {% endfor %}
 {% endfor %}
 
-<h2>Notes</h2>
-
-{% if student.notes %}
-    <p>
-        {{ student.notes | markdown }}
-    </p>  
-{% else %}
-    <em>
-        No notes for this student.
-    </em>
-{% endif %}
-<p align="right">
-    <a class="btn btn-primary" href="/notes_edit/{{ student.student_id }}">
-        Edit
-    </a>
-</p>
 
 {% endblock %}

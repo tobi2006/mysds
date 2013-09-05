@@ -1,4 +1,6 @@
-from django.forms.models import modelformset_factory, inlineformset_factory
+import datetime
+
+#from django.forms.models import modelformset_factory, inlineformset_factory
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import Template, Context, RequestContext
@@ -9,9 +11,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
 from django.utils import simplejson
 
-from reportlab.pdfgen import canvas
-
-from database import models
+# from database import models delete line if it works
 from database.models import *
 from database import functions
 from database.forms import *
@@ -225,346 +225,6 @@ def add_module(request):
         context_instance = RequestContext(request)
     )
 
-#####################################
-#       Anonymous Marking           #
-#####################################
-
-
-@login_required
-@user_passes_test(is_admin)
-def upload_anon_ids(request):
-    module_dict = functions.modules_for_menubar()
-    if request.method == 'POST':
-        form = CSVUploadForm(request.POST, request.FILES)
-        if form.is_valid():
-            f = request.FILES['csvfile']
-            f.read()
-            counter = 0
-            problems = []
-            for line in f:
-                row = line.split(',')
-                student_id = row[0]
-                anon_id = row[1]
-                anon_id = anon_id.rstrip()
-                if anon_id == '':
-                    anon_id = None
-                student = Student.objects.get(student_id = student_id)
-                student.exam_id = anon_id
-                try:
-                    student.save()
-                    counter += 1
-                except IntegrityError:
-                    pass
-                    problems.append(student)
-            if problems:
-                printstring = '''%s exam IDs imported.<br><br>
-                The exam IDs for the following student(s) were already assigned to a different student:<br>
-                <ul>
-                '''%(counter)
-                for problem in problems:
-                    printstring += '<li>' + problem.first_name + ' ' + problem.last_name + ' (' + problem.student_id + ')</li>\n'
-                printstring += '</ul>'
-            else:
-                printstring = '%s exam IDs imported' % (counter)
-            title = 'CCCU Law DB'
-            return render_to_response(
-                    'blank.html', 
-                    {'printstring': printstring, 'title': title},
-                    context_instance = RequestContext(request))
-    else:
-        form = CSVUploadForm()
-    return render_to_response('anon_file_upload.html',
-            {'form': form},
-            context_instance=RequestContext(request))
-
-@login_required
-@user_passes_test(is_admin)
-def edit_anon_ids(request):
-    students = Student.objects.filter(active=True)
-    if request.method == 'POST':
-        counter = 0
-        problems = ""
-        for student in students:
-            if student.student_id in request.POST:
-                anon_id = request.POST[student.student_id]
-                if anon_id == "":
-                    anon_id = None
-                student.exam_id = anon_id
-                try:
-                    student.save()
-                    counter += 1
-                except IntegrityError:
-                    problems += '<li>' + student.first_name + ' ' + student.last_name + ' (' + student.student_id + ')</li>\n'
-        if len(problems)>0:
-            printstring = '''%s exam IDs imported.<br><br>
-            The exam IDs for the following student(s) could not be assigned, as they were already assigned to a different student:<br>
-            <ul>
-            '''%(counter)
-            printstring += problems
-            printstring += '</ul>'
-        else:
-            printstring = '%s exam IDs saved' % (counter)
-        title = 'CCCU Law DB'
-        return render_to_response(
-                'blank.html', 
-                {'printstring': printstring, 'title': title},
-                context_instance = RequestContext(request))
-    return render_to_response('anon_ids_edit.html',
-            {'students': students},
-            context_instance=RequestContext(request))
-        
-
-@login_required
-@user_passes_test(is_teacher)
-def mark_anonymously(request, module_id, year, assessment):
-
-    """
-    Function to enter marks according to the exam ID
-
-    With this function, the marks can be added to the corresponding exam ID.
-    Before, the exam IDs have to be added with the function edit_anon_ids.
-    The marks get stored into a separate model (AnonymousMarks) and can be matched
-    to the students DB entries with the function put_anonymous_marks_in_db.
-    """
-
-    module = Module.objects.get(code=module_id, year=year)
-    students = module.student_set.all()
-    exam_ids = []
-    for student in students:
-        exam_id = student.exam_id
-        exam_ids.append(exam_id)
-        print exam_id
-    performances = {}
-    for exam_id in exam_ids:
-        try:
-            performance = AnonymousMarks.objects.get(exam_id=exam_id, module=module)
-        except ObjectDoesNotExist:
-            performance = AnonymousMarks(exam_id = exam_id, module = module)
-        performances[exam_id] = performance
-    if assessment == "exam":
-        to_change = 9
-    else:
-        tmp = assessment.split("_")
-        to_change = int(tmp[1])
-    if request.method == 'POST':
-        students = module.student_set.all()
-        for student in students:
-            if student.exam_id in request.POST:
-                tmp = request.POST[student.exam_id]
-                try:
-                    mark = int(tmp)
-                    if mark in range(0, 100):
-                        print student.exam_id + ": " + str(mark)
-                        try:
-                            performance = AnonymousMarks.objects.get(exam_id=student.exam_id, module=module)
-                        except ObjectDoesNotExist:
-                            performance = AnonymousMarks(exam_id = student.exam_id, module = module)
-                        if to_change == 1:
-                            performance.assessment_1 = mark
-                        elif to_change == 2:
-                            performance.assessment_2 = mark
-                        elif to_change == 3:
-                            performance.assessment_3 = mark
-                        elif to_change == 4:
-                            performance.assessment_4 = mark
-                        elif to_change == 5:
-                            performance.assessment_5 = mark
-                        elif to_change == 6:
-                            performance.assessment_6 = mark
-                        elif to_change == 9:
-                            performance.exam = mark
-                        performance.save()
-                except ValueError:
-                    pass
-        return HttpResponseRedirect(module.get_absolute_url())
-    return render_to_response(
-            'anon_mark.html',
-            {'current_module': module, 'performances': performances, 'to_mark': to_change},
-            context_instance = RequestContext(request)
-        )
-    
-@login_required
-@user_passes_test(is_admin)
-def write_anonymous_marks_to_db (request, confirmation):
-    if confirmation == 'confirm':
-        printstring = """
-            This function will write the anonymous marks entered so far into the database. After this, the marks of all students
-            will be visible, and the anonymous records will be deleted.
-            <br><br>
-            Are you sure you want to go ahead?<br><br>
-            <a href="/write_anonymous_marks_to_db/create_pdf" class="btn btn-primary" type="button">Go ahead</a>
-            """
-        title = "Confirm De-Anonymisation"
-    elif confirmation == 'create_pdf':
-        metadata = MetaData.objects.get(id=1)
-        current_year = metadata.current_year
-        modules = Module.objects.filter(year=current_year)
-        for module in modules:
-            data = []
-            anonymous_marks = AnonymousMarks.objects.filter(module=module)
-            columns = ['Anonymous ID',]
-            for marks in anonymous_marks:
-                row = {}
-                row['id'] = marks.exam_id
-                if marks.assessment_1:
-                    if 'assessment_1' not in columns:
-                        columns.append('assessment_1')
-                    row['assessment_1'] = marks.assessment_1
-                if marks.assessment_2:
-                    if 'assessment_2' not in columns:
-                        columns.append('assessment_2')
-                    row['assessment_2'] = marks.assessment_2
-                if marks.assessment_3:
-                    if 'assessment_3' not in columns:
-                        columns.append('assessment_3')
-                    row['assessment_3'] = marks.assessment_3
-                if marks.assessment_4:
-                    if 'assessment_4' not in columns:
-                        columns.append('assessment_4')
-                    row['assessment_4'] = marks.assessment_4
-                if marks.assessment_5:
-                    if 'assessment_5' not in columns:
-                        columns.append('assessment_5')
-                    row['assessment_5'] = marks.assessment_5
-                if marks.assessment_6:
-                    if 'assessment_6' not in columns:
-                        columns.append('assessment_6')
-                    row['assessment_6'] = marks.assessment_6
-                if marks.exam:
-                    if 'exam' not in columns:
-                        columns.append('exam')
-                    row['exam'] = marks.exam
-                if marks.r_assessment_1:
-                    if 'r_assessment_1' not in columns:
-                        columns.append('r_assessment_1')
-                    row['r_assessment_1'] = marks.r_assessment_1
-                if marks.r_assessment_2:
-                    if 'r_assessment_2' not in columns:
-                        columns.append('r_assessment_2')
-                    row['r_assessment_2'] = marks.r_assessment_2
-                if marks.r_assessment_3:
-                    if 'r_assessment_3' not in columns:
-                        columns.append('r_assessment_3')
-                    row['r_assessment_3'] = marks.r_assessment_3
-                if marks.r_assessment_4:
-                    if 'r_assessment_4' not in columns:
-                        columns.append('r_assessment_4')
-                    row['r_assessment_4'] = marks.r_assessment_4
-                if marks.r_assessment_5:
-                    if 'r_assessment_5' not in columns:
-                        columns.append('r_assessment_5')
-                    row['r_assessment_5'] = marks.r_assessment_5
-                if marks.r_assessment_6:
-                    if 'r_assessment_6' not in columns:
-                        columns.append('r_assessment_6')
-                    row['r_assessment_6'] = marks.r_assessment_6
-                if marks.r_exam:
-                    if 'r_exam' not in columns:
-                        columns.append('r_exam')
-                    row['r_exam'] = marks.r_exam
-                if marks.q_assessment_1:
-                    if 'q_assessment_1' not in columns:
-                        columns.append('q_assessment_1')
-                    row['q_assessment_1'] = marks.q_assessment_1
-                if marks.q_assessment_2:
-                    if 'q_assessment_2' not in columns:
-                        columns.append('q_assessment_2')
-                    row['q_assessment_2'] = marks.q_assessment_2
-                if marks.q_assessment_3:
-                    if 'q_assessment_3' not in columns:
-                        columns.append('q_assessment_3')
-                    row['q_assessment_3'] = marks.q_assessment_3
-                if marks.q_assessment_4:
-                    if 'q_assessment_4' not in columns:
-                        columns.append('q_assessment_4')
-                    row['q_assessment_4'] = marks.q_assessment_4
-                if marks.q_assessment_5:
-                    if 'q_assessment_5' not in columns:
-                        columns.append('q_assessment_5')
-                    row['q_assessment_5'] = marks.q_assessment_5
-                if marks.q_assessment_6:
-                    if 'q_assessment_6' not in columns:
-                        columns.append('q_assessment_6')
-                    row['q_assessment_6'] = marks.q_assessment_6
-                if marks.q_exam:
-                    if 'q_exam' not in columns:
-                        columns.append('q_exam')
-                    row['q_exam'] = marks.q_exam
-                data.append(row)
-            table = []
-            header = []
-            for item in columns:
-                if item == "id":
-                    header.append("Anonymous ID")
-                elif item == "assessment_1":
-                    header.append(module.assessment_1_title)
-                elif item == "assessment_2":
-                    header.append(module.assessment_2_title)
-                elif item == "assessment_3":
-                    header.append(module.assessment_3_title)
-                elif item == "assessment_4":
-                    header.append(module.assessment_4_title)
-                elif item == "assessment_5":
-                    header.append(module.assessment_5_title)
-                elif item == "assessment_6":
-                    header.append(module.assessment_6_title)
-                elif item == "exam":
-                    header.append("Exam")
-                elif item == "r_assessment_1":
-                    title = module.assessment_1_title + " ([Re]sit)
-                    header.append(title)
-                elif item == "r_assessment_2":
-                    title = module.assessment_2_title + " ([Re]sit)
-                    header.append(title)
-                elif item == "r_assessment_3":
-                    title = module.assessment_3_title + " ([Re]sit)
-                    header.append(title)
-                elif item == "r_assessment_4":
-                    title = module.assessment_4_title + " ([Re]sit)
-                    header.append(title)
-                elif item == "r_assessment_5":
-                    title = module.assessment_5_title + " ([Re]sit)
-                    header.append(title)
-                elif item == "r_assessment_6":
-                    title = module.assessment_6_title + " ([Re]sit)
-                    header.append(title)
-                elif item == "r_exam":
-                    header.append("Exam ([Re]sit)")
-                elif item == "q_assessment_1":
-                    title = module.assessment_1_title + " (QLD [Re]sit)
-                    header.append(title)
-                elif item == "q_assessment_2":
-                    title = module.assessment_2_title + " (QLD [Re]sit)
-                    header.append(title)
-                elif item == "q_assessment_3":
-                    title = module.assessment_3_title + " (QLD [Re]sit)
-                    header.append(title)
-                elif item == "q_assessment_4":
-                    title = module.assessment_4_title + " (QLD [Re]sit)
-                    header.append(title)
-                elif item == "q_assessment_5":
-                    title = module.assessment_5_title + " (QLD [Re]sit)
-                    header.append(title)
-                elif item == "q_assessment_6":
-                    title = module.assessment_6_title + " (QLD [Re]sit)
-                    header.append(title)
-                elif item == "q_exam":
-                    header.append("Exam (QLD [Re]sit)")
-
-            table.append(columns)
-            for row in data:
-                table_row = []
-                for item in columns:
-                    table_row.append(row[item])
-                table.append(table_row)
-            print table
-        printstring = "juppie"
-        title = "juppie"
-
-    return render_to_response(
-            'blank.html', 
-            {'printstring': printstring, 'title': title},
-            context_instance = RequestContext(request))
 
 
 ###############################################################################
@@ -650,11 +310,15 @@ def year_view(request, year):
     Shows all students in a particular year and allows making changes in bulk
     """
     if request.method == 'POST':
+        print request.POST
         students_to_add = request.POST.getlist('selected_student_id')
+        for student_id in students_to_add:
+            print student_id
         selected_option = request.POST.__getitem__('modify')
         selected = selected_option.split('_')
         if selected[0] == 'tutor':
             tutor = User.objects.get(id=selected[1])
+            print tutor
             for student_id in students_to_add:
                 student = Student.objects.get(student_id=student_id)
                 student.tutor = tutor
@@ -759,18 +423,10 @@ def year_view(request, year):
         academic_years.append(academic_year[0])
     llb = Course.objects.get(title="LLB (Hons) Bachelor Of Law")
     all_students = len(students)
-    llb_students = None
-    other_students = None
-    if year == "all":
-        llb = Course.objects.get(title__contains="LLB")
-        llb_students = Student.objects.filter(course=llb).count()
-        other_students = all_students - llb_students
-    elif ug:
-        llb = Course.objects.get(title__contains="LLB")
-        llb_students = Student.objects.filter(year=year, course=llb).count()
-        other_students = all_students - llb_students
+
     if ug or alumnus or unassigned or inactive:
         courses = Course.objects.all
+
     tutors = User.objects.filter(groups__name='teachers')
     
     return render_to_response('year_view.html',
@@ -778,9 +434,7 @@ def year_view(request, year):
             'ug': ug, 'pg':pg, 'phd': phd, 'alumnus': alumnus, 'llb': llb,
             'more_than_one_year': more_than_one_year, 'tutors': tutors,
             'academic_years': academic_years, 'courses': courses,
-            'all_students': all_students, 'llb_students': llb_students,
-            'show_inactive': inactive,
-            'other_students': other_students},
+            'all_students': all_students, 'show_inactive': inactive},
             context_instance = RequestContext(request)
         )
 
@@ -928,19 +582,33 @@ def mark(request, module_id, year, assessment):
                     if mark in range(0, 100):
                         performance = Performance.objects.get(student=student, module=module)
                         if to_change == 1:
-                            performance.assessment_1 = mark
+                            if mark != performance.assessment_1:
+                                performance.assessment_1 = mark
+                                performance.assessment_1_modified = datetime.datetime.today()
                         elif to_change == 2:
-                            performance.assessment_2 = mark
+                            if mark != performance.assessment_2:
+                                performance.assessment_2 = mark
+                                performance.assessment_2_modified = datetime.datetime.today()
                         elif to_change == 3:
-                            performance.assessment_3 = mark
+                            if mark != performance.assessment_3:
+                                performance.assessment_3 = mark
+                                performance.assessment_3_modified = datetime.datetime.today()
                         elif to_change == 4:
-                            performance.assessment_4 = mark
+                            if mark != performance.assessment_4:
+                                performance.assessment_4 = mark
+                                performance.assessment_4_modified = datetime.datetime.today()
                         elif to_change == 5:
-                            performance.assessment_5 = mark
+                            if mark != performance.assessment_5:
+                                performance.assessment_5 = mark
+                                performance.assessment_5_modified = datetime.datetime.today()
                         elif to_change == 6:
-                            performance.assessment_6 = mark
+                            if mark != performance.assessment_6:
+                                performance.assessment_6 = mark
+                                performance.assessment_6_modified = datetime.datetime.today()
                         elif to_change == 9:
-                            performance.exam = mark
+                            if mark != performance.exam:
+                                performance.exam = mark
+                                performance.exam_modified = datetime.datetime.today()
                     performance.save_with_avg()
                 except ValueError:
                     pass
@@ -962,7 +630,7 @@ def attendance(request, module_id, year, group):
     module = Module.objects.get(code=module_id, year=year)
     no_of_sessions = range(module.number_of_sessions)
     students = module.student_set.all()
-    students.order_by('last_name')
+    #students.order_by('last_name')
     if group == "all":
         students_in_group = students
         seminar_group = None
@@ -1173,6 +841,7 @@ def add_students_to_module(request, module_id, year):
             eligible.append(student.student_id)
 
     if request.method == 'POST':
+        print request.POST
         students_to_add = request.POST.getlist('selected_student_id')
         for student_id in students_to_add:
             student_to_add = Student.objects.get(student_id = student_id)
@@ -1236,127 +905,131 @@ def parse_csv(request):
                                                         if no_of_columns > 11:
                                                             list_of_columns.append(form.cleaned_data['column_12'])
             successful_entrys = 0
+            item_in_table = 0
+            ignore_students = request.POST.getlist('exclude')
             for row in table:
-                result = {}
-                counter = 0
-                for entry in row:
-                    column = list_of_columns[counter]
-                    if column != 'ignore':
-                        result[column] = entry
-                    counter += 1
-                try: # Check if student is already in and add new data / amend existing
-                    current = Student.objects.get(student_id=result['student_id'])
-                    if 'first_name' in result:
-                        current.first_name = result['first_name']
-                    if 'last_name' in result:
-                        current.last_name = result['last_name']
-                    if 'since' in result:
-                        current.since = result['since']
-                    if 'year' in result:
-                        tmp = result['year']
-                        current.year = int(tmp[0])
-                    if 'is_part_time' in result:
-                        current.is_part_time = result['is_part_time']
-                    if 'email' in result:
-                        current.email = result['email']
-                    if 'course' in result:
-                        courses = Course.objects.filter(title__icontains = result['course'])
-                        if courses:
-                            course = courses[0]
-                            current.course = course
-                        else:
-                            new_course = Course(title = result['course'])
-                            new_course.save()
-                            current.course = new_course
-                    if 'qld' in result:
-                        current.qld = result['qld']
-                    if 'tutor' in result:
-                        tutor_results = User.objects.filter(name = result['tutor'])
-                        tutor = tutors[0]
-                        current.tutor = tutor
-                    if 'notes' in result:
-                        current.notes = current.notes + '\n' + result['notes']
-                    if 'lsp' in result:
-                        current.lsp = result['lsp']
-                    if 'permanent_email' in result:
-                        current.permanent_email = result['permanent_email']
-#                    if 'achieved_grade' in result:
-#                        current.achieved_grade = result['achieved_grade']
-                    if 'address' in result:
-                        current.address = result['address']
-                    if 'home_address' in result:
-                        current.home_address = result['home_address']
-                    current.save()
+                item_in_table += 1
+                if str(item_in_table) not in ignore_students:
+                    result = {}
+                    counter = 0
+                    for entry in row:
+                        column = list_of_columns[counter]
+                        if column != 'ignore':
+                            result[column] = entry
+                        counter += 1
+                    try: # Check if student is already in and add new data / amend existing
+                        current = Student.objects.get(student_id=result['student_id'])
+                        if 'first_name' in result:
+                            current.first_name = result['first_name']
+                        if 'last_name' in result:
+                            current.last_name = result['last_name']
+                        if 'since' in result:
+                            current.since = result['since']
+                        if 'year' in result:
+                            tmp = result['year']
+                            current.year = int(tmp[0])
+                        if 'is_part_time' in result:
+                            current.is_part_time = result['is_part_time']
+                        if 'email' in result:
+                            current.email = result['email']
+                        if 'course' in result:
+                            courses = Course.objects.filter(title__icontains = result['course'])
+                            if courses:
+                                course = courses[0]
+                                current.course = course
+                            else:
+                                new_course = Course(title = result['course'])
+                                new_course.save()
+                                current.course = new_course
+                        if 'qld' in result:
+                            current.qld = result['qld']
+                        if 'tutor' in result:
+                            tutor_results = User.objects.filter(name = result['tutor'])
+                            tutor = tutors[0]
+                            current.tutor = tutor
+                        if 'notes' in result:
+                            current.notes = current.notes + '\n' + result['notes']
+                        if 'lsp' in result:
+                            current.lsp = result['lsp']
+                        if 'permanent_email' in result:
+                            current.permanent_email = result['permanent_email']
+    #                    if 'achieved_grade' in result:
+    #                        current.achieved_grade = result['achieved_grade']
+                        if 'address' in result:
+                            current.address = result['address']
+                        if 'home_address' in result:
+                            current.home_address = result['home_address']
+                        current.save()
 
-                except Student.DoesNotExist: # Enter new student
-                    if 'first_name' not in result:
-                        result['first_name'] = ""
-                    if 'last_name' not in result:
-                        result['last_name'] = ""
-                    if 'since' not in result:
-                        result['since'] = ""
-                    if 'year' not in result:
-                        result['year'] = None
-                    else:
-                        tmp = result['year']
-                        result['year'] = int(tmp[0])
-                    if 'is_part_time' not in result:
-                        result['is_part_time'] = False 
-                    if 'email' not in result:
-                        result['email'] = ""
-                    if 'course' not in result:
-                        result['course'] = None
-                    else:
-                        courses = Course.objects.filter(title__icontains = result['course'])
-                        if courses:
-                            course = courses[0]
-                            result['course'] = course
+                    except Student.DoesNotExist: # Enter new student
+                        if 'first_name' not in result:
+                            result['first_name'] = ""
+                        if 'last_name' not in result:
+                            result['last_name'] = ""
+                        if 'since' not in result:
+                            result['since'] = ""
+                        if 'year' not in result:
+                            result['year'] = None
                         else:
-                            new_course = Course(title = result['course'])
-                            new_course.save()
-                            result['course'] = new_course
-                    result['modules'] = ""
-                    if 'qld' not in result:
-                        result['qld'] = False
-                    if 'tutor' not in result:
-                        result['tutor'] = None
-                    else:
-                        tutors = User.objects.filter(name = result['tutor'])
-                        tutor = tutors[0]
-                        result['tutor'] = tutor
-                    if 'notes' not in result:
-                        result['notes'] = ""
-                    result['highlighted'] = False
-                    result['active'] = True
-                    if 'lsp' not in result:
-                        result['lsp'] = ""
-                    if 'permanent_email' not in result:
-                        result['permanent_email'] = ""
-                    if 'address' not in result:
-                        result['address'] = ""
-                    if 'home_address' not in result:
-                        result['home_address'] = ""
-                    new = Student(
-                            student_id = result['student_id'],
-                            first_name = result['first_name'],
-                            last_name = result['last_name'],
-                            #since = int(result['since']),
-                            year = result['year'],
-                            is_part_time = result['is_part_time'],
-                            email = result['email'],
-                            course = result['course'],
-                            qld = result['qld'],
-                            notes = result['notes'],
-                            highlighted = result['highlighted'],
-                            active = result['active'],
-                            lsp = result['lsp'],
-                            permanent_email = result['permanent_email'],
-#                            achieved_grade = result['achieved_grade'],
-                            address = result['address'],
-                            home_address = result['home_address']
-                        )
-                    new.save()
-                    successful_entrys += 1
+                            tmp = result['year']
+                            result['year'] = int(tmp[0])
+                        if 'is_part_time' not in result:
+                            result['is_part_time'] = False 
+                        if 'email' not in result:
+                            result['email'] = ""
+                        if 'course' not in result:
+                            result['course'] = None
+                        else:
+                            courses = Course.objects.filter(title__icontains = result['course'])
+                            if courses:
+                                course = courses[0]
+                                result['course'] = course
+                            else:
+                                new_course = Course(title = result['course'])
+                                new_course.save()
+                                result['course'] = new_course
+                        result['modules'] = ""
+                        if 'qld' not in result:
+                            result['qld'] = False
+                        if 'tutor' not in result:
+                            result['tutor'] = None
+                        else:
+                            tutors = User.objects.filter(name = result['tutor'])
+                            tutor = tutors[0]
+                            result['tutor'] = tutor
+                        if 'notes' not in result:
+                            result['notes'] = ""
+                        result['highlighted'] = False
+                        result['active'] = True
+                        if 'lsp' not in result:
+                            result['lsp'] = ""
+                        if 'permanent_email' not in result:
+                            result['permanent_email'] = ""
+                        if 'address' not in result:
+                            result['address'] = ""
+                        if 'home_address' not in result:
+                            result['home_address'] = ""
+                        new = Student(
+                                student_id = result['student_id'],
+                                first_name = result['first_name'],
+                                last_name = result['last_name'],
+                                #since = int(result['since']),
+                                year = result['year'],
+                                is_part_time = result['is_part_time'],
+                                email = result['email'],
+                                course = result['course'],
+                                qld = result['qld'],
+                                notes = result['notes'],
+                                highlighted = result['highlighted'],
+                                active = result['active'],
+                                lsp = result['lsp'],
+                                permanent_email = result['permanent_email'],
+    #                            achieved_grade = result['achieved_grade'],
+                                address = result['address'],
+                                home_address = result['home_address']
+                            )
+                        new.save()
+                        successful_entrys += 1
             request.session['number_of_imports'] = successful_entrys
             return HttpResponseRedirect('/import_success')
     else:
@@ -1408,4 +1081,3 @@ def import_success(request):
             'blank.html', 
             {'printstring': printstring, 'title': title},
             context_instance = RequestContext(request))
-

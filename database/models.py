@@ -67,6 +67,7 @@ class Module(models.Model):
         ) #With these kinds of strings, it should be possible to check "if 1 in eligible:"
     title = models.CharField(max_length = 50)
     code = models.CharField(max_length = 20)
+    instructors = models.ManyToManyField(User, limit_choices_to={'groups__name': 'teachers'}, blank=True, null=True)
 
     #Show next year as the default
     year = datetime.datetime.now().year
@@ -208,6 +209,7 @@ class Student(models.Model):
 class Performance(models.Model):
     student = models.ForeignKey(Student)
     module = models.ForeignKey(Module)
+    last_modified = models.DateTimeField(blank=True, null=True)
     seminar_group = models.IntegerField(blank=True, null=True)
     assessment_1 = models.IntegerField(blank=True, null=True)
     assessment_2 = models.IntegerField(blank=True, null=True)
@@ -240,6 +242,28 @@ class Performance(models.Model):
     q_assessment_5 = models.IntegerField(blank=True, null=True)
     q_assessment_6 = models.IntegerField(blank=True, null=True)
     q_exam = models.IntegerField(blank=True, null=True)
+    # Time Stamps for anonymous marking (comparing which is more recent)
+    assessment_1_modified = models.DateTimeField(blank=True, null=True)
+    assessment_2_modified = models.DateTimeField(blank=True, null=True)
+    assessment_3_modified = models.DateTimeField(blank=True, null=True)
+    assessment_4_modified = models.DateTimeField(blank=True, null=True)
+    assessment_5_modified = models.DateTimeField(blank=True, null=True)
+    assessment_6_modified = models.DateTimeField(blank=True, null=True)
+    exam_modified = models.DateTimeField(blank=True, null=True)
+    r_assessment_1_modified = models.DateTimeField(blank=True, null=True)
+    r_assessment_2_modified = models.DateTimeField(blank=True, null=True)
+    r_assessment_3_modified = models.DateTimeField(blank=True, null=True)
+    r_assessment_4_modified = models.DateTimeField(blank=True, null=True)
+    r_assessment_5_modified = models.DateTimeField(blank=True, null=True)
+    r_assessment_6_modified = models.DateTimeField(blank=True, null=True)
+    r_exam_modified = models.DateTimeField(blank=True, null=True)
+    q_assessment_1_modified = models.DateTimeField(blank=True, null=True)
+    q_assessment_2_modified = models.DateTimeField(blank=True, null=True)
+    q_assessment_3_modified = models.DateTimeField(blank=True, null=True)
+    q_assessment_4_modified = models.DateTimeField(blank=True, null=True)
+    q_assessment_5_modified = models.DateTimeField(blank=True, null=True)
+    q_assessment_6_modified = models.DateTimeField(blank=True, null=True)
+    q_exam_modified = models.DateTimeField(blank=True, null=True)
 
     average = models.IntegerField(blank=True, null=True)
     real_average = models.FloatField(blank=True, null=True)
@@ -330,35 +354,8 @@ class Performance(models.Model):
         rounded = round(average)
         self.average = int(rounded)
         self.real_average = average
+        self.last_modified = datetime.datetime.today()
         self.save()
-
-class AnonymousMarks(models.Model):
-    module = models.ForeignKey(Module)
-    exam_id = models.CharField(max_length = 15)
-    assessment_1 = models.IntegerField(blank=True, null=True)
-    assessment_2 = models.IntegerField(blank=True, null=True)
-    assessment_3 = models.IntegerField(blank=True, null=True)
-    assessment_4 = models.IntegerField(blank=True, null=True)
-    assessment_5 = models.IntegerField(blank=True, null=True)
-    assessment_6 = models.IntegerField(blank=True, null=True)
-    exam = models.IntegerField(blank=True, null=True)
-    r_assessment_1 = models.IntegerField(blank=True, null=True)
-    r_assessment_2 = models.IntegerField(blank=True, null=True)
-    r_assessment_3 = models.IntegerField(blank=True, null=True)
-    r_assessment_4 = models.IntegerField(blank=True, null=True)
-    r_assessment_5 = models.IntegerField(blank=True, null=True)
-    r_assessment_6 = models.IntegerField(blank=True, null=True)
-    r_exam = models.IntegerField(blank=True, null=True)
-    q_assessment_1 = models.IntegerField(blank=True, null=True)
-    q_assessment_2 = models.IntegerField(blank=True, null=True)
-    q_assessment_3 = models.IntegerField(blank=True, null=True)
-    q_assessment_4 = models.IntegerField(blank=True, null=True)
-    q_assessment_5 = models.IntegerField(blank=True, null=True)
-    q_assessment_6 = models.IntegerField(blank=True, null=True)
-    q_exam = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        unique_together = ('module', 'exam_id')
 
 class Tutee_Session(models.Model):
     tutee = models.ForeignKey(Student)

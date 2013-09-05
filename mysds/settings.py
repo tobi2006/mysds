@@ -135,7 +135,8 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.markup',
     'database',
-#    'bootstrap_toolkit',
+    'export',
+    'anonymous_marking'
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )

@@ -27,7 +27,7 @@
 <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container">
-            <a class="brand" href="/">CCCU Law DB</a>
+            <a class="brand" href="{% url "home" %}">CCCU Law DB</a>
             <ul class="nav">
                 <!-- <li><a href="">Form</a></li> -->
                 <li class="dropdown">
@@ -46,7 +46,7 @@
                             <li><a href="/year/9">Alumni</a></li> 
                         </ul>
                         <li class="divider"></li>
-                        <li><a href="/tutee_list">My Tutees</a></li>
+                        <li><a href="{% url "tutee_list" %}">My Tutees</a></li>
                         <li class="divider"></li>
                         <li><a href="{% url "add_student" %}">Add Student(s)</a></li>
                     </ul>
@@ -100,6 +100,7 @@
                         <ul class = "dropdown-menu">
                             <li><a href="{% url "edit_anon_ids" %}">Set anonymous IDs</a></li>
                             <li><a href="/write_anonymous_marks_to_db/confirm">De-Anonymise Marks</a></li>
+                            <li><a href="/anonymous_marking_records/">Anonymous Marking Records</a></li>
                         </ul>
                     </ul>
                 {% endif %}
@@ -117,12 +118,17 @@
 </div>
 {% endblock %}
 
+{% block formstart %}
+{% endblock %}
+
 {% block structure %}
 <div class="container">
     {% block content %}{% endblock %}
 </div>
 {% endblock %}
 
+{% block formend %}
+{% endblock %}
 
 {% block footer %}
     <br><br>
@@ -144,15 +150,19 @@
     $(document).ready(function() 
         { 
         $("#sortable_table").tablesorter({
+            sortList: {% block sortorder %}[[0,0],[1,0]]{% endblock %}
             }); 
         } 
     ); 
 
-{% comment %}
-    $(document).ready(function(){
-            $("#markForm").validate();
-            });
-{% endcomment %}
+    $(document).ready(function()
+        {
+        $(":submit").click(function(){
+            $(this).val("Please Wait");})
+        }
+    );
+
+
 
 {% block scripts %}
 {% endblock %}

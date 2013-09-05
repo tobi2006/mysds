@@ -1,0 +1,39 @@
+module = Module.objects.get(
+all = Performance.objects.filter(module = module)
+number_of_seminar_groups = 1
+for performance in all:
+    if performance.seminar_group > number_of_seminar_groups:
+        number_of_seminar_groups = performance.seminar_group
+
+seminar_group = 0
+while seminar_group < number_of_seminar_groups:
+    seminar_group += 1
+
+    # Make this as a table with data on one page of the pdf
+
+    try:
+        performances = Performance.objects.filter(module = module, seminar_group = seminar_group)
+        module_year_p_1 = int(module.year) + 1
+        headline = (%s (%s, %s/%s) - Seminar Group %s" %(module.title, module.code, module.year, module_year_p_1, seminar_group)
+        data = []
+        row = ["Name",]
+        counter = 0
+        while counter < module.number_of_sessions
+            counter += 1
+            row.append(str(counter))
+
+        for item in p:
+            row = []
+            for session in item.attendance:
+                if session == '1':
+                    row.append("P")
+                else:
+                    row.append(" ")
+            data.append(row)
+
+    # MAKE PAGE
+    #
+
+    except someerror:
+        pass
+    # Add exception for the case that the seminar group is empty - in that case there will be an error from performances

@@ -12,6 +12,11 @@
 
 {% endblock %}
 
+{% block formstart %}
+    <form action="{{ action_url }}" id="seminarGroupForm" method="post">
+    {% csrf_token %}
+{% endblock %}
+
 {% block content %}
 
 {% url "seminar_groups" as action_url%}
@@ -26,8 +31,6 @@ Randomly assign students (number of groups / maximum number of students per grou
 </p>
 
 
-<form action="{{ action_url }}" id="seminarGroupForm" method="post">
-{% csrf_token %}
 
 <div class="btn-toolbar" align="center">
     {% for number, max_students in random_options.items %}
@@ -78,6 +81,9 @@ Randomly assign students (number of groups / maximum number of students per grou
 
 <input type="submit" value="Save Groups" class="btn btn-primary" align=right>
 
+{% endblock %}
+
+{% block formend %}
 </form>
 {% endblock %}
 

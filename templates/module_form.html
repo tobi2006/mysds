@@ -24,18 +24,28 @@
     <table cellpadding = "10">
         <tr>
             <td>
-                <strong>Year</strong>
+                <table cellpadding = "10">
+                    <tr>
+                        <td>
+                            <strong>Year</strong>
+                        </td>
+                        <td>
+                            {{ module_form.year }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>Successor of (essential for foundational modules)</strong>
+                        </td>
+                        <td>
+                            {{ module_form.successor_of }}
+                        </td>
+                    </tr>
+                </table>
             </td>
             <td>
-                {{ module_form.year }}
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <strong>Successor of (essential for foundational modules)</strong>
-            </td>
-            <td>
-                {{ module_form.successor_of }}
+                Teacher(s) - hold Ctrl to mark more than one<br>
+                {{ module_form.instructors }}
             </td>
         </tr>
     </table>

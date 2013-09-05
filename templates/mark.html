@@ -3,6 +3,11 @@
 
 {% block title %}CCCU Law - {{current_module}}{% endblock %}
 
+{% block formstart %}
+<form action="{{ action_url }}" id="markForm" method="post"> 
+{% csrf_token %}
+{% endblock %} 
+
 {% block content %}
 
 {% url "mark" as action_url%}
@@ -58,10 +63,6 @@
         </tr>
     </thead>
     <tbody>
-        <form action="{{ action_url }}" id="markForm" method="post"> 
-        {% csrf_token %}
-        
-
     {% for student, performance in performances.items|sort %}
         <tr>
             <td>
@@ -169,9 +170,13 @@
 </table>
 
 <input type="submit" value="Save Marks" class="btn btn-primary" align=right>
-</form>
 
 {% endblock %}
+
+{% block formend %}
+</form>
+{% endblock %}
+
 {% block scripts %}
 
 function process(elem, student_id){

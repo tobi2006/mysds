@@ -6,6 +6,10 @@
 
 {% block title %}CCCU Law - {{ module }}{% endblock %}
 
+{% block formstart %}
+<form action = "", method="post">
+{% endblock %}
+
 {% block content %}
 
 <h2>Add Students to {{ module }}</h2>
@@ -44,7 +48,6 @@
             </th>
         </tr>
     </thead>
-    <form action = "", method="post">
     <tbody>
     {% for student in students %}
     {% if student.active %}
@@ -82,14 +85,17 @@
     </tbody>
 </table>
 
-{% csrf_token %}
 
 <input type="submit" value="Add students" class="btn btn-primary">
 
 Please be patient - depending on the number of students you are adding, this can take a little moment.
 
-</form>
 
+{% endblock %}
+
+{% block formend %}
+{% csrf_token %}
+</form>
 {% endblock %}
 
 {%block scripts %}

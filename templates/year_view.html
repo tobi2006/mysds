@@ -3,54 +3,30 @@
 
 {% block title %}CCCU Law -  Year {{year}} Overview{% endblock %}
 
-{% block sidebar %}
+{% block formstart %}
+{% url "year_view" as action_url%}
+<form action="{{ action_url }}" id="students_form" method="post"> 
+{% endblock %}
 
-<form action = "", method="post">
+{% block sidebar %}
                 
 <div class="well" data-spy="affix" data-offset-top="0">
     <strong>
         {% if ug %}
             {% if year == "all" %}
-                Undergraduate
+                Undergraduate ({{ all_students }} students)
             {% else %}
-                Year {{ year }}
+                Year {{ year }} ({{ all_students }} students)
             {% endif %}
         {% elif pg %} 
-            Masters Students
+            Masters ({{ all_students }} students)
         {% elif phd %}
-            PhD Students
+            PhD ({{ all_students }} students)
         {% elif alumnus %}
-            Alumni
+            Alumni ({{ all_students }})
         {% endif %}
     </strong>
-    {% if ug %}
-        <table cellpadding="5">
-            <tr>
-                <td>
-                    Overall
-                </td>
-                <td>
-                    {{ all_students }}
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    LLB
-                </td>
-                <td>
-                    {{ llb_students }}
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Others
-                </td>
-                <td>
-                    {{ other_students }}
-                </td>
-            </tr>
-        </table>
-    {% endif %}
+
 <br><br>
 <strong>Apply actions to selected students</strong>
 <br>
@@ -85,7 +61,7 @@
 <table>
     <tr>
         <td>
-            <input type="checkbox" id="select_llb" onchange="selectLLBStudents()" name="select_llb " /> All LLB
+            <input type="checkbox" id="select_llb" onchange="selectLLBStudents()" name="select_llb" /> All LLB
         </td>
         <td>
             <input type="checkbox" id="select_all_items" onchange="selectAllItems()" name="select_all_items" /> All Others
@@ -146,9 +122,6 @@
     </tbody>
 </table>
 
-{% csrf_token %}
-
-</form>
 
 {% else %}
 
@@ -156,8 +129,19 @@ There are currently no students in this category.
 
 {% endif %}
 
+{% endblock %}
+{% block footer %}
+
 
 {% endblock %}
+
+{% block formend %}
+{% csrf_token %}
+</form>
+{% endblock %}
+
+{% block sortorder %}[[1,0],[2,0]]{% endblock %}
+
 
 {% block scripts %}
 
@@ -204,7 +188,7 @@ There are currently no students in this category.
                               <br><br><input type="submit" value="Apply" class="btn btn-primary">';
                 break;
             case "course":
-                var toenter = '<select id="specifier">{% for course in courses %}<option value="{{ course.title }}">{{ course.title }}</option>{% endfor %}</select>';
+            var toenter = '<select id="specifier">{% for course in courses %}<option value="{{ course.title }}">{{ course.title }}</option>{% endfor %}</select><br><br><input type="submit" value="Apply" class="btn btn-primary">';
                 break;
             case "since":
                 var toenter = '<select id="specifier">{% for academic_year in academic_years %}<option value="academic_year">{{ academic_year }}/{{ academic_year|add:"1" }}</option>{% endfor %}</select>\
@@ -244,3 +228,4 @@ There are currently no students in this category.
     }
 
 {% endblock %}
+
