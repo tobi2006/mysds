@@ -7,7 +7,7 @@
 <h1>{% if add %} Add {% else %} Edit {% endif %} Student</h1>
 
 {% if add %}
-<a class="btn btn-primary" href="{% url "upload_csv" %}" align="right">Add Students from Spreadsheet</a>
+<a class="btn btn-default" href="{% url "upload_csv" %}" align="right">Add Students from Spreadsheet</a>
 <hr>
 {% endif %}
 
@@ -62,7 +62,8 @@
             <td>
             </td>
             <td>
-                {{ student_form.active }} Active
+                {{ student_form.active }}
+                Active
             </td>
         </tr>
         <tr>
@@ -144,7 +145,7 @@
         </tr>
     </table>
     
-    <input type = "submit" value="Save" class="btn btn-primary" align="right">
+    <input type = "submit" value="Save" class="btn btn-default" align="right">
 </form>
 
 {% endblock %}

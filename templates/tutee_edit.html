@@ -6,26 +6,26 @@
 
 {% block content %}
 
-<div class="hero-unit">
-    <h1>{{student.first_name}} {{student.last_name}}</h1>
+<div class="jumbotron">
+    <h2>{{student.first_name}} {{student.last_name}}</h2>
 <p>
 <!--<table cellpadding="5">-->
 <table class="table">
     <tr>
         <td><strong>ID</strong></td>
-        <td align="right">{{student.student_id}}</td>
+        <td>{{student.student_id}}</td>
         <td><strong>Course</strong></td>
-        <td align="right">{{ student.course }} ({% if not student.qld %}No {% endif %}QLD)</td>
+        <td>{{ student.course }} ({% if not student.qld %}No {% endif %}QLD)</td>
     </tr>
     <tr>
         <td><strong>Email</strong></td>
-        <td align="right"><a href="mailto:{{ student.email }}">{{ student.email }}</a></td>
+        <td><a href="mailto:{{ student.email }}">{{ student.email }}</a></td>
         <td><strong>Year</strong></td>
-        <td align="right">{{ student.year }} {% if student.since %} (Since {{ student.since }}/{{ student.since|add:"1" }}) {% endif %}</td>
+        <td>{{ student.year }} {% if student.since %} (Since {{ student.since }}/{{ student.since|add:"1" }}) {% endif %}</td>
     </tr>
     <tr>
         <td><strong>LSP</strong></td>
-        <td align="right">{% if student.lsp %}<a href="/lsp_view/{{ student.student_id }}">View</a> / <a href="/lsp_edit/{{ student.student_id }}">Edit</a>{% else %}No LSP - <a href="/lsp_edit/{{ student.student_id }}">Add</a>{% endif %}</a></td>
+        <td>{% if student.lsp %}<a href="/lsp_view/{{ student.student_id }}">View</a> / <a href="/lsp_edit/{{ student.student_id }}">Edit</a>{% else %}No LSP - <a href="/lsp_edit/{{ student.student_id }}">Add</a>{% endif %}</a></td>
     </tr>
 </table>
 </p>  
@@ -34,7 +34,7 @@
 
 <p align="right">
 
-<button class="btn btn-primary" type="button" id="show_hide_performances">Show Performance</button>
+<button class="btn btn-default" type="button" id="show_hide_performances">Show Performance</button>
 
 
 </p>
@@ -184,7 +184,7 @@
     </table>
 
      <p align="right">
-        <a class="btn btn-primary">
+        <a class="btn btn-default">
             Edit
         </a>
     </p>
@@ -207,8 +207,9 @@
 
 {% if meeting.tutor == user %}
     <p align="right">
-    <small><a href="/tutee/{{ student.student_id }}/{{ meeting.id }}">Edit</a> | 
-        <a href="/delete_tutee_meeting/{{ meeting.id }}" data-confirm="Are you sure you want to delete this meeting record?">Delete</a></small>
+    <small>
+        <a href="/tutee/{{ student.student_id }}/{{ meeting.id }}">Edit</a> | <a href=# class="delete" id="{{ meeting.id }}">Delete</a>
+    </small>
     </p>
 {% endif %}
 
@@ -227,7 +228,7 @@ No meetings recorded yet.
 <h2>Add New Meeting Record</h2>
 
     <p align="right">
-        <button class="btn btn-small" type="button" id="md-helper">Help with Formatting</button>
+        <button class="btn btn-sm" type="button" id="md-helper">Help with Formatting</button>
     </p>
 
 
@@ -238,9 +239,15 @@ No meetings recorded yet.
 
     <form action="/tutee/{{ student.student_id }}/{% if edit %}{{ edit }}/{% endif %}" method="post" accept-charset="utf-8">
         {% csrf_token %}
-        {{ form.date_of_meet }}<br><br>
+        <div class="row">
+            <div class="col-lg-2">
+                <label for="id_date_of_meet">Date</label>
+                {{ form.date_of_meet }}
+            </div>
+        </div>
+        <br><br>
         {{ form.notes }}<br>
-        <input type="submit" value="Save" class="btn btn-primary">
+        <input type="submit" value="Save" class="btn btn-default">
     </form>
 
 {% endif %}
@@ -299,17 +306,15 @@ No meetings recorded yet.
         $( "#id_date_of_meet" ).datepicker();
     });
 
-    $(document).ready(function() {
-        $('a[data-confirm]').click(function(ev) {
-            var href = $(this).attr('href');
-            if (!$('#dataConfirmModal').length) {
-                $('body').append('<div id="dataConfirmModal" class="modal" role="dialog" aria-labelledby="dataConfirmLabel" aria-hidden="true"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button><h3 id="dataConfirmLabel">Please Confirm</h3></div><div class="modal-body"></div><div class="modal-footer"><button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button><a class="btn btn-primary" id="dataConfirmOK">OK</a></div></div>');
-            } 
-            $('#dataConfirmModal').find('.modal-body').text($(this).attr('data-confirm'));
-            $('#dataConfirmOK').attr('href', href);
-            $('#dataConfirmModal').modal({show:true});
-            return false;
-        });
+$(document).on("click", ".delete", function(e) {
+    bootbox.confirm("Are you sure you want to delete this meeting record?", function(confirm) {
+        if (confirm)
+        {
+            var meeting_id = e.target.id;
+            var url = "/delete_tutee_meeting/" + meeting_id;
+            window.location.replace(url);
+        }
     });
+});
 
 {% endblock %}

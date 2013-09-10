@@ -19,7 +19,7 @@ In case you entered anonymous IDs before (either manually or by uploading), this
 <form action="{% url "upload_anon_ids" %}" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <p>{{ form }}</p>
-    <input type = "submit" value="Upload" class="btn btn-primary" align="right">
+    <input type = "submit" value="Upload" class="btn btn-default" align="right">
 </form>
 
 {% endblock %}

@@ -1,17 +1,24 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-from django.contrib.auth.views import login, logout
+#from django.contrib.auth.views import login, logout
+#from django.contrib import auth
 import mysds
 import database
 admin.autodiscover()
 
-urlpatterns = patterns('mysds.views',
+urlpatterns = patterns('',
+    url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}, name='login'),
+    url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'template_name': 'logout.html'}, name='logout')
+)
+
+urlpatterns += patterns('mysds.views',
     url(r'^$', 'default_page', name = 'home'),
     url(r'^na/$', 'na', name = 'na'),
     url(r'^admin/', include(admin.site.urls)),
-    (r'^accounts/login/$',  login, {'template_name': 'login.html'}),
-    (r'^accounts/logout/$', logout, {'template_name': 'logout.html'}),
+#    (r'^accounts/login/$',  login, {'template_name': 'login.html'}),
+#    (r'^accounts/logout/$', logout, {'template_name': 'logout.html'})
 )
+
 
 urlpatterns += patterns('database.views',
     url(r'^search_student/$', 'search_student', name = 'search_student'),
@@ -25,6 +32,7 @@ urlpatterns += patterns('database.views',
     url(r'^edit_module/(\w+)/(\d{4})/$', 'edit_module', name='edit_module'),
     url(r'^add_students_to_module/(\w+)/(\d{4})/$', 'add_students_to_module', name='add_students_to_module'),
     url(r'^module/(\w+)/(\d{4})/$', 'module_view', name = 'module_view'),
+    url(r'^delete_module/(\w+)/(\d{4})/$', 'delete_module', name = 'delete_module'),
     url(r'^module_overview/(\d{4})/$', 'module_overview', name = 'module_overview'),
     url(r'^mark/(\w+)/(\d{4})/(\w+)/$', 'mark', name = 'mark'),
     url(r'^seminar_groups/(\w+)/(\d{4})/$', 'seminar_groups', name = 'seminar_groups'),

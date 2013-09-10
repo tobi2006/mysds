@@ -108,7 +108,7 @@
                 </td>
             {% endif %}
             <td>
-                <a href="/student/{{ student.student_id }}">{{ student.last_name }}, {{ student.first_name|only_first_word }}</a>
+                <a href="{{ student.get_absolute_url }}">{{ student.last_name }}, {{ student.first_name|only_first_word }}</a>
             </td>
             <td>
                 {{ student.student_id }}
@@ -170,14 +170,14 @@ There are currently no students in this category.
             case "tutor":
                 var toenter = 'Assign selected to...<br>\
                 {% for tutor in tutors %}<input type="radio" name="modify" value="tutor_{{ tutor.id }}">{{ tutor.first_name }} {{ tutor.last_name }}<br>{% endfor %}\
-                              <br><br><input type="submit" value="Apply" class="btn btn-primary">';
+                              <br><br><input type="submit" value="Apply" class="btn btn-default">';
                 break;
             case "qld":
                 var toenter = 'Mark selected as...<br>\
                               <input type="radio" name="modify" value="qld_on" checked>\
                               QLD students<br><input type="radio"\
                               name="modify" value="qld_off">NOT QLD students\
-                              <br><br><input type="submit" value="Apply" class="btn btn-primary">';
+                              <br><br><input type="submit" value="Apply" class="btn btn-default">';
                 break;
             case "nalp":
                 var toenter = '<br>Mark selected as...<br>\
@@ -185,14 +185,14 @@ There are currently no students in this category.
                               On the paralegal pathway<br>\
                               <input type="radio" name="modify" value="nalp_off">\
                               NOT on the paralegal pathway\
-                              <br><br><input type="submit" value="Apply" class="btn btn-primary">';
+                              <br><br><input type="submit" value="Apply" class="btn btn-default">';
                 break;
             case "course":
-            var toenter = '<select id="specifier">{% for course in courses %}<option value="{{ course.title }}">{{ course.title }}</option>{% endfor %}</select><br><br><input type="submit" value="Apply" class="btn btn-primary">';
+            var toenter = '<select id="specifier">{% for course in courses %}<option value="{{ course.title }}">{{ course.title }}</option>{% endfor %}</select><br><br><input type="submit" value="Apply" class="btn btn-default">';
                 break;
             case "since":
                 var toenter = '<select id="specifier">{% for academic_year in academic_years %}<option value="academic_year">{{ academic_year }}/{{ academic_year|add:"1" }}</option>{% endfor %}</select>\
-                              <br><br><input type="submit" value="Apply" class="btn btn-primary">';
+                              <br><br><input type="submit" value="Apply" class="btn btn-default">';
                 break;
             case "year":
                 var toenter = '<br>Mark selected as...<br>\
@@ -202,7 +202,7 @@ There are currently no students in this category.
                               Year 2<br>\
                               <input type="radio" name="modify" value="year_3">\
                               Year 3<br>\
-                              <br><br><input type="submit" value="Apply" class="btn btn-primary">';
+                              <br><br><input type="submit" value="Apply" class="btn btn-default">';
                 break;
             case "inactive":
                 var toenter = '<br>Mark selected as...<br>\
@@ -210,7 +210,7 @@ There are currently no students in this category.
                               Active<br>\
                               <input type="radio" name="modify" value="active_no">\
                               Inactive<br>\
-                              <br><br><input type="submit" value="Apply" class="btn btn-primary">';
+                              <br><br><input type="submit" value="Apply" class="btn btn-default">';
                 break;
             case "delete":
                 var toenter = '<br>This action cannot be undone.<br>\
@@ -221,7 +221,7 @@ There are currently no students in this category.
                               Yes<br>\
                               <input type="radio" name="modify" value="delete_no" checked>\
                               No<br>\
-                              <br><br><input type="submit" value="Apply" class="btn btn-primary">';
+                              <br><br><input type="submit" value="Apply" class="btn btn-default">';
                 break;
         }
         document.getElementById("second_option").innerHTML = toenter;

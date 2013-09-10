@@ -35,7 +35,7 @@
             </td>
             {% for session in sessions %}
             <td>
-                <input type="checkbox" value="{{ session }}" name="{{ student.student_id }}" {% if attendance|get_directory_item:session %}checked{% endif %}>
+                <input type="checkbox" value="{{ session }}" name="{{ student.student_id }}" class="form-control" {% if attendance|get_directory_item:session %}checked{% endif %}>
             </td>
             {% endfor %}
         </tr>
@@ -45,7 +45,7 @@
 
 <input type="hidden" name="option" value="" id="btn-input" />
 
-<input type="submit" value="Submit Attendance Sheet" class="btn btn-primary" align=right>
+<input type="submit" value="Submit Attendance Sheet" class="btn btn-default" align=right>
 
 </form>
 

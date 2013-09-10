@@ -67,7 +67,11 @@ def module_view(request, module_id, year):
             number_of_groups = performance.seminar_group
         student_name = student.last_name + ", " + student.first_name
         performances[student_name] = performance
-         
+    
+    if request.user in module.instructors.all() or is_admin(request.user):
+        adminorinstructor = True
+    else:
+        adminorinstructor = False
 
     #create string to make it iterable
     groupstring = ''
@@ -76,6 +80,7 @@ def module_view(request, module_id, year):
 
     return render_to_response('module_view.html',
             {'current_module': module, 'performances': performances, 
+            'adminorinstructor': adminorinstructor,
             'number_of_groups': groupstring},
             context_instance = RequestContext(request)
             )
@@ -226,6 +231,29 @@ def add_module(request):
     )
 
 
+#####################################
+#       Delete Module               #
+#####################################
+
+@login_required
+@user_passes_test(is_teacher)
+def delete_module(request, module_id, year):
+    module = Module.objects.get(code = module_id, year = year)
+    if request.user in module.instructors.all() or is_admin(request.user):
+        performances = Performance.objects.filter(module = module)
+        for performance in performances:
+            performances.delete()
+        module.delete()
+        printstring = 'Module deleted'
+        title = 'Module deleted'
+    else:
+        printstring = 'Only the module instructors or an admin can delete this module'
+        title = 'CCCU Law DB: Not allowed'
+    return render_to_response(
+            'blank.html', 
+            {'printstring': printstring, 'title': title},
+            context_instance = RequestContext(request))
+
 
 ###############################################################################
 ###############################################################################
@@ -310,15 +338,11 @@ def year_view(request, year):
     Shows all students in a particular year and allows making changes in bulk
     """
     if request.method == 'POST':
-        print request.POST
         students_to_add = request.POST.getlist('selected_student_id')
-        for student_id in students_to_add:
-            print student_id
         selected_option = request.POST.__getitem__('modify')
         selected = selected_option.split('_')
         if selected[0] == 'tutor':
             tutor = User.objects.get(id=selected[1])
-            print tutor
             for student_id in students_to_add:
                 student = Student.objects.get(student_id=student_id)
                 student.tutor = tutor
@@ -841,7 +865,6 @@ def add_students_to_module(request, module_id, year):
             eligible.append(student.student_id)
 
     if request.method == 'POST':
-        print request.POST
         students_to_add = request.POST.getlist('selected_student_id')
         for student_id in students_to_add:
             student_to_add = Student.objects.get(student_id = student_id)

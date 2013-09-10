@@ -2,20 +2,18 @@
 
 {% block title %} {% if add %} Add {% else %} Edit {% endif %} Module {% endblock %}
 
-{% block formstart %}
-    {% if add %}
-        {% url "add_module" as action_url %}
-    {% else %}
-        {% url "edit_module" object.pk as action_url %}
-    {% endif %}
-    <form action="{{ action_url }}" method="post" accept-charset="utf-8" role="form">
-    {% csrf_token %}
-{% endblock %}
-
 {% block content %}
 
 <h1>{% if add %} Add {% else %} Edit {% endif %} Module</h1>
 <br>
+{% if add %}
+{% url "add_module" as action_url %}
+{% else %}
+{% url "edit_module" object.pk as action_url %}
+{% endif %}
+
+<form action="{{ action_url }}" method="post" accept-charset="utf-8" role="form">
+    {% csrf_token %}
 
     {% if module_form.errors %}
     <em>{{ module_form.errors }}</em>
@@ -151,7 +149,7 @@
                 <strong>Number of Coursework Assessments</strong>
             </td>
             <td>
-                <select id="number_of_coursework" class="form-control" onchange="put_assessment_forms()">
+                <select id="number_of_coursework" class="input-mini" onchange="put_assessment_forms()">
                     {% if add %}
                     <option value="0">0</option>
                     <option value="1" selected>1</option>
@@ -175,7 +173,7 @@
                 <strong>There will be an exam</strong>
             </td>
             <td>
-                <input type="checkbox" name="exam" id="exam" value="1" checked onclick="show_hide_exam(this)" class="form-control">
+                <input type="checkbox" name="exam" id="exam" value="1" checked onclick="show_hide_exam(this)">
             </td>
         </tr>
     </table>
@@ -188,10 +186,10 @@
         </tr>
 
     </table>
-    <div class="form-group" id="exam_area">
-        <label for="id_exam_value">Exam Value</label>
-        {{ module_form.exam_value }}
-    </div>
+    <p id="exam_area">
+    <strong>Exam Value</strong>
+    {{ module_form.exam_value }}
+    </p>
 
     <input type = "submit" value="Save" class="btn btn-default">
 </form>
@@ -274,7 +272,7 @@
     window.onload = put_assessment_forms();
 
     $(document).ready(function(){
-            $('.form-control').change(function(){
+            $('.assessment_value').change(function(){
                 var sum = 0;
                 var max_exam = 100;
                 if ($('#id_assessment_1_value').length){

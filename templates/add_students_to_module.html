@@ -15,7 +15,7 @@
 <h2>Add Students to {{ module }}</h2>
 
 <p align="right">
-    <button class="btn btn-small" type="button" id="show">Show non-eligible students</button>
+    <button class="btn btn-sm" type="button" id="show">Show non-eligible students</button>
 </p>
 
 <table cellpadding="4">
@@ -71,7 +71,7 @@
                 {{ student.year }}
             </td>
             <td>
-                <a href="/student/{{ student.student_id }}">{{ student }}</a>
+                <a href="{{ student.get_absolute_url }}">{{ student }}</a>
             </td>
             <td>
                 {{ student.student_id }}
@@ -86,10 +86,7 @@
 </table>
 
 
-<input type="submit" value="Add students" class="btn btn-primary">
-
-Please be patient - depending on the number of students you are adding, this can take a little moment.
-
+<input type="submit" value="Add students" class="btn btn-default">
 
 {% endblock %}
 

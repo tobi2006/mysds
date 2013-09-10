@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load custom_filters %}
+{% load markup %}
+
+{% block title %}CCCU Law - Tutees{% endblock %}
+
+{% block content %}
+
+    <h2>List of Tutees</h2>
+
+    <ul>
+    {% for tutee in tutees %}
+        <li><a href="/tutee/{{ tutee.student_id }}">{{ tutee }}</a></li>
+    {% endfor %}
+    </ul>
+
+{% endblock %}
+

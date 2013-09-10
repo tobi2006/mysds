@@ -6,33 +6,33 @@
 
 {% block content %}
 
-<div class="hero-unit">
-    <h1>{{student.first_name}} {{student.last_name}} {% if not student.active %}(Inactive){% endif %}</h1>
+<div class="jumbotron">
+    <h2>{{student.first_name}} {{student.last_name}} {% if not student.active %}(Inactive){% endif %}</h2>
 <p>
 <!--<table cellpadding="5">-->
 <table class="table">
     <tr>
         <td><strong>ID</strong></td>
-        <td align="right">{{student.student_id}}</td>
+        <td>{{student.student_id}}</td>
         <td><strong>Course</strong></td>
-        <td align="right">{{ student.course }} ({% if not student.qld %}No {% endif %}QLD)</td>
+        <td>{{ student.course }} ({% if not student.qld %}No {% endif %}QLD)</td>
     </tr>
     <tr>
         <td><strong>Email</strong></td>
-        <td align="right"><a href="mailto:{{ student.email }}">{{ student.email }}</a></td>
+        <td><a href="mailto:{{ student.email }}">{{ student.email }}</a></td>
         <td><strong>Tutor</strong></td>
-        <td align="right"><a href="mailto:{{ student.tutor.email }}?Subject={{ student }}">{{ student.tutor.first_name }} {{ student.tutor.last_name }}</a></td>
+        <td><a href="mailto:{{ student.tutor.email }}?Subject={{ student }}">{{ student.tutor.first_name }} {{ student.tutor.last_name }}</a></td>
     </tr>
     <tr>
         <td><strong>Year</strong></td>
-        <td align="right">{{ student.year }} {% if student.since %} (Since {{ student.since }}/{{ student.since|add:"1" }}) {% endif %}</td>
+        <td>{{ student.year }} {% if student.since %} (Since {{ student.since }}/{{ student.since|add:"1" }}) {% endif %}</td>
         <td><strong>LSP</strong></td>
-        <td align="right">{% if student.lsp %}<a href="/lsp_view/{{ student.student_id }}">View</a> / <a href="/lsp_edit/{{ student.student_id }}">Edit</a>{% else %}No LSP - <a href="/lsp_edit/{{ student.student_id }}">Add</a>{% endif %}</a></td>
+        <td>{% if student.lsp %}<a href="/lsp_view/{{ student.student_id }}">View</a> / <a href="/lsp_edit/{{ student.student_id }}">Edit</a>{% else %}No LSP - <a href="/lsp_edit/{{ student.student_id }}">Add</a>{% endif %}</a></td>
     </tr>
 </table>
 </p>  
  <p align="right">
- <a class="btn btn-primary" href="/edit_student/{{ student.student_id }}">
+ <a class="btn btn-default" href="/edit_student/{{ student.student_id }}">
         Edit
     </a>
 </p>
@@ -50,7 +50,7 @@
     </em>
 {% endif %}
 <p align="right">
-    <a class="btn btn-primary" href="/notes_edit/{{ student.student_id }}">
+    <a class="btn btn-default" href="/notes_edit/{{ student.student_id }}">
         Edit
     </a>
 </p>
@@ -62,7 +62,7 @@
     
     {% for performance in performances_per_year|sort %}
 
-    <h3>{{ performance.module }}</h3>
+    <h3>{{ performance.module.title }}</h3>
 
     <table class="table table-bordered">
         <tr>
@@ -196,7 +196,7 @@
     </table>
 
      <p align="right">
-        <a class="btn btn-primary">
+        <a class="btn btn-default">
             Edit
         </a>
     </p>

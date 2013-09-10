@@ -34,7 +34,7 @@ Randomly assign students (number of groups / maximum number of students per grou
 
 <div class="btn-toolbar" align="center">
     {% for number, max_students in random_options.items %}
-    <button class="btn btn-small" type="button" onclick="var ret = assign_randomly({{ number }}); count_groups(); return ret">
+    <button class="btn btn-sm" type="button" onclick="var ret = assign_randomly({{ number }}); count_groups(); return ret">
         {{ number }} / {{ max_students }}
     </button>
     {% endfor %}
@@ -61,12 +61,12 @@ Randomly assign students (number of groups / maximum number of students per grou
 
     {% for student, performance in performances.items %}
         <tr>
-            <td>
-                {% if performance.seminar_group %}
-                    <input type="text" class="input-mini" name="{{ student.student_id }}" id="{{ student.student_id }}" value="{{ performance.seminar_group }}" onchange="count_groups()">
-                {% else %}
-                    <input type="text" class="input-mini" name="{{ student.student_id }}" id="{{ student.student_id }}" onchange="count_groups()">
-                {% endif %}
+            <td class="col-md-1">
+                    {% if performance.seminar_group %}
+                        <input type="text" class="form-control" name="{{ student.student_id }}" id="{{ student.student_id }}" value="{{ performance.seminar_group }}" onchange="count_groups()">
+                    {% else %}
+                        <input type="text" class="form-control" name="{{ student.student_id }}" id="{{ student.student_id }}" onchange="count_groups()">
+                    {% endif %}
             </td>
             <td>
                 <label>{{ student.last_name }}, {{ student.first_name }}</label>
@@ -79,7 +79,7 @@ Randomly assign students (number of groups / maximum number of students per grou
     </tbody>
 </table>
 
-<input type="submit" value="Save Groups" class="btn btn-primary" align=right>
+<input type="submit" value="Save Groups" class="btn btn-default" align=right>
 
 {% endblock %}
 
@@ -118,7 +118,7 @@ Randomly assign students (number of groups / maximum number of students per grou
 
     function count_groups(){
         var highest_group=0;
-        var fields = document.getElementsByClassName("input-mini");
+        var fields = document.getElementsByClassName("form-control");
         for(var i=0; i<fields.length; i++) {
             var group = parseInt(fields[i].value);
             if (group > highest_group){

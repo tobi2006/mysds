@@ -1,19 +1,30 @@
 {% extends "base.html" %}
 
+{% block menubar %}
+{% endblock %}
+
 {% block content %}
+
+<p>
+    Welcome to the CCCU Law Database. Please provide your login details to continue.
+</p>
 
   {% if form.errors %}
     <p class="error">Sorry, but this username or password is not valid</p>
   {% endif %}
 
-  <form action="" method="post">
+  <form action="" method="post" class="form-inline">
  {% csrf_token %}
+ <div class="form-group">
     <label for="username">User name:</label>
-    <input type="text" name="username" value="" id="username">
+    <input type="text" name="username" value="" id="username" class="form-control">
+</div>
+<div class="form-group">
     <label for="password">Password:</label>
-    <input type="password" name="password" value="" id="password">
+    <input type="password" name="password" value="" id="password" class="form-control">
+</div>
 
-    <input type="submit" value="login" />
+    <input type="submit" value="login" class="btn btn-default" />
     <input type="hidden" name="next" value="{{ next|escape }}" />
   </form>
 

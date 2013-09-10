@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 class UserModelChoiceField(forms.ModelChoiceField):
     """
     Extend ModelChoiceField for users so that the choices are
-    listed as 'first_name last_name (username)' instead of just
+    listed as 'first_name last_name' instead of just
     'username'.
 
     """
@@ -18,7 +18,7 @@ class UserModelChoiceField(forms.ModelChoiceField):
 class UserModelMultipleChoiceField(forms.ModelMultipleChoiceField):
     """
     Extend MultipleChoiceField for users so that the choices are
-    listed as 'first_name last_name (username)' instead of just
+    listed as 'first_name last_name' instead of just
     'username'.
 
     """
@@ -27,7 +27,10 @@ class UserModelMultipleChoiceField(forms.ModelMultipleChoiceField):
 
 class StudentForm(forms.ModelForm):
 
-    tutor = UserModelChoiceField(User.objects.filter(groups__name='teachers'))
+    tutor = UserModelChoiceField(
+            User.objects.filter(groups__name='teachers'),
+            widget=forms.Select(attrs={'class': 'form-control'})
+            )
 
     class Meta:
         model = Student
@@ -36,30 +39,54 @@ class StudentForm(forms.ModelForm):
                 'tutor', 'course', 'qld', 'nalp', 'address',
                 'home_address', 'phone_no', 'permanent_email')
         widgets = {
-                'address': forms.Textarea(attrs={'rows': 6, 'cols': 20}),
-                'home_address': forms.Textarea(attrs={'rows': 6, 'cols': 20}),
+                'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+                'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+                'student_id': forms.TextInput(attrs={'class': 'form-control'}),
+                'email': forms.TextInput(attrs={'class': 'form-control'}),
+                'address': forms.Textarea(attrs={'rows': 6, 'cols': 20, 'class': 'form-control'}),
+                'home_address': forms.Textarea(attrs={'rows': 6, 'cols': 20, 'class': 'form-control'}),
+                'phone_no': forms.TextInput(attrs={'class': 'form-control'}),
+                'permanent_email': forms.TextInput(attrs={'class': 'form-control'}),
+                'year': forms.Select(attrs={'class': 'form-control'}),
+                'since': forms.Select(attrs={'class': 'form-control'}),
+                'course': forms.Select(attrs={'class': 'form-control'}),
+                'nalp': forms.CheckboxInput(attrs={'class': 'form-control'}),
+                'is_part_time': forms.CheckboxInput(attrs={'class': 'form-control'}),
+                'active': forms.CheckboxInput(attrs={'class': 'form-control'}),
+                'qld': forms.CheckboxInput(attrs={'class': 'form-control'})
                 }
 
 class ModuleForm(forms.ModelForm):
 
-    #SUCCESSOR_OF_CHOICES = [('', 'Select the Predecessor'), (m, m) for m in Module.objects.all()]
+  #  instructors = UserModelMultipleChoiceField(User.objects.filter(groups__name='teachers'),
+  #          widget=forms.Select(attrs={'class': 'form-control'}))
 
-    #year = forms.ChoiceField(choices = ACADEMIC_YEARS, widgets=forms.Select(attrs={'class': 'year'}))
-    #successor_of = forms.ChoiceField(choices = SUCCESSOR_OF_CHOICES, widgets=forms.Select(attrs={'class': 'successor_of'}))
 
     class Meta:
         model = Module
         exclude = ('last_recorded_session',)
         widgets = {
                 'year': forms.Select(attrs={'class': 'year'}),
-                'successor_of': forms.Select(attrs={'class': 'successor_of'}),
-                'assessment_1_value': forms.TextInput(attrs={'class': 'assessment_value'}),
-                'assessment_2_value': forms.TextInput(attrs={'class': 'assessment_value'}),
-                'assessment_3_value': forms.TextInput(attrs={'class': 'assessment_value'}),
-                'assessment_4_value': forms.TextInput(attrs={'class': 'assessment_value'}),
-                'assessment_5_value': forms.TextInput(attrs={'class': 'assessment_value'}),
-                'assessment_6_value': forms.TextInput(attrs={'class': 'assessment_value'}),
-                'exam_value': forms.TextInput(attrs={'class': 'input-small'})
+                'successor_of': forms.Select(attrs={'class': 'form-control'}),
+                #'instructors': forms.ChoiceField(attrs={'class': 'form-control'}),
+                'title': forms.TextInput(attrs={'class': 'form-control'}),
+                'code': forms.TextInput(attrs={'class': 'form-control'}),
+                'credits': forms.TextInput(attrs={'class': 'form-control'}),
+                'year': forms.Select(attrs={'class': 'form-control'}),
+                'number_of_sessions': forms.TextInput(attrs={'class': 'form-control'}),
+                'assessment_1_title': forms.TextInput(attrs={'class': 'form-control'}),
+                'assessment_1_value': forms.TextInput(attrs={'class': 'form-control'}),
+                'assessment_2_title': forms.TextInput(attrs={'class': 'form-control'}),
+                'assessment_2_value': forms.TextInput(attrs={'class': 'form-control'}),
+                'assessment_3_title': forms.TextInput(attrs={'class': 'form-control'}),
+                'assessment_3_value': forms.TextInput(attrs={'class': 'form-control'}),
+                'assessment_4_title': forms.TextInput(attrs={'class': 'form-control'}),
+                'assessment_4_value': forms.TextInput(attrs={'class': 'form-control'}),
+                'assessment_5_title': forms.TextInput(attrs={'class': 'form-control'}),
+                'assessment_5_value': forms.TextInput(attrs={'class': 'form-control'}),
+                'assessment_6_title': forms.TextInput(attrs={'class': 'form-control'}),
+                'assessment_6_value': forms.TextInput(attrs={'class': 'form-control'}),
+                'exam_value': forms.TextInput(attrs={'class': 'form-control'})
                 }
 
 
@@ -67,6 +94,9 @@ class LSPForm(forms.ModelForm):
     class Meta:
         model = Student
         fields = ('lsp',)
+        widgets = {
+                'lsp': forms.Textarea(attrs={'class': 'form-control'})
+                }
 
 class NotesForm(forms.ModelForm):
     class Meta:
@@ -78,7 +108,8 @@ class TuteeForm(forms.ModelForm):
         model = Tutee_Session
         fields = ('date_of_meet', 'notes', )
         widgets = {
-                'date_of_meet': forms.DateInput(attrs={'data-date-format': 'dd/mm/yyyy', 'class': 'input-small'}),
+                'date_of_meet': forms.DateInput(attrs={'data-date-format': 'dd/mm/yyyy', 'class': 'form-control'}),
+                'notes': forms.Textarea(attrs={'class': 'form-control'}),
                 }
 
 class CSVUploadForm(forms.Form):

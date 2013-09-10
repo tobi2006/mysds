@@ -10,7 +10,9 @@
 
 # Housekeeping
 
-Change all URL references in templates to generic ones!
+Address absolute "/module" etc references in URL functions in views.py
+Finally get the Action URL crap in order
+Address URLs in module_view, student_view, tutee_edit, tutee_list
 
 # Exam board mode
 

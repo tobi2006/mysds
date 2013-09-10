@@ -24,7 +24,7 @@
         {% for module in modules %}
             <tr>
                 <td>
-                    <a href = "/module/{{ module.code }}/{{ module.year }}">{{ module.title }}</a>
+                    <a href = "{{ module.get_absolute_url }}">{{ module.title }}</a>
                 </td>
                 <td>
                     {{ module.code }}

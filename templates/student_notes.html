@@ -10,7 +10,7 @@
 
     <br><br>
     <p align="right">
-        <button class="btn btn-small" type="button" id="md-helper">Help with Formatting</button>
+        <button class="btn btn-sm" type="button" id="md-helper">Help with Formatting</button>
     </p>
 
     <div id="md-helptext">
@@ -20,7 +20,7 @@
     <form action="/notes_edit/{{ student.student_id }}/" method="post" accept-charset="utf-8">
         {% csrf_token %}
         {{ form.notes }}<br>
-        <input type="submit" value="Save" class="btn btn-primary">
+        <input type="submit" value="Save" class="btn btn-default">
     </form>
 
 {% endblock %}

@@ -69,7 +69,7 @@ class Module(models.Model):
     code = models.CharField(max_length = 20)
     instructors = models.ManyToManyField(User, limit_choices_to={'groups__name': 'teachers'}, blank=True, null=True)
 
-    #Show next year as the default
+    #Show next year as the default - problematic, as this way "month" is in the db for no reasons, needs to be in functions.py
     year = datetime.datetime.now().year
     month = datetime.datetime.now().month
     if month < 10:
@@ -163,8 +163,14 @@ class Module(models.Model):
         next_year = int(self.year) + 1
         return u'%s (%s/%s)' % (self.title, self.year, next_year)
 
+    @models.permalink
     def get_absolute_url(self):
-        return "/module/%s/%s" % (self.code, self.year)
+        return ('module_view', [self.code, str(self.year)])
+#        return "/module/%s/%s" % (self.code, self.year)
+
+    @models.permalink
+    def get_edit_url(self):
+        return ('edit_module', [self.code, str(self.year)])
 
     class Meta:
         unique_together = ('code', 'year')
@@ -199,8 +205,9 @@ class Student(models.Model):
     def __unicode__(self):
         return u'%s, %s' % (self.last_name, self.first_name)
 
+    @models.permalink
     def get_absolute_url(self):
-        return "/student/%s" % (self.student_id)
+        return ('student_view', [self.student_id])
 
     class Meta:
         ordering = ['last_name', 'first_name', 'year']
