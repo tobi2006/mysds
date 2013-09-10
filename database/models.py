@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 import datetime
 
@@ -163,14 +164,26 @@ class Module(models.Model):
         next_year = int(self.year) + 1
         return u'%s (%s/%s)' % (self.title, self.year, next_year)
 
-    @models.permalink
     def get_absolute_url(self):
-        return ('module_view', [self.code, str(self.year)])
-#        return "/module/%s/%s" % (self.code, self.year)
+        return reverse('module_view', args=[self.code, str(self.year)])
 
-    @models.permalink
     def get_edit_url(self):
-        return ('edit_module', [self.code, str(self.year)])
+        return reverse('edit_module', args=[self.code, str(self.year)])
+
+    def get_mark_url(self):
+        return reverse('mark_no', args=[self.code, str(self.year)])
+
+    def get_anonymous_mark_url(self):
+        return reverse('mark_anon', args=[self.code, str(self.year)])
+
+    def get_attendance_url(self):
+        return reverse('attendance_no', args=[self.code, str(self.year)])
+    
+    def get_seminar_groups_url(self):
+        return reverse('seminar_groups', args=[self.code, str(self.year)])
+
+    def get_add_students_url(self):
+        return reverse('add_students_to_module', args=[self.code, str(self.year)])
 
     class Meta:
         unique_together = ('code', 'year')
@@ -205,9 +218,23 @@ class Student(models.Model):
     def __unicode__(self):
         return u'%s, %s' % (self.last_name, self.first_name)
 
-    @models.permalink
     def get_absolute_url(self):
-        return ('student_view', [self.student_id])
+        return reverse('student_view', args=[self.student_id])
+
+    def get_edit_url(self):
+        return reverse('edit_student', args=[self.student_id])
+
+    def get_lsp_view_url(self):
+        return reverse('lsp_view', args=[self.student_id])
+
+    def get_lsp_edit_url(self):
+        return reverse('lsp_edit', args=[self.student_id])
+
+    def get_notes_edit_url(self):
+        return reverse('notes_edit', args=[self.student_id])
+
+    def get_tutee_url(self):
+        return reverse('tutee_edit', args=[self.student_id])
 
     class Meta:
         ordering = ['last_name', 'first_name', 'year']
@@ -369,6 +396,7 @@ class Tutee_Session(models.Model):
     tutor = models.ForeignKey(User, limit_choices_to={'groups__name': 'teachers'})
     date_of_meet = models.DateField()
     notes = models.TextField()
+
 
     class Meta:
         ordering = ['date_of_meet', 'tutor']

@@ -4,15 +4,18 @@
 + Module overview (exam board)
 + Anonymous marking records
 
-# Unsorted
+# Student View
 
-+ Add function to delete module (probably in module view)
++ Add Tier 4 boolean field
+
 
 # Housekeeping
 
 Address absolute "/module" etc references in URL functions in views.py
 Finally get the Action URL crap in order
-Address URLs in module_view, student_view, tutee_edit, tutee_list
+Address URLs in module_view, tutee_edit, tutee_list
+Write sit/resit mark views
+
 
 # Exam board mode
 

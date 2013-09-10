@@ -27,7 +27,7 @@
                     {{ tutee.year }}
                 </td>
                 <td>
-                    <a href = "/tutee/{{ tutee.student_id }}">{{ tutee }}</a>
+                    <a href = "{{ tutee.get_tutee_url }}">{{ tutee }}</a>
                 </td>
                 <td>
                     {{ tutee.course }}

@@ -1,26 +1,26 @@
 {% extends "base.html" %}
 {% load custom_filters %}
 
-{% block title %}CCCU Law - {{current_module}}{% endblock %}
+{% block title %}CCCU Law - {{module}}{% endblock %}
 
 {% block content %}
 
 <div class="jumbotron">
-    <h2>{{current_module}}</h2>
+    <h2>{{module}}</h2>
 
 <p>
 <table class="table">
     <tr>
         <td><strong>ID</strong></td>
-        <td>{{current_module.code}}</td>
+        <td>{{module.code}}</td>
         <td><strong>Year</strong></td>
-        <td>{{current_module.year}}/{{current_module.year|add:"1"}}</td>
+        <td>{{module.year}}/{{module.year|add:"1"}}</td>
     </tr>
     <tr>
         <td><strong>Number of Students</strong></td>
-        <td>{{ current_module.student_set.count }}</td>
+        <td>{{ module.student_set.count }}</td>
         <td><strong>Sessions so far<strong></td>
-        <td>{{ current_module.sessions_recorded }}</td>
+        <td>{{ module.sessions_recorded }}</td>
 </table>
 </p>  
 {% if adminorinstructor %}
@@ -29,7 +29,7 @@
     </p>
 {% endif %}
  <p align="right">
- <a class="btn btn-default" href="{{ current_module.get_edit_url }}">
+ <a class="btn btn-default" href="{{ module.get_edit_url }}">
         Edit
     </a>
 </p>
@@ -39,58 +39,58 @@
     <div class="btn-group dropdown">
         <a class = "btn btn-default dropdown-toggle" data-toggle="dropdown">Enter/Change Marks <span class="caret"></span></a>
         <ul class="dropdown-menu" role="menu">
-            {% if current_module.assessment_1_title %}
+            {% if module.assessment_1_title %}
                 <li>
-                    <a href="/mark/{{ current_module.code }}/{{ current_module.year }}/assessment_1">
-                        {{ current_module.assessment_1_title }}
+                    <a href="{{ module.get_mark_url }}assessment_1">
+                        {{ module.assessment_1_title }}
                     </a>
                 </li>
             {% endif %}
-            {% if current_module.assessment_2_title %}
+            {% if module.assessment_2_title %}
                 <li>
-                    <a href="/mark/{{ current_module.code }}/{{ current_module.year }}/assessment_2">
-                        {{ current_module.assessment_2_title }}
+                    <a href="{{ module.get_mark_url }}assessment_2">
+                        {{ module.assessment_2_title }}
                     </a>
                 </li>
             {% endif %}
-            {% if current_module.assessment_3_title %}
+            {% if module.assessment_3_title %}
                 <li>
-                    <a href="/mark/{{ current_module.code }}/{{ current_module.year }}/assessment_3">
-                        {{ current_module.assessment_3_title }}
+                    <a href="{{ module.get_mark_url }}assessment_3">
+                        {{ module.assessment_3_title }}
                     </a>
                 </li>
             {% endif %}
-            {% if current_module.assessment_4_title %}
+            {% if module.assessment_4_title %}
                 <li>
-                    <a href="/mark/{{ current_module.code }}{{ current_module.year }}/assessment_4">
-                        {{ current_module.assessment_4_title }}
+                    <a href="{{ module.get_mark_url }}assessment_4">
+                        {{ module.assessment_4_title }}
                     </a>
                 </li>
             {% endif %}
-            {% if current_module.assessment_5_title %}
+            {% if module.assessment_5_title %}
                 <li>
-                    <a href="/mark/{{ current_module.code }}/{{ current_module.year }}/assessment_5">
-                        {{ current_module.assessment_5_title }}
+                    <a href="{{ module.get_mark_url }}assessment_5">
+                        {{ module.assessment_5_title }}
                     </a>
                 </li>
             {% endif %}
-            {% if current_module.assessment_6_title %}
+            {% if module.assessment_6_title %}
                 <li>
-                    <a href="/mark/{{ current_module.code }}/{{ current_module.year }}/assessment_6">
-                        {{ current_module.assessment_6_title }}
+                    <a href="{{ module.get_mark_url }}assessment_6">
+                        {{ module.assessment_6_title }}
                     </a>
                 </li>
             {% endif %}
-            {% if current_module.exam_value %}
+            {% if module.exam_value %}
                 <li>
-                    <a href="/mark/{{ current_module.code }}/{{ current_module.year }}/exam">
+                    <a href="{{ module.get_mark_url }}exam">
                         Exam
                     </a>
                 </li>
             {% endif %}
-            {% if current_module.exam_value %}
+            {% if module.exam_value %}
                 <li>
-                    <a href="/mark_anonymously/{{ current_module.code }}/{{ current_module.year }}/exam">
+                    <a href="{{ module.get_anonymous_mark_url }}exam">
                         Anonymous Exam Marks
                     </a>
                 </li>
@@ -105,51 +105,51 @@
             <li class="dropdown-submenu">
             <a tabindex="-1" href="#">Enter/Change Marks Anonymously</a>
             <ul class = "dropdown-menu">
-                {% if current_module.assessment_1_title %}
+                {% if module.assessment_1_title %}
                     <li>
-                        <a href="/mark_anonymously/{{ current_module.code }}/{{ current_module.year }}/assessment_1">
-                            {{ current_module.assessment_1_title }}
+                        <a href="{{ module.get_anonymous_mark_url }}assessment_1">
+                            {{ module.assessment_1_title }}
                         </a>
                     </li>
                 {% endif %}
-                {% if current_module.assessment_2_title %}
+                {% if module.assessment_2_title %}
                     <li>
-                        <a href="/mark_anonymously/{{ current_module.code }}/{{ current_module.year }}/assessment_2">
-                            {{ current_module.assessment_2_title }}
+                        <a href="{{ module.get_anonymous_mark_url }}assessment_2">
+                            {{ module.assessment_2_title }}
                         </a>
                     </li>
                 {% endif %}
-                {% if current_module.assessment_3_title %}
+                {% if module.assessment_3_title %}
                     <li>
-                        <a href="/mark_anonymously/{{ current_module.code }}/{{ current_module.year }}/assessment_3">
-                            {{ current_module.assessment_3_title }}
+                        <a href="{{ module.get_anonymous_mark_url }}assessment_3">
+                            {{ module.assessment_3_title }}
                         </a>
                     </li>
                 {% endif %}
-                {% if current_module.assessment_4_title %}
+                {% if module.assessment_4_title %}
                     <li>
-                        <a href="/mark_anonymously/{{ current_module.code }}{{ current_module.year }}/assessment_4">
-                            {{ current_module.assessment_4_title }}
+                        <a href="{{ module.get_anonymous_mark_url }}assessment_4">
+                            {{ module.assessment_4_title }}
                         </a>
                     </li>
                 {% endif %}
-                {% if current_module.assessment_5_title %}
+                {% if module.assessment_5_title %}
                     <li>
-                        <a href="/mark_anonymously/{{ current_module.code }}/{{ current_module.year }}/assessment_5">
-                            {{ current_module.assessment_5_title }}
+                        <a href="{{ module.get_anonymous_mark_url }}assessment_5">
+                            {{ module.assessment_5_title }}
                         </a>
                     </li>
                 {% endif %}
-                {% if current_module.assessment_6_title %}
+                {% if module.assessment_6_title %}
                     <li>
-                        <a href="/mark_anonymously/{{ current_module.code }}/{{ current_module.year }}/assessment_6">
-                            {{ current_module.assessment_6_title }}
+                        <a href="{{ module.get_anonymous_mark_url }}assessment_6">
+                            {{ module.assessment_6_title }}
                         </a>
                     </li>
                 {% endif %}
-                {% if current_module.exam_value %}
+                {% if module.exam_value %}
                     <li>
-                        <a href="/mark_anonymously/{{ current_module.code }}/{{ current_module.year }}/exam">
+                        <a href="{{ module.get_anonymous_mark_url }}exam">
                             Exam
                         </a>
                     </li>
@@ -162,29 +162,29 @@
         <a class = "btn btn-default dropdown-toggle" data-toggle="dropdown">Edit Attendance<span class="caret"></span></a>
         <ul class="dropdown-menu" role="menu">
             <li>
-                <a href="/attendance/{{ current_module.code }}/{{ current_module.year }}/all">
+                <a href="{{ module.get_attendance_url }}all">
                     For all Groups
                 </a>
             </li>
             {% for i in number_of_groups %}
             <li>
-                <a href="/attendance/{{ current_module.code }}/{{ current_module.year }}/{{ i }}">
+            <a href="{{ module.get_attendance_url }}{{ i }}">
                     Seminar Group {{ i }}
                 </a>
             </li>
             {% endfor %}
         </ul>
     </div>
-    <a class="btn btn-default" href="/seminar_groups/{{ current_module.code }}/{{ current_module.year }}">
+    <a class="btn btn-default" href="{{ module.get_seminar_groups_url }}">
         Seminar Groups
     </a>
-    <a class="btn btn-default" href="/resits/{{ current_module.code }}/{{ current_module.year }}">
+    <a class="btn btn-default" href="/na">
         Sits/Resits
     </a>
-    <a class="btn btn-default" href="/export_module/{{ current_module.code }}/{{ current_module.year }}">
+    <a class="btn btn-default" href="/na">
         Export Data
     </a>
-    <a class="btn btn-default" href="/add_students_to_module/{{ current_module.code }}/{{ current_module.year }}">
+    <a class="btn btn-default" href="{{ module.get_add_students_url }}">
                     Add Student(s)
     </a>
 </div>
@@ -206,39 +206,39 @@
             <th>
                 Attendance
             </th>
-            {% if current_module.assessment_1_title %}
+            {% if module.assessment_1_title %}
                 <th>
-                    {{ current_module.assessment_1_title }} ({{ current_module.assessment_1_value }}%)
+                    {{ module.assessment_1_title }} ({{ module.assessment_1_value }}%)
                 </th>
             {% endif %}
-            {% if current_module.assessment_2_title %}
+            {% if module.assessment_2_title %}
                 <th>
-                    {{ current_module.assessment_2_title }} ({{ current_module.assessment_2_value }}%)
+                    {{ module.assessment_2_title }} ({{ module.assessment_2_value }}%)
                 </th>
             {% endif %}
-            {% if current_module.assessment_3_title %}
+            {% if module.assessment_3_title %}
                 <th>
-                    {{ current_module.assessment_3_title }} ({{ current_module.assessment_3_value }}%)
+                    {{ module.assessment_3_title }} ({{ module.assessment_3_value }}%)
                 </th>
             {% endif %}
-            {% if current_module.assessment_4_title %}
+            {% if module.assessment_4_title %}
                 <th>
-                    {{ current_module.assessment_4_title }} ({{ current_module.assessment_4_value }}%)
+                    {{ module.assessment_4_title }} ({{ module.assessment_4_value }}%)
                 </th>
             {% endif %}
-            {% if current_module.assessment_5_title %}
+            {% if module.assessment_5_title %}
                 <th>
-                    {{ current_module.assessment_5_title }} ({{ current_module.assessment_5_value }}%)
+                    {{ module.assessment_5_title }} ({{ module.assessment_5_value }}%)
                 </th>
             {% endif %}
-            {% if current_module.assessment_6_title %}
+            {% if module.assessment_6_title %}
                 <th>
-                    {{ current_module.assessment_6_title }} ({{ current_module.assessment_6_value }}%)
+                    {{ module.assessment_6_title }} ({{ module.assessment_6_value }}%)
                 </th>
             {% endif %}
-            {% if current_module.exam_value %}
+            {% if module.exam_value %}
                 <th>
-                    Exam ({{ current_module.exam_value }}%)
+                    Exam ({{ module.exam_value }}%)
                 </th>
             {% endif %}
             <th>
@@ -253,44 +253,44 @@
                 {{ performance.seminar_group }}
             </td>
             <td>
-                <a href="/student/{{ performance.student.student_id }}">{{ performance.student.last_name }}, {{ performance.student.first_name|only_first_word }}</a>
+                <a href="{{ performance.student.get_absolute_url }}">{{ performance.student.last_name }}, {{ performance.student.first_name|only_first_word }}</a>
             </td>
             <td>
-                {% if performance.student.lsp %}<a href="/lsp_view/{{ performance.student.student_id }}"><i class="icon-tag"></i></a>{% endif %}
+                {% if performance.student.lsp %}<a href="{{ performance.student.get_lsp_view_url }}"><span class="glyphicon glyphicon-warning-sign"></span></a>{% endif %}
             <td>
-                {{ performance.attendance | count_attendance }} / {{ current_module.sessions_recorded }}
+                {{ performance.attendance | count_attendance }} / {{ module.sessions_recorded }}
             </td>
-            {% if current_module.assessment_1_title %}
+            {% if module.assessment_1_title %}
                 <th>
                     {{ performance.assessment_1 }}
                 </th>
             {% endif %}
-            {% if current_module.assessment_2_title %}
+            {% if module.assessment_2_title %}
                 <th>
                     {{ performance.assessment_2 }}
                 </th>
             {% endif %}
-            {% if current_module.assessment_3_title %}
+            {% if module.assessment_3_title %}
                 <th>
                     {{ performance.assessment_3 }}
                 </th>
             {% endif %}
-            {% if current_module.assessment_4_title %}
+            {% if module.assessment_4_title %}
                 <th>
                     {{ performance.assessment_4 }}
                 </th>
             {% endif %}
-            {% if current_module.assessment_5_title %}
+            {% if module.assessment_5_title %}
                 <th>
                     {{ performance.assessment_5 }}
                 </th>
             {% endif %}
-            {% if current_module.assessment_6_title %}
+            {% if module.assessment_6_title %}
                 <th>
                     {{ performance.assessment_6 }}
                 </th>
             {% endif %}
-            {% if current_module.exam_value %}
+            {% if module.exam_value %}
                 <th>
                     {{ performance.exam }}
                 </th>
@@ -312,7 +312,7 @@ $(document).on("click", ".delete", function(e) {
     bootbox.confirm("Are you sure you want to delete this module and all associated marks?", function(confirm) {
     if (confirm)
     {
-    window.location.replace("/delete_module/{{ current_module.code }}/{{ current_module.year }}")
+    window.location.replace("/delete_module/{{ module.code }}/{{ module.year }}")
     }
 });
 });

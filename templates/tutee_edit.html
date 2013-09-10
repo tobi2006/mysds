@@ -25,7 +25,7 @@
     </tr>
     <tr>
         <td><strong>LSP</strong></td>
-        <td>{% if student.lsp %}<a href="/lsp_view/{{ student.student_id }}">View</a> / <a href="/lsp_edit/{{ student.student_id }}">Edit</a>{% else %}No LSP - <a href="/lsp_edit/{{ student.student_id }}">Add</a>{% endif %}</a></td>
+        <td>{% if student.lsp %}<a href="{{ student.get_lsp_view_url }}">View</a> / <a href="{{ student.get_lsp_edit_url }}">Edit</a>{% else %}No LSP - <a href="{{ student.get_lsp_edit_url }}">Add</a>{% endif %}</a></td>
     </tr>
 </table>
 </p>  
@@ -186,7 +186,8 @@
      <p align="right">
         <a class="btn btn-default">
             Edit
-        </a>
+        </a>#Dummy to enable get_mark_url method
+
     </p>
 
     {% endfor %}
@@ -208,7 +209,7 @@
 {% if meeting.tutor == user %}
     <p align="right">
     <small>
-        <a href="/tutee/{{ student.student_id }}/{{ meeting.id }}">Edit</a> | <a href=# class="delete" id="{{ meeting.id }}">Delete</a>
+        <a href="{{ student.get_tutee_url }}{{ meeting.id }}">Edit</a> | <a href=# class="delete" id="{{ meeting.id }}">Delete</a>
     </small>
     </p>
 {% endif %}
@@ -311,7 +312,7 @@ $(document).on("click", ".delete", function(e) {
         if (confirm)
         {
             var meeting_id = e.target.id;
-            var url = "/delete_tutee_meeting/" + meeting_id;
+            var url = "{% url 'delete_tutee_meeting_no' %}" + meeting_id;
             window.location.replace(url);
         }
     });

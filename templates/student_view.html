@@ -27,12 +27,12 @@
         <td><strong>Year</strong></td>
         <td>{{ student.year }} {% if student.since %} (Since {{ student.since }}/{{ student.since|add:"1" }}) {% endif %}</td>
         <td><strong>LSP</strong></td>
-        <td>{% if student.lsp %}<a href="/lsp_view/{{ student.student_id }}">View</a> / <a href="/lsp_edit/{{ student.student_id }}">Edit</a>{% else %}No LSP - <a href="/lsp_edit/{{ student.student_id }}">Add</a>{% endif %}</a></td>
+        <td>{% if student.lsp %}<a href="{{ student.get_lsp_view_url }}">View</a> / <a href="{{ student.get_lsp_edit_url }}">Edit</a>{% else %}No LSP - <a href="{{ student.get_lsp_edit_url }}">Add</a>{% endif %}</a></td>
     </tr>
 </table>
 </p>  
  <p align="right">
- <a class="btn btn-default" href="/edit_student/{{ student.student_id }}">
+ <a class="btn btn-default" href="{{ student.get_edit_id }}">
         Edit
     </a>
 </p>
@@ -50,7 +50,7 @@
     </em>
 {% endif %}
 <p align="right">
-    <a class="btn btn-default" href="/notes_edit/{{ student.student_id }}">
+    <a class="btn btn-default" href="{{ student.get_notes_edit_url }}">
         Edit
     </a>
 </p>

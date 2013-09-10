@@ -15,8 +15,11 @@ urlpatterns += patterns('mysds.views',
     url(r'^$', 'default_page', name = 'home'),
     url(r'^na/$', 'na', name = 'na'),
     url(r'^admin/', include(admin.site.urls)),
-#    (r'^accounts/login/$',  login, {'template_name': 'login.html'}),
-#    (r'^accounts/logout/$', logout, {'template_name': 'logout.html'})
+    url(r'^mark/(\w+)/(\d{4})/$', 'na', name = 'mark_no'), #Dummy to enable get_mark_url method
+    url(r'^mark_anonymously/(\w+)/(\d{4})/$', 'na', name = 'mark_anon'), #Dummy to enable get_mark_url method
+    url(r'^attendance/(\w+)/(\d{4})/$', 'na', name = 'attendance_no'), #Dummy to enable get_mark_url method
+    url(r'^delete_tutee_meeting/$', 'na', name='delete_tutee_meeting_no') #Dummy to enable get_mark_url method
+
 )
 
 

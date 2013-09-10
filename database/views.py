@@ -79,7 +79,7 @@ def module_view(request, module_id, year):
         groupstring += str(i+1)
 
     return render_to_response('module_view.html',
-            {'current_module': module, 'performances': performances, 
+            {'module': module, 'performances': performances, 
             'adminorinstructor': adminorinstructor,
             'number_of_groups': groupstring},
             context_instance = RequestContext(request)

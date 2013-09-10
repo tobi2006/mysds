@@ -71,57 +71,57 @@
             {% if to_mark == 1 %}
             <td>
                 {% if performance.assessment_1 %}
-                <input type="text" class="input-mini" name="{{ exam_id }}" value="{{ performance.assessment_1 }}">
+                <input type="text" class="form-control" name="{{ exam_id }}" value="{{ performance.assessment_1 }}">
                 {% else %}
-                <input type="text" class="input-mini"  name="{{ exam_id }}"">
+                <input type="text" class="form-control"  name="{{ exam_id }}"">
                 {% endif %}
             </td>
             {% elif to_mark == 2 %}
             <td>
                 {% if performance.assessment_2 %}
-                <input type="text" class="input-mini" name="{{ exam_id }}" value="{{ performance.assessment_2 }}">
+                <input type="text" class="form-control" name="{{ exam_id }}" value="{{ performance.assessment_2 }}">
                 {% else %}
-                <input type="text" class="input-mini" name="{{ exam_id }}">
+                <input type="text" class="form-control" name="{{ exam_id }}">
                 {% endif %}
             </td>
             {% elif to_mark == 3 %}
             <td>
                 {% if performance.assessment_3 %}
-                <input type="text" class="input-mini" name="{{ exam_id }}" value="{{ performance.assessment_3 }}">
+                <input type="text" class="form-control" name="{{ exam_id }}" value="{{ performance.assessment_3 }}">
                 {% else %}
-                <input type="text" class="input-mini" name="{{ exam_id }}">
+                <input type="text" class="form-control" name="{{ exam_id }}">
                 {% endif %}
             </td>
             {% elif to_mark == 4 %}
             <td>
                 {% if performance.assessment_4 %}
-                <input type="text" class="input-mini" name="{{ exam_id }}" value="{{ performance.assessment_4 }}">
+                <input type="text" class="form-control" name="{{ exam_id }}" value="{{ performance.assessment_4 }}">
                 {% else %}
-                <input type="text" class="input-mini" name="{{ exam_id }}">
+                <input type="text" class="form-control" name="{{ exam_id }}">
                 {% endif %}
             </td>
             {% elif to_mark == 5 %}
             <td>
                 {% if performance.assessment_5 %}
-                <input type="text" class="input-mini" name="{{ exam_id }}" value="{{ performance.assessment_5 }}">
+                <input type="text" class="form-control" name="{{ exam_id }}" value="{{ performance.assessment_5 }}">
                 {% else %}
-                <input type="text" class="input-mini" name="{{ exam_id }}">
+                <input type="text" class="form-control" name="{{ exam_id }}">
                 {% endif %}
             </td>
             {% elif to_mark == 6 %}
             <td>
                 {% if performance.assessment_6 %}
-                <input type="text" class="input-mini" name="{{ exam_id }}" value="{{ performance.assessment_6 }}">
+                <input type="text" class="form-control" name="{{ exam_id }}" value="{{ performance.assessment_6 }}">
                 {% else %}
-                <input type="text" class="input-mini" name="{{ exam_id }}">
+                <input type="text" class="form-control" name="{{ exam_id }}">
                 {% endif %}
             </td>
             {% elif to_mark == 9 %}
             <td>
                 {% if performance.exam %}
-                <input type="text" class="input-mini" name="{{ exam_id }}" value="{{ performance.exam }}">
+                <input type="text" class="form-control" name="{{ exam_id }}" value="{{ performance.exam }}">
                 {% else %}
-                <input type="text" class="input-mini" name="{{ exam_id }}">
+                <input type="text" class="form-control" name="{{ exam_id }}">
                 {% endif %}
             </td>
             {% endif %}
@@ -142,7 +142,7 @@
 
 {% block scripts %}
     $(document).ready(function(){
-        $(".input-mini").change(function(){
+        $(".form-control").change(function(){
             value = $(this).val()
             var errortag = '#' + $(this).prop("name") + '_error';
             if ($.isNumeric(value)){
