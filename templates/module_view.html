@@ -173,6 +173,11 @@
                 </a>
             </li>
             {% endfor %}
+            <li>
+                <a href="{{ module.get_attendance_sheet_url }}">
+                    Get Attendance Sheet
+                </a>
+            </li>
         </ul>
     </div>
     <a class="btn btn-default" href="{{ module.get_seminar_groups_url }}">
@@ -181,7 +186,7 @@
     <a class="btn btn-default" href="/na">
         Sits/Resits
     </a>
-    <a class="btn btn-default" href="/na">
+    <a class="btn btn-default" href="{{ module.get_marks_export_url }}">
         Export Data
     </a>
     <a class="btn btn-default" href="{{ module.get_add_students_url }}">

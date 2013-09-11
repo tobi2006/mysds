@@ -51,3 +51,4 @@ class AnonymousMarks(models.Model):
 
     class Meta:
         unique_together = ('module', 'exam_id')
+        ordering = ['module', 'exam_id']

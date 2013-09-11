@@ -185,6 +185,10 @@ class Module(models.Model):
     def get_add_students_url(self):
         return reverse('add_students_to_module', args=[self.code, str(self.year)])
 
+    def get_attendance_sheet_url(self):
+        return reverse('export_attendance_sheet', args=[self.code, str(self.year)])
+
+
     class Meta:
         unique_together = ('code', 'year')
 
@@ -308,6 +312,7 @@ class Performance(models.Model):
 
     class Meta:
         unique_together = ('student', 'module')
+        ordering = ['module', 'student']
 
     def initial_save(self):
         """ Sets the initial attendance string based on the number of sessions in the module """

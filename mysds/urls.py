@@ -18,7 +18,8 @@ urlpatterns += patterns('mysds.views',
     url(r'^mark/(\w+)/(\d{4})/$', 'na', name = 'mark_no'), #Dummy to enable get_mark_url method
     url(r'^mark_anonymously/(\w+)/(\d{4})/$', 'na', name = 'mark_anon'), #Dummy to enable get_mark_url method
     url(r'^attendance/(\w+)/(\d{4})/$', 'na', name = 'attendance_no'), #Dummy to enable get_mark_url method
-    url(r'^delete_tutee_meeting/$', 'na', name='delete_tutee_meeting_no') #Dummy to enable get_mark_url method
+    url(r'^delete_tutee_meeting/$', 'na', name='delete_tutee_meeting_no'), #Dummy to enable get_mark_url method
+    url(r'^export_anonymous_exam_marks/$', 'na', name='export_anonymous_exam_marks_year') #Dummy to enable get_mark_url method
 
 )
 
@@ -51,12 +52,15 @@ urlpatterns += patterns('database.views',
 )
 
 urlpatterns += patterns('export.views',
-    url(r'^export_mark_overview/(\d+)/$', 'export_mark_overview', name = 'export_mark_overview'),
+    url(r'^export_attendance_sheet/(\w+)/(\d+)/$', 'export_attendance_sheet', name = 'export_attendance_sheet'),
+    url(r'^export_anonymous_exam_marks/(\d+)/$', 'export_anonymous_exam_marks', name = 'export_anonymous_exam_marks'),
+
 )
 
 urlpatterns += patterns('anonymous_marking.views',
     url(r'^upload_anon_ids/$', 'upload_anon_ids', name = 'upload_anon_ids'),
     url(r'^edit_anon_ids/$', 'edit_anon_ids', name = 'edit_anon_ids'),
     url(r'^mark_anonymously/(\w+)/(\d{4})/(\w+)/$', 'mark_anonymously', name = 'mark_anonymously'),
-    url(r'^write_anonymous_marks_to_db/(\w+)/$', 'write_anonymous_marks_to_db', name = 'write_anonymous_marks_to_db')
+    url(r'^write_anonymous_marks_to_db/(\w+)/$', 'write_anonymous_marks_to_db', name = 'write_anonymous_marks_to_db'),
+    url(r'^anonymous_marking_admin/$', 'anonymous_marking_admin', name = 'anonymous_marking_admin'),
 )

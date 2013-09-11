@@ -14,6 +14,25 @@ from database.forms import *
 from anonymous_marking.models import *
 from database.views import is_teacher, is_admin 
 
+
+@login_required
+@user_passes_test(is_admin)
+def anonymous_marking_admin(request):
+    years = []
+    all_modules = Module.objects.all()
+    for module in all_modules:
+        if module.exam_value:
+            marks = AnonymousMarks.objects.filter(module = module)
+            for mark in marks:
+                if mark.exam:
+                    if module.year not in years:
+                        years.append(module.year)
+                    break
+    years.sort()
+    return render_to_response('anonymous_marking_admin.html',
+            {'years': years},
+            context_instance=RequestContext(request))
+
 @login_required
 @user_passes_test(is_admin)
 def upload_anon_ids(request):

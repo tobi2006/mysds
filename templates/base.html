@@ -98,8 +98,11 @@
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin<b class="caret"></b></a>
             <ul class="dropdown-menu">
+                <li><a href="{% url 'anonymous_marking_admin' %}">Anonymous Marking</a></li>
+                {% comment %}
                 <li><a href="{% url "edit_anon_ids" %}">Set anonymous IDs</a></li>
                 <li><a href="{% url 'write_anonymous_marks_to_db' 'confirm' %}">De-Anonymise Marks</a></li>
+                {% endcomment %}
                 {% comment %}
                 <li><a href="{% url 'anonymous_marking_records' %}">Anonymous Marking Records</a></li>
                 {% endcomment %}
