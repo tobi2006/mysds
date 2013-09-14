@@ -102,6 +102,9 @@ class NotesForm(forms.ModelForm):
     class Meta:
         model = Student
         fields = ('notes',)
+        widgets = {
+                'notes': forms.Textarea(attrs={'class': 'form-control'})
+                }
 
 class TuteeForm(forms.ModelForm):
     class Meta:

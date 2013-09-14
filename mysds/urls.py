@@ -20,7 +20,6 @@ urlpatterns += patterns('mysds.views',
     url(r'^attendance/(\w+)/(\d{4})/$', 'na', name = 'attendance_no'), #Dummy to enable get_mark_url method
     url(r'^delete_tutee_meeting/$', 'na', name='delete_tutee_meeting_no'), #Dummy to enable get_mark_url method
     url(r'^export_anonymous_exam_marks/$', 'na', name='export_anonymous_exam_marks_year') #Dummy to enable get_mark_url method
-
 )
 
 
@@ -48,12 +47,14 @@ urlpatterns += patterns('database.views',
     url(r'^tutee_list/$', 'tutee_list', name='tutee_list'),
     url(r'^tutee/(\w+)/$', 'tutee_edit', name='tutee_edit'),
     url(r'^tutee/(\w+)/(\d+)/$', 'tutee_edit', name='edit_tutee_meeting'),
-    url(r'^delete_tutee_meeting/(\d+)/$', 'delete_tutee_meeting', name='delete_tutee_meeting')
+    url(r'^delete_tutee_meeting/(\d+)/$', 'delete_tutee_meeting', name='delete_tutee_meeting'),
+    url(r'^seminar_group_overview/(\w+)/(\d{4})/$', 'seminar_group_overview', name='seminar_group_overview'),
 )
 
 urlpatterns += patterns('export.views',
     url(r'^export_attendance_sheet/(\w+)/(\d+)/$', 'export_attendance_sheet', name = 'export_attendance_sheet'),
     url(r'^export_anonymous_exam_marks/(\d+)/$', 'export_anonymous_exam_marks', name = 'export_anonymous_exam_marks'),
+    url(r'^export_marks/(\w+)/(\d+)/$', 'export_marks', name = 'export_marks'),
 
 )
 

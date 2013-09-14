@@ -13,6 +13,7 @@
 
 Finally get the Action URL crap in order
 Write sit/resit mark views
+Fix timestamp problem in performance / anonymous marks to UTC, remove general performance timestamp
 
 
 # Exam board mode

@@ -32,7 +32,7 @@
 </table>
 </p>  
  <p align="right">
- <a class="btn btn-default" href="{{ student.get_edit_id }}">
+ <a class="btn btn-default" href="{{ student.get_edit_url }}">
         Edit
     </a>
 </p>
@@ -62,7 +62,7 @@
     
     {% for performance in performances_per_year|sort %}
 
-    <h3>{{ performance.module.title }}</h3>
+    <h3><a href = "{{ performance.module.get_absolute_url }}">{{ performance.module.title }}</a></h3>
 
     <table class="table table-bordered">
         <tr>
@@ -195,11 +195,13 @@
         </tr> 
     </table>
 
+    {% comment %}
      <p align="right">
         <a class="btn btn-default">
             Edit
         </a>
     </p>
+    {% endcomment %}
 
     {% endfor %}
 {% endfor %}

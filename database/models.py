@@ -44,6 +44,15 @@ POSSIBLE_YEARS = (
         (9, 'Alumni')
     )
 
+def this_year():
+    year = datetime.datetime.now().year
+    month = datetime.datetime.now().month
+    if month < 10:
+        current_year = year
+    else:
+        current_year = year + 1
+    return current_year
+
 class MetaData(models.Model):
     data_id = models.IntegerField(default = 1, unique = True)
     current_year = models.IntegerField(choices=ACADEMIC_YEARS)
@@ -65,18 +74,13 @@ class Module(models.Model):
             ('123', 'All years'),
             ('12', 'Years 1 and 2'),
             ('23', 'Years 2 and 3')
-        ) #With these kinds of strings, it should be possible to check "if 1 in eligible:"
+        ) #With these kinds of strings, it should be possible to check "if '1' in eligible:"
     title = models.CharField(max_length = 50)
     code = models.CharField(max_length = 20)
     instructors = models.ManyToManyField(User, limit_choices_to={'groups__name': 'teachers'}, blank=True, null=True)
 
     #Show next year as the default - problematic, as this way "month" is in the db for no reasons, needs to be in functions.py
-    year = datetime.datetime.now().year
-    month = datetime.datetime.now().month
-    if month < 10:
-        current_year = year
-    else:
-        current_year = year + 1
+    current_year = this_year()
     year = models.IntegerField(choices=ACADEMIC_YEARS, default=current_year)
     successor_of = models.ForeignKey('self', blank = True, null=True)
     is_foundational = models.BooleanField(verbose_name="Foundational Module")
@@ -188,6 +192,12 @@ class Module(models.Model):
     def get_attendance_sheet_url(self):
         return reverse('export_attendance_sheet', args=[self.code, str(self.year)])
 
+    def get_seminar_group_overview_url(self):
+        return reverse('seminar_group_overview', args=[self.code, str(self.year)])
+
+
+    def get_export_marks_url(self):
+        return reverse('export_marks', args=[self.code, str(self.year)])
 
     class Meta:
         unique_together = ('code', 'year')
@@ -218,6 +228,7 @@ class Student(models.Model):
     phone_no = models.CharField(max_length=20, blank=True)
     home_address = models.TextField(blank=True)
     nalp = models.BooleanField(verbose_name = "Paralegal Pathway")
+    tier_4 = models.BooleanField(verbose_name = "Tier 4 Student")
 
     def __unicode__(self):
         return u'%s, %s' % (self.last_name, self.first_name)
@@ -247,7 +258,6 @@ class Student(models.Model):
 class Performance(models.Model):
     student = models.ForeignKey(Student)
     module = models.ForeignKey(Module)
-    last_modified = models.DateTimeField(blank=True, null=True)
     seminar_group = models.IntegerField(blank=True, null=True)
     assessment_1 = models.IntegerField(blank=True, null=True)
     assessment_2 = models.IntegerField(blank=True, null=True)
@@ -393,7 +403,6 @@ class Performance(models.Model):
         rounded = round(average)
         self.average = int(rounded)
         self.real_average = average
-        self.last_modified = datetime.datetime.today()
         self.save()
 
 class Tutee_Session(models.Model):

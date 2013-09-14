@@ -1,4 +1,4 @@
-from database.models import Module, MetaData
+from database.models import Module, MetaData, Student
 from database.views import is_admin
 from django.contrib.auth.models import Group
 from django.template import Context, RequestContext
@@ -26,8 +26,27 @@ def menubar(request):
         admin = True
     else:
         admin = False
+    inactive_students = Student.objects.filter(active=False)
+    if len(inactive_students) > 0:
+        if admin:
+            inactive = True
+        else:
+            inactive = False
+    else:
+        inactive = False
+    alumni_students = Student.objects.filter(year=9)
+    if len(alumni_students) > 0:
+        alumni = True
+    else:
+        alumni = False
+    not_assigned = Student.objects.filter(year=None)
+    if len(not_assigned) > 0:
+        unassigned = True
+    else:
+        unassigned = False
     module_dict = {'current': current, 'past': past, 'future': future}
     return {
-            'module_dict': module_dict, 'admin': admin
+            'module_dict': module_dict, 'admin': admin, 'inactive': inactive,
+            'alumni': alumni, 'unassigned': unassigned
             }
 

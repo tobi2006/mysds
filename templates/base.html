@@ -34,7 +34,7 @@
       <span class="icon-bar"></span>
       <span class="icon-bar"></span>
     </button>
-    <a class="navbar-brand" href="{% url "home" %}">CCCU Law DB</a>
+    <a class="navbar-brand" href="{% url "home" %}">Law@CCCU</a>
   </div>
 
 <div class="collapse navbar-collapse navbar-ex1-collapse">
@@ -47,10 +47,18 @@
                 <li><a href="{% url 'year_view' '2' %}">Year 2</a></li>
                 <li><a href="{% url 'year_view' '3' %}">Year 3</a></li>
                 <li class="divider"></li>
-                <li><a href="{% url 'year_view' 'inactive' %}">Inactive Students</a></li>
-                <li><a href="{% url 'year_view' 'unassigned' %}">Students not assigned to a year</a></li>
-                <li><a href="{% url 'year_view' '9' %}">Alumni</a></li>
-                <li class="divider"></li>
+                {% if inactive %}
+                    <li><a href="{% url 'year_view' 'inactive' %}">Inactive Students</a></li>
+                {% endif %}
+                {% if unassigned %}
+                    <li><a href="{% url 'year_view' 'unassigned' %}">Students not assigned to a year</a></li>
+                {% endif %}
+                {% if alumni %}
+                    <li><a href="{% url 'year_view' '9' %}">Alumni</a></li>
+                {% endif %}
+                {% if inactive or unassigned or alumni %}
+                    <li class="divider"></li>
+                {% endif %}
                 <li><a href="{% url "tutee_list" %}">My Tutees</a></li>
                 <li class="divider"></li>
                 <li><a href="{% url "add_student" %}">Add Student(s)</a></li>

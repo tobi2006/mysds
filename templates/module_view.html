@@ -159,7 +159,7 @@
         </ul>
     </div>
     <div class="btn-group dropdown">
-        <a class = "btn btn-default dropdown-toggle" data-toggle="dropdown">Edit Attendance<span class="caret"></span></a>
+        <a class = "btn btn-default dropdown-toggle" data-toggle="dropdown">Attendance<span class="caret"></span></a>
         <ul class="dropdown-menu" role="menu">
             <li>
                 <a href="{{ module.get_attendance_url }}all">
@@ -173,6 +173,13 @@
                 </a>
             </li>
             {% endfor %}
+            <li class = "divider"></li>
+            <li>
+                <a href="{{ module.get_seminar_group_overview_url }}">
+                    Get Seminar Group Overview
+                </a>
+            </li>
+
             <li>
                 <a href="{{ module.get_attendance_sheet_url }}">
                     Get Attendance Sheet
@@ -186,11 +193,11 @@
     <a class="btn btn-default" href="/na">
         Sits/Resits
     </a>
-    <a class="btn btn-default" href="{{ module.get_marks_export_url }}">
-        Export Data
+    <a class="btn btn-default" href="{{ module.get_export_marks_url }}">
+        Export Mark Overview
     </a>
     <a class="btn btn-default" href="{{ module.get_add_students_url }}">
-                    Add Student(s)
+        Add Student(s)
     </a>
 </div>
 

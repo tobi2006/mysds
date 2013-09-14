@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 import datetime
-from database.models import *
+#from database.models import *
+from database.models import Module
 
 class AnonymousMarks(models.Model):
     module = models.ForeignKey(Module)

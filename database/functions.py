@@ -1,4 +1,5 @@
 from database.models import MetaData, Module
+import datetime
 
 def module_dictionary(module_list):
     module_dict={}
@@ -50,4 +51,4 @@ def get_number_of_assessments(module):
     elif module.assessment_1_title:
         number_of_assessments = 1
     return number_of_assessments
-    
+
