@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% load custom_filters %}
 
-{% block title %}CCCU Law - {{current_module}}{% endblock %}
+{% block title %}CCCU Law - {{module}}{% endblock %}
 
 {% block content %}
 
 {% url "attendance" as action_url%}
 
 <h2>
-    Attendance for {{ current_module.title }} ({{ current_module.year }}) {% if seminar_group %} - Seminar Group {{ seminar_group }}{% endif %}
+    Attendance for {{ module.title }} ({{ module.year }}) {% if seminar_group %} - Seminar Group {{ seminar_group }}{% endif %}
 </h2>
 
 <form action="{{ action_url }}" id="absenceForm" method="post"> 
@@ -20,9 +20,9 @@
             <th>
                 Student
             </th>
-            {% for session in sessions %}
+            {% for week in header %}
             <th>
-                {{ session | add:"+1" }}
+                {{ week }}
             </th>
             {% endfor %}
         </tr>

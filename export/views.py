@@ -36,9 +36,12 @@ def export_attendance_sheet(request, code, year):
         data = []
         header = ['Name',]
         column = 0
-        while column < module.number_of_sessions:
-            column += 1
-            header.append(str(column))
+        last_week = module.last_session + 1
+        no_teaching = module.no_teaching_in.split(",")
+        for week in range(module.first_session, last_week):
+            strweek = str(week)
+            if strweek not in no_teaching:
+                header.append(strweek)
         data.append(header)
         performances = Performance.objects.filter(module=module, seminar_group=counter)
         #performances.sort()

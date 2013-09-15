@@ -58,9 +58,9 @@ class StudentForm(forms.ModelForm):
 
 class ModuleForm(forms.ModelForm):
 
-  #  instructors = UserModelMultipleChoiceField(User.objects.filter(groups__name='teachers'),
-  #          widget=forms.Select(attrs={'class': 'form-control'}))
-
+    instructors = UserModelMultipleChoiceField(
+            User.objects.filter(groups__name='teachers'),
+            )
 
     class Meta:
         model = Module
@@ -68,11 +68,13 @@ class ModuleForm(forms.ModelForm):
         widgets = {
                 'year': forms.Select(attrs={'class': 'year'}),
                 'successor_of': forms.Select(attrs={'class': 'form-control'}),
-                #'instructors': forms.ChoiceField(attrs={'class': 'form-control'}),
                 'title': forms.TextInput(attrs={'class': 'form-control'}),
                 'code': forms.TextInput(attrs={'class': 'form-control'}),
                 'credits': forms.TextInput(attrs={'class': 'form-control'}),
                 'year': forms.Select(attrs={'class': 'form-control'}),
+                'first_session': forms.Select(attrs={'class': 'form-control'}),
+                'no_teaching_in': forms.TextInput(attrs={'class': 'form-control'}),
+                'last_session': forms.Select(attrs={'class': 'form-control'}),
                 'number_of_sessions': forms.TextInput(attrs={'class': 'form-control'}),
                 'assessment_1_title': forms.TextInput(attrs={'class': 'form-control'}),
                 'assessment_1_value': forms.TextInput(attrs={'class': 'form-control'}),

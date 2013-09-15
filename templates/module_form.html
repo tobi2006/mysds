@@ -22,7 +22,6 @@
     {% endif %}
 
     <h4>Module Information</h4>
-
     <table cellpadding = "10">
         <tr>
             <td>
@@ -46,7 +45,7 @@
                 </table>
             </td>
             <td>
-                Teacher(s) - hold Ctrl to mark more than one<br>
+                <strong>Teacher(s)</strong><br>Hold Ctrl to mark more than one<br>
                 {{ module_form.instructors }}
             </td>
         </tr>
@@ -77,10 +76,10 @@
                 {{ module_form.credits }}
             </td>
             <td>
-                <strong>Number of sessions for attendance record</strong>
+                <strong>Who can/has to take this module?</strong>
             </td>
             <td>
-                {{ module_form.number_of_sessions }}
+                {{ module_form.eligible }}
             </td>
         </tr>
         {% if module_form.errors %}
@@ -94,27 +93,6 @@
             </td>
             <td>
                 {{ module_form.credits.errors }}
-            </td>
-        </tr>
-        {% endif %}
-        <tr> 
-            <td>
-                <strong>Who can/has to take this module?</strong>
-            </td>
-            <td>
-                {{ module_form.eligible }}
-            </td>
-        </tr>
-        {% if module_form.errors %}
-        <tr>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td>
-                {{ module_form.number_of_sessions.errors }}
             </td>
         </tr>
         {% endif %}
@@ -139,6 +117,35 @@
             <td>
                 This is a postgraduate module
             </td>
+    </table>
+
+    <hr>
+
+    <h4>Attendance</h4>
+    <p>
+    Enter the teaching weeks for the sessions with recorded attendance below. If you need more information, refer to the <a href="http://www.canterbury.ac.uk/support/registry/documents/taro/13-14-week-numbers.pdf" target="_blank">Week Overview</a> and the <a href="http://www.canterbury.ac.uk/support/student-support-and-guidance/term-dates/2013-2014.asp" target="_blank">Term Dates</a> on the CCCU website. If your module has an Independent Study Week or something similar, please enter the weeks where you will not be recording attendance into the "No Teaching In" field, separated by a comma. The Law Team suggestions for Independent Study Weeks are 9 (term 1) and 25 (term 2).
+    </p>
+    <table cellpadding = "10">
+        <tr> 
+            <td>
+                <strong>First Teaching Week</strong>
+            </td>
+            <td>
+                {{ module_form.first_session }}
+            </td>
+            <td>
+                <strong>Last Teaching Week</strong>
+            </td>
+            <td>
+                {{ module_form.last_session }}
+            </td>
+            <td>
+                <strong>No Teaching In</strong>
+            </td>
+            <td>
+                {{ module_form.no_teaching_in }}
+            </td>
+        </tr>
     </table>
 
     <hr>

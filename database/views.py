@@ -161,7 +161,10 @@ def add_module(request):
             suggestions['title'] = predecessor.title
             suggestions['code'] = predecessor.code
             suggestions['credits'] = predecessor.credits
-            suggestions['number_of_sessions'] = predecessor.number_of_sessions
+            suggestions['first_session'] = predecessor.first_session
+            suggestions['last_session'] = predecessor.last_session
+            suggestions['no_teaching_in'] = predecessor.no_teaching_in
+#            suggestions['number_of_sessions'] = predecessor.number_of_sessions
             eligible = ''
             for entry in Module.ELIGIBLE:
                 if entry[0] == predecessor.eligible:
@@ -683,7 +686,7 @@ def mark(request, module_id, year, assessment):
 @user_passes_test(is_teacher)
 def attendance(request, module_id, year, group):
     module = Module.objects.get(code=module_id, year=year)
-    no_of_sessions = range(module.number_of_sessions)
+    no_of_sessions = range(module.get_number_of_sessions())
     students = module.student_set.all()
     #students.order_by('last_name')
     if group == "all":
@@ -704,7 +707,7 @@ def attendance(request, module_id, year, group):
             weeks_present = request.POST.getlist(student.student_id)
             counter = 0
             attendance = ""
-            while counter < module.number_of_sessions:
+            while counter < module.get_number_of_sessions:
                 if str(counter) in weeks_present:
                     attendance = attendance + "1"
                     week_number = counter + 1
@@ -718,8 +721,14 @@ def attendance(request, module_id, year, group):
         module.sessions_recorded = last_session
         module.save()
         return HttpResponseRedirect(module.get_absolute_url())
-
     else:
+        header = []
+        last_week = module.last_session + 1
+        no_teaching = module.no_teaching_in.split(",")
+        for week in range(module.first_session, last_week):
+            strweek = str(week)
+            if strweek not in no_teaching:
+                header.append(strweek)
         attendances = {}
         for student in students_in_group:
             performance = Performance.objects.get(student=student, module=module)
@@ -735,8 +744,8 @@ def attendance(request, module_id, year, group):
 
     return render_to_response(
             'attendance.html',
-            {'current_module': module, 'attendances': attendances, 'seminar_group': seminar_group,
-            'sessions': no_of_sessions},
+            {'module': module, 'attendances': attendances, 'seminar_group': seminar_group,
+                'sessions': no_of_sessions, 'header': header},
             context_instance = RequestContext(request)
         )
 

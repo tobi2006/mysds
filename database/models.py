@@ -35,6 +35,10 @@ ACADEMIC_YEARS = (
         (2029, '2029/30')
     )
 
+TEACHING_WEEKS = (
+        [(i, 'Week ' + str(i)) for i in range(1, 53)]
+        )
+
 POSSIBLE_YEARS = (
         (1, '1'),
         (2, '2'),
@@ -78,8 +82,6 @@ class Module(models.Model):
     title = models.CharField(max_length = 50)
     code = models.CharField(max_length = 20)
     instructors = models.ManyToManyField(User, limit_choices_to={'groups__name': 'teachers'}, blank=True, null=True)
-
-    #Show next year as the default - problematic, as this way "month" is in the db for no reasons, needs to be in functions.py
     current_year = this_year()
     year = models.IntegerField(choices=ACADEMIC_YEARS, default=current_year)
     successor_of = models.ForeignKey('self', blank = True, null=True)
@@ -93,8 +95,9 @@ class Module(models.Model):
             default = '1',
             verbose_name = "Which students can (or have to) take this module?"
         )
-    # Add: instructor = USER??
-    number_of_sessions = models.IntegerField(default=10, verbose_name = "Number of sessions with attendance record")
+    first_session = models.IntegerField(default=5, verbose_name = "Week of first seminar", choices = TEACHING_WEEKS)
+    no_teaching_in = models.CharField(max_length = 20, blank=True)
+    last_session = models.IntegerField(default=15, verbose_name = "Week of last seminar", choices = TEACHING_WEEKS)
     sessions_recorded = models.IntegerField(blank=True, null=True, default=0)
     assessment_1_title = models.CharField(
             max_length = 30,
@@ -167,6 +170,13 @@ class Module(models.Model):
     def __unicode__(self):
         next_year = int(self.year) + 1
         return u'%s (%s/%s)' % (self.title, self.year, next_year)
+
+    def get_number_of_sessions(self):
+        number_of_sessions = self.last_session - self.first_session
+        number_of_sessions += 1
+        if self.no_teaching_in != "":
+            number_of_sessions -= len(self.no_teaching_in.split(","))
+        return number_of_sessions
 
     def get_absolute_url(self):
         return reverse('module_view', args=[self.code, str(self.year)])
@@ -328,7 +338,8 @@ class Performance(models.Model):
         """ Sets the initial attendance string based on the number of sessions in the module """
         counter = 0
         initial_attendance = ""
-        while counter < self.module.number_of_sessions:
+        number_of_sessions = self.module.get_number_of_sessions()
+        while counter < number_of_sessions:
             initial_attendance = initial_attendance + "0"
             counter += 1
         self.attendance = initial_attendance
