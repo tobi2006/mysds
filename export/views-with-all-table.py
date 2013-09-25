@@ -9,7 +9,6 @@ from anonymous_marking.models import *
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.templatetags.static import static
 from database.views import is_teacher, is_admin
 from django.http import HttpResponse, HttpResponseRedirect
 from datetime import date
@@ -55,17 +54,11 @@ def export_feedback_sheet(request, code, year, assessment_str, student_id):
         mark = str(performance.assessment_6)
     feedback_category = FeedbackCategories.objects.get(assessment_type = assessment_type) 
     response = HttpResponse(mimetype='application/pdf')
-    # Construct filename
-    ln = student.last_name.replace(' ', '_')
-    fn = student.first_name.replace(' ', '_')
-    filename_string = 'attachment; filename=' + ln + '_' + fn + '.pdf'
-
-    response['Content-Disposition'] = filename_string
+    response['Content-Disposition'] = 'attachment; filename=marksheet.pdf'
     document = SimpleDocTemplate(response)
-    document.setAuthor = 'Canterbury Christ Church University'
     elements = []
     styles = getSampleStyleSheet()
-    logo = "https://cccu.tobiaskliem.de/static/images/cccu.jpg"
+    logo = "cccu.jpg"
     im = Image(logo, 2.45*inch, 1*inch)
     elements.append(im)
     elements.append(Spacer(1,5))
@@ -100,120 +93,29 @@ def export_feedback_sheet(request, code, year, assessment_str, student_id):
                 ['', '']]
         mark_table = Table(mark)
         mark_table.setStyle(TableStyle([('SPAN', (1,0), (1,1))]))
+        comments = [Paragraph('<b>General Comments</b>', styles['Normal']), Spacer(1,4)]
+        feedbacklist = marksheet.comments.split('\n')
+        for line in feedbacklist:
+            if line != "":
+                paragraph = Paragraph(line, styles['Normal'])
+                comments.append(paragraph)
+                comments.append(Spacer(1,4))
 
         data = [[family_name, '', first_name, ''],
                 [module_title, '', module_code, submission_date, ''],
                 [assessment_title, '', word_count, '', ''],
-                [criteria, r_a_k, u_a_a, arg, o_a_p]]
-        # Fill marking grid
-        row = ['80 +']
-        if marksheet.category_mark_1 == 80:
-            row.append('X')
-        else:
-            row.append(' ')
-        if marksheet.category_mark_2 == 80:
-            row.append('X')
-        else:
-            row.append(' ')
-        if marksheet.category_mark_3 == 80:
-            row.append('X')
-        else:
-            row.append(' ')
-        if marksheet.category_mark_4 == 80:
-            row.append('X')
-        else:
-            row.append(' ')
-        data.append(row)
-        row = ['70 - 79']
-        if marksheet.category_mark_1 == 79:
-            row.append('X')
-        else:
-            row.append(' ')
-        if marksheet.category_mark_2 == 79:
-            row.append('X')
-        else:
-            row.append(' ')
-        if marksheet.category_mark_3 == 79:
-            row.append('X')
-        else:
-            row.append(' ')
-        if marksheet.category_mark_4 == 79:
-            row.append('X')
-        else:
-            row.append(' ')
-        data.append(row)
-        row = ['60 - 69']
-        if marksheet.category_mark_1 == 69:
-            row.append('X')
-        else:
-            row.append(' ')
-        if marksheet.category_mark_2 == 69:
-            row.append('X')
-        else:
-            row.append(' ')
-        if marksheet.category_mark_3 == 69:
-            row.append('X')
-        else:
-            row.append(' ')
-        if marksheet.category_mark_4 == 69:
-            row.append('X')
-        else:
-            row.append(' ')
-        data.append(row)
-        row = ['50 - 59']
-        if marksheet.category_mark_1 == 59:
-            row.append('X')
-        else:
-            row.append(' ')
-        if marksheet.category_mark_2 == 59:
-            row.append('X')
-        else:
-            row.append(' ')
-        if marksheet.category_mark_3 == 59:
-            row.append('X')
-        else:
-            row.append(' ')
-        if marksheet.category_mark_4 == 59:
-            row.append('X')
-        else:
-            row.append(' ')
-        data.append(row)
-        row = ['40 - 49']
-        if marksheet.category_mark_1 == 49:
-            row.append('X')
-        else:
-            row.append(' ')
-        if marksheet.category_mark_2 == 49:
-            row.append('X')
-        else:
-            row.append(' ')
-        if marksheet.category_mark_3 == 49:
-            row.append('X')
-        else:
-            row.append(' ')
-        if marksheet.category_mark_4 == 49:
-            row.append('X')
-        else:
-            row.append(' ')
-        data.append(row)
-        row = ['Under 40']
-        if marksheet.category_mark_1 == 39:
-            row.append('X')
-        else:
-            row.append(' ')
-        if marksheet.category_mark_2 == 39:
-            row.append('X')
-        else:
-            row.append(' ')
-        if marksheet.category_mark_3 == 39:
-            row.append('X')
-        else:
-            row.append(' ')
-        if marksheet.category_mark_4 == 39:
-            row.append('X')
-        else:
-            row.append(' ')
-        data.append(row)
+                [],
+                [criteria, r_a_k, u_a_a, arg, o_a_p],
+                ['80 +', '', '', '', ''],
+                ['70 - 79', '', '', '', '',],
+                ['60 - 69', '', '', '', '',],
+                ['50 - 59', '', '', '', '',],
+                ['40 - 49', '', '', '', '',],
+                ['Under 40', '', '', '', '',],
+                [],
+                [comments, '', '', '', ''],
+                [marked_table, '', '', mark_table, '']
+                ]
 
         t = Table(data) 
         t.setStyle(TableStyle([('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
@@ -223,29 +125,16 @@ def export_feedback_sheet(request, code, year, assessment_str, student_id):
                                 ('SPAN', (3,1), (-1,1)),
                                 ('SPAN', (0,2), (1,2)),
                                 ('SPAN', (2,2), (-1,2)),
-                                ('BACKGROUND', (0,3), (-1,3), colors.lightgrey),
-                                ('BACKGROUND', (0,4), (0,9), colors.lightgrey),
-                                ('ALIGN', (1,4), (-1,-1), 'CENTER'),
+                                ('SPAN', (0,3), (-1,3)),
+                                ('BACKGROUND', (0,4), (-1,4), colors.lightgrey),
+                                ('BACKGROUND', (0,5), (0,10), colors.lightgrey),
+                                ('SPAN', (0,11), (-1,11)),
+                                ('SPAN', (0,12), (-1,12)),
+                                ('SPAN', (0,-1), (2,-1)),
+                                ('SPAN', (3,-1), (-1,-1)),
                                 ('BOX', (0,0), (-1,-1), 0.25, colors.black)]))
 
         elements.append(t)
-        elements.append(Spacer(1,5))
-        comments = [Paragraph('<b>General Comments</b>', styles['Normal']), Spacer(1,4)]
-        feedbacklist = marksheet.comments.split('\n')
-        for line in feedbacklist:
-            if line != "":
-                paragraph = Paragraph(line, styles['Normal'])
-                comments.append(paragraph)
-                comments.append(Spacer(1,4))
-        for comment in comments:
-            elements.append(comment)
-        last_data = [[marked_table, '', '', mark_table, '']]
-        last_table = Table(last_data)
-        last_table.setStyle(TableStyle([('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
-                                ('BOX', (0,0), (-1,-1), 0.25, colors.black),
-                                ('SPAN', (0,0), (2,0)),
-                                ('SPAN', (3,-1), (-1,-1))]))
-        elements.append(last_table)
     document.build(elements)
     return response
 

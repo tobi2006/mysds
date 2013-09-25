@@ -1,6 +1,5 @@
 import datetime
 
-#from django.forms.models import modelformset_factory, inlineformset_factory
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import Template, Context, RequestContext
@@ -35,6 +34,14 @@ def is_admin(user):
     else:
         return False
 
+def is_student(user):
+    if user:
+        if user.groups.filter(name='students').count() == 1:
+            return True
+        else:
+            return False
+    else:
+        return False
 
 ###############################################################################
 ###############################################################################
@@ -87,7 +94,7 @@ def module_view(request, module_id, year):
 
 
 #####################################
-#        Module Overview            #
+#        Module Overview            # CAN PROBABLY BE DELETED
 #####################################
 
 @login_required
@@ -122,9 +129,42 @@ def edit_module(request, module_id, year):
         form = ModuleForm(instance=module, data=request.POST)
         if form.is_valid():
             form.save()
+            assessments_set = int(request.POST['number_of_coursework']) # Make sure no hidden fields get into the module
+            if assessments_set < 6:
+                module.assessment_6_title = ""
+                module.assessment_6_value = None
+                if assessments_set < 5:
+                    module.assessment_5_title = ""
+                    module.assessment_5_value = None
+                    if assessments_set < 4:
+                        module.assessment_4_title = ""
+                        module.assessment_4_value = None
+                        if assessments_set < 3:
+                            module.assessment_3_title = ""
+                            module.assessment_3_value = None
+                            if assessments_set < 2:
+                                module.assessment_2_title = ""
+                                module.assessment_2_value = None
+                                if assessments_set < 1:
+                                    module.assessment_1_title = ""
+                                    module.assessment_1_value = None
+                module.save()
+                if request.session['old_assessment_number'] != module.get_number_of_sessions():
+                    performances = Performance.objects.filter(module=module)
+                    for performance in performances:
+                        attendance = performance.attendance
+                        while len(attendance) < module.get_number_of_sessions():
+                            attendance += '0'
+                        while len(attendance) > module.get_number_of_sessions():
+                            attendance = attendance[:-1] 
+                        performance.attendance = attendance
+                        performance.save()
+
             return HttpResponseRedirect(module.get_absolute_url())
     else:
         form = ModuleForm(instance=module)
+        request.session['old_assessment_number'] = module.get_number_of_sessions()
+
     return render_to_response(
         'module_form.html', 
         {'module_form': form, 'add': False, 'object': module, 
@@ -245,7 +285,7 @@ def delete_module(request, module_id, year):
     if request.user in module.instructors.all() or is_admin(request.user):
         performances = Performance.objects.filter(module = module)
         for performance in performances:
-            performances.delete()
+            performance.delete()
         module.delete()
         printstring = 'Module deleted'
         title = 'Module deleted'
@@ -256,6 +296,20 @@ def delete_module(request, module_id, year):
             'blank.html', 
             {'printstring': printstring, 'title': title},
             context_instance = RequestContext(request))
+
+#####################################
+#  Remove Student from Module       #
+#####################################
+
+@login_required
+@user_passes_test(is_teacher)
+def remove_student_from_module(request, module_id, year, student_id):
+    module = Module.objects.get(code = module_id, year = year)
+    student = Student.objects.get(student_id = student_id)
+    performance = Performance.objects.get(module = module, student = student)
+    performance.delete()
+    student.modules.remove(module)
+    return HttpResponseRedirect(module.get_absolute_url())
 
 
 #####################################
@@ -707,7 +761,7 @@ def attendance(request, module_id, year, group):
             weeks_present = request.POST.getlist(student.student_id)
             counter = 0
             attendance = ""
-            while counter < module.get_number_of_sessions:
+            while counter < module.get_number_of_sessions():
                 if str(counter) in weeks_present:
                     attendance = attendance + "1"
                     week_number = counter + 1
@@ -996,12 +1050,13 @@ def parse_csv(request):
                         if 'email' in result:
                             current.email = result['email']
                         if 'course' in result:
-                            courses = Course.objects.filter(title__icontains = result['course'])
+                            parse_result = result['course'].split("-")[-1].strip()
+                            courses = Course.objects.filter(title = parse_result)
                             if courses:
                                 course = courses[0]
                                 current.course = course
                             else:
-                                new_course = Course(title = result['course'])
+                                new_course = Course(title = parse_result)
                                 new_course.save()
                                 current.course = new_course
                         if 'qld' in result:
@@ -1043,12 +1098,13 @@ def parse_csv(request):
                         if 'course' not in result:
                             result['course'] = None
                         else:
-                            courses = Course.objects.filter(title__icontains = result['course'])
+                            parse_result = result['course'].split("-")[-1].strip()
+                            courses = Course.objects.filter(title = parse_result)
                             if courses:
                                 course = courses[0]
                                 result['course'] = course
                             else:
-                                new_course = Course(title = result['course'])
+                                new_course = Course(title = parse_result)
                                 new_course.save()
                                 result['course'] = new_course
                         result['modules'] = ""

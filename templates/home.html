@@ -1,10 +1,110 @@
 {% extends "base.html" %}
+{% load markup %}
 
 {% block title %}Law at CCCU Database{% endblock %}
 
 {% block content %}
 
-    <h2>Welcome to the CCCU Law Database!</h2>
-    <p>This website is still in the process of being built, so please be patient with the bugs that might occur.</p>
+{% if admin %}
+<button class="btn btn-md" type="button" id="announce">Add Announcement</button>
+
+<div id="input_form">
+    <br>
+     <form action="/" method="post" class="form-horizontal" role="form" accept-charset="utf-8">
+         {% csrf_token %}
+        <div class="form-group">
+            <label for="header" class="col-lg-2 control-label">Subject</label>
+            <div class="col-lg-6">
+                <input class="form-control" id="header" name="header" type="text">
+            </div>
+        </div>
+        <p align="right">
+            <button class="btn btn-sm" type="button" id="md-helper">Help with Formatting</button>
+        </p>
+        <div id="md-helptext">
+            {{ mdexplanation | safe }}
+            <br>
+        </div>
+        <div class="form-group">
+            <label for="text" class="col-lg-2 control-label">Announcement</label>
+            <div class="col-lg-6">
+                <textarea class="form-control" id="text" name="text" rows="10">
+                </textarea><br>
+            </div>
+        </div>
+        <div class="form-group form-inline">
+            <label for="announce_to" class="col-lg-2 control-label">Announce to</label>
+            <div class="col-lg-2">
+                <select class="form-control" id="announce_to" name="announce_to">
+                    <option value="teachers" selected="selected">Staff</option>
+                    <option value="students">Students</options>
+                    <option value="all">All</option>
+                </select>
+            </div>
+        </div>
+        <input type="submit" value="Save" class="btn btn-default">
+    </form>
+</div>
+<br><br>
+
+{% endif %}
+
+{% if announcements %}
+
+<h2>Announcements</h2>
+
+{% for announcement in announcements %}
+
+<h3>{{ announcement.headline }}</h3>
+
+{{ announcement.text | markdown }}
+
+<p align = "right"><small>By {{ announcement.author.first_name }} {{ announcement.author.last_name }} ({{ announcement.publishing_date.day }}/{{ announcement.publishing_date.month }}/{{ announcement.publishing_date.year }})</small></p>
+
+{% endfor %}
+
+{% else %}
+
+<p>Currently, there are no announcements here. </p>
+
+{% endif %}
+
+
+{% endblock %}
+
+{% block scripts %}
+
+   $(document).ready(function(){
+        $("#md-helptext").hide();
+    });
+
+    $(document).ready(function(){
+        $("#md-helper").click(function(){
+            $("#md-helptext").toggle();
+        });
+    });
+
+    $(document).ready(function(){
+            $('#md-helper').click(function(){
+                  if ($(this).text() == "Help with Formatting") 
+                  { 
+                     $(this).text("Hide Formatting Help"); 
+                  } 
+                  else 
+                  { 
+                     $(this).text("Help with Formatting"); 
+                  }; 
+                });
+            });
+
+   $(document).ready(function(){
+        $("#input_form").hide();
+    });
+
+    $(document).ready(function(){
+        $("#announce").click(function(){
+            $("#input_form").toggle();
+        });
+    });
 
 {% endblock %}

@@ -175,6 +175,9 @@
             {% endfor %}
             <li class = "divider"></li>
             <li>
+                <a href = "{{ module.get_seminar_groups_url }}">
+                    Assign Seminar Groups
+                </a>
                 <a href="{{ module.get_seminar_group_overview_url }}">
                     Get Seminar Group Overview
                 </a>
@@ -187,9 +190,6 @@
             </li>
         </ul>
     </div>
-    <a class="btn btn-default" href="{{ module.get_seminar_groups_url }}">
-        Seminar Groups
-    </a>
     <a class="btn btn-default" href="/na">
         Sits/Resits
     </a>
@@ -256,13 +256,18 @@
             <th>
                 Module Mark
             </th>
+            <th>
+                &nbsp;
+            </th>
         </tr>
     </thead>
     <tbody>
     {% for student, performance in performances.items|sort %}
         <tr>
             <td>
+                {% if performance.seminar_group %}
                 {{ performance.seminar_group }}
+                {% endif %}
             </td>
             <td>
                 <a href="{{ performance.student.get_absolute_url }}">{{ performance.student.last_name }}, {{ performance.student.first_name|only_first_word }}</a>
@@ -270,46 +275,72 @@
             <td>
                 {% if performance.student.lsp %}<a href="{{ performance.student.get_lsp_view_url }}"><span class="glyphicon glyphicon-warning-sign"></span></a>{% endif %}
             <td>
-                {{ performance.attendance | count_attendance }} / {{ module.sessions_recorded }}
+                {{ performance.attendance | count_attendance }} / {% if module.sessions_recorded %}{{ module.sessions_recorded }}{% else %}0{% endif %}
             </td>
             {% if module.assessment_1_title %}
-                <th>
-                    {{ performance.assessment_1 }}
-                </th>
+                <td>
+                    <a href = "/essay_feedback/{{ module.code }}/{{ module.year }}/1/{{ performance.student.student_id }}"><span class="glyphicon glyphicon-pencil"></span></a>
+                    {% if performance.assessment_1 %}
+                    &nbsp;{{ performance.assessment_1 }}&nbsp; 
+                        <a href = "/export_feedback_sheet/{{ module.code }}/{{ module.year }}/1/{{ performance.student.student_id }}"><span class="glyphicon glyphicon-file"></span></a>
+                    {% endif %}
+                </td>
             {% endif %}
             {% if module.assessment_2_title %}
-                <th>
-                    {{ performance.assessment_2 }}
-                </th>
+                <td>
+                    {% if performance.assessment_2 %}
+                    {{ performance.assessment_2 }}&nbsp; 
+                    {% endif %}
+                    <a href = "/essay_feedback/{{ module.code }}/{{ module.year }}/2/{{ performance.student.student_id }}"><span class="glyphicon glyphicon-pencil"></span></a>
+                </td>
             {% endif %}
             {% if module.assessment_3_title %}
-                <th>
-                    {{ performance.assessment_3 }}
-                </th>
+                <td>
+                    {% if performance.assessment_3 %}
+                    {{ performance.assessment_3 }}&nbsp; 
+                    {% endif %}
+                    <a href = "/essay_feedback/{{ module.code }}/{{ module.year }}/3/{{ performance.student.student_id }}"><span class="glyphicon glyphicon-pencil"></span></a>
+                </td>
             {% endif %}
             {% if module.assessment_4_title %}
-                <th>
-                    {{ performance.assessment_4 }}
-                </th>
+                <td>
+                    {% if performance.assessment_4 %}
+                    {{ performance.assessment_4 }}&nbsp; 
+                    {% endif %}
+                    <a href = "/essay_feedback/{{ module.code }}/{{ module.year }}/4/{{ performance.student.student_id }}"><span class="glyphicon glyphicon-pencil"></span></a>
+                </td>
             {% endif %}
             {% if module.assessment_5_title %}
-                <th>
-                    {{ performance.assessment_5 }}
-                </th>
+                <td>
+                    {% if performance.assessment_5 %}
+                    {{ performance.assessment_5 }}&nbsp; 
+                    {% endif %}
+                    <a href = "/essay_feedback/{{ module.code }}/{{ module.year }}/5/{{ performance.student.student_id }}"><span class="glyphicon glyphicon-pencil"></span></a>
+                </td>
             {% endif %}
             {% if module.assessment_6_title %}
-                <th>
-                    {{ performance.assessment_6 }}
-                </th>
+                <td>
+                    {% if performance.assessment_6 %}
+                    {{ performance.assessment_6 }}&nbsp; 
+                    {% endif %}
+                    <a href = "/essay_feedback/{{ module.code }}/{{ module.year }}/6/{{ performance.student.student_id }}"><span class="glyphicon glyphicon-pencil"></span></a>
+                </td>
             {% endif %}
             {% if module.exam_value %}
-                <th>
+                <td>
+                    {% if performance.exam %}
                     {{ performance.exam }}
-                </th>
+                    {% endif %}
+                </td>
             {% endif %}
-            <th>
+            <td>
+                {% if performance.average %}
                 {{ performance.average }}
-            </th>
+                {% endif %}
+            </td>
+            <td>
+                <a href="#" class="remove""><span class="glyphicon glyphicon-remove" id="{{ performance.student.student_id }}"></span></a>
+            </td>
         </tr>
     {% endfor %}
     </tbody>
@@ -328,6 +359,19 @@ $(document).on("click", ".delete", function(e) {
     }
 });
 });
+
+
+$(document).on("click", ".remove", function(e) {
+    bootbox.confirm("Are you sure you want to remove this student from the module and delete all marks the students might have in this module? If the student is just temporary absent, it is better to mark them inactive.", function(confirm) {
+        if (confirm)
+        {
+        var student_id = e.target.id;
+        var remove = "{{ module.get_remove_student_url }}" + student_id;
+        window.location.replace(remove);
+        }
+    });
+});
+
 
 {% endblock %}
 

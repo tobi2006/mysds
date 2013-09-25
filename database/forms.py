@@ -1,5 +1,4 @@
 from django import forms
-#from bootstrap_toolkit.widgets import BootstrapTextInput, BootstrapUneditableInput
 from database.models import *
 
 from django.contrib.auth.models import User
@@ -28,14 +27,15 @@ class UserModelMultipleChoiceField(forms.ModelMultipleChoiceField):
 class StudentForm(forms.ModelForm):
 
     tutor = UserModelChoiceField(
-            User.objects.filter(groups__name='teachers'),
+            User.objects.filter(groups__name='teachers').order_by('first_name', 'last_name'),
+            required = False,
             widget=forms.Select(attrs={'class': 'form-control'})
             )
 
     class Meta:
         model = Student
         fields = ('first_name', 'last_name', 'student_id', 'email',
-                'active', 'since', 'year', 'is_part_time',
+                'active', 'since', 'year', 'is_part_time', 'tier_4',
                 'tutor', 'course', 'qld', 'nalp', 'address',
                 'home_address', 'phone_no', 'permanent_email')
         widgets = {
@@ -51,6 +51,7 @@ class StudentForm(forms.ModelForm):
                 'since': forms.Select(attrs={'class': 'form-control'}),
                 'course': forms.Select(attrs={'class': 'form-control'}),
                 'nalp': forms.CheckboxInput(attrs={'class': 'form-control'}),
+                'tier_4': forms.CheckboxInput(attrs={'class': 'form-control'}),
                 'is_part_time': forms.CheckboxInput(attrs={'class': 'form-control'}),
                 'active': forms.CheckboxInput(attrs={'class': 'form-control'}),
                 'qld': forms.CheckboxInput(attrs={'class': 'form-control'})
@@ -70,7 +71,7 @@ class ModuleForm(forms.ModelForm):
                 'successor_of': forms.Select(attrs={'class': 'form-control'}),
                 'title': forms.TextInput(attrs={'class': 'form-control'}),
                 'code': forms.TextInput(attrs={'class': 'form-control'}),
-                'credits': forms.TextInput(attrs={'class': 'form-control'}),
+                'credits': forms.Select(attrs={'class': 'form-control'}),
                 'year': forms.Select(attrs={'class': 'form-control'}),
                 'first_session': forms.Select(attrs={'class': 'form-control'}),
                 'no_teaching_in': forms.TextInput(attrs={'class': 'form-control'}),
@@ -78,16 +79,28 @@ class ModuleForm(forms.ModelForm):
                 'number_of_sessions': forms.TextInput(attrs={'class': 'form-control'}),
                 'assessment_1_title': forms.TextInput(attrs={'class': 'form-control'}),
                 'assessment_1_value': forms.TextInput(attrs={'class': 'form-control'}),
+                'assessment_1_type': forms.Select(attrs={'class': 'form-control'}),
+                'assessment_1_max_word_count': forms.TextInput(attrs={'class': 'form-control'}),
                 'assessment_2_title': forms.TextInput(attrs={'class': 'form-control'}),
                 'assessment_2_value': forms.TextInput(attrs={'class': 'form-control'}),
+                'assessment_2_type': forms.Select(attrs={'class': 'form-control'}),
+                'assessment_2_max_word_count': forms.TextInput(attrs={'class': 'form-control'}),
                 'assessment_3_title': forms.TextInput(attrs={'class': 'form-control'}),
                 'assessment_3_value': forms.TextInput(attrs={'class': 'form-control'}),
+                'assessment_3_type': forms.Select(attrs={'class': 'form-control'}),
+                'assessment_3_max_word_count': forms.TextInput(attrs={'class': 'form-control'}),
                 'assessment_4_title': forms.TextInput(attrs={'class': 'form-control'}),
                 'assessment_4_value': forms.TextInput(attrs={'class': 'form-control'}),
+                'assessment_4_type': forms.Select(attrs={'class': 'form-control'}),
+                'assessment_4_max_word_count': forms.TextInput(attrs={'class': 'form-control'}),
                 'assessment_5_title': forms.TextInput(attrs={'class': 'form-control'}),
                 'assessment_5_value': forms.TextInput(attrs={'class': 'form-control'}),
+                'assessment_5_type': forms.Select(attrs={'class': 'form-control'}),
+                'assessment_5_max_word_count': forms.TextInput(attrs={'class': 'form-control'}),
                 'assessment_6_title': forms.TextInput(attrs={'class': 'form-control'}),
                 'assessment_6_value': forms.TextInput(attrs={'class': 'form-control'}),
+                'assessment_6_type': forms.Select(attrs={'class': 'form-control'}),
+                'assessment_6_max_word_count': forms.TextInput(attrs={'class': 'form-control'}),
                 'exam_value': forms.TextInput(attrs={'class': 'form-control'})
                 }
 

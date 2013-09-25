@@ -1,0 +1,13 @@
+exclude.txt
+mysds.db
+deploy.sh
+exam-board-mode.txt
+questions.txt
+todo.md
+.git
+.*.swp
+*.pyc
+.gitignore
+mysds/settings.py
+database/fixtures
+old_stuff

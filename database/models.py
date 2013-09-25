@@ -12,27 +12,7 @@ DEGREES = (
     )
 
 ACADEMIC_YEARS = (
-        (2009, '2009/10'),
-        (2010, '2010/11'),
-        (2011, '2011/12'),
-        (2012, '2012/13'),
-        (2013, '2013/14'),
-        (2014, '2014/15'),
-        (2015, '2015/16'),
-        (2016, '2016/17'),
-        (2017, '2017/18'),
-        (2018, '2018/19'),
-        (2019, '2019/20'),
-        (2020, '2020/21'),
-        (2021, '2021/22'),
-        (2022, '2022/23'),
-        (2023, '2023/24'),
-        (2024, '2024/25'),
-        (2025, '2025/26'),
-        (2026, '2026/27'),
-        (2027, '2027/28'),
-        (2028, '2028/29'),
-        (2029, '2029/30')
+        [(i, str(i) + "/" + str(i+1)) for i in range(2009, 2025)]
     )
 
 TEACHING_WEEKS = (
@@ -51,10 +31,10 @@ POSSIBLE_YEARS = (
 def this_year():
     year = datetime.datetime.now().year
     month = datetime.datetime.now().month
-    if month < 10:
-        current_year = year
+    if month < 9:
+        current_year = year - 1
     else:
-        current_year = year + 1
+        current_year = year
     return current_year
 
 class MetaData(models.Model):
@@ -62,7 +42,7 @@ class MetaData(models.Model):
     current_year = models.IntegerField(choices=ACADEMIC_YEARS)
 
 class Course(models.Model):
-    title = models.CharField(max_length = 50, unique=True, verbose_name = "Official Course Title")
+    title = models.CharField(max_length = 100, unique=True, verbose_name = "Official Course Title")
 #    short_title = models.CharField(max_length = 30, blank = True, verbose_name = "Short Title") 
 #    is_pg = models.BooleanField(verbose_name="Postgraduate Course")
 #    all_years = models.BooleanField(verbose_name="Course extends over all years (for example Erasmus)")
@@ -79,7 +59,17 @@ class Module(models.Model):
             ('12', 'Years 1 and 2'),
             ('23', 'Years 2 and 3')
         ) #With these kinds of strings, it should be possible to check "if '1' in eligible:"
-    title = models.CharField(max_length = 50)
+    CREDITS = (
+            (20, '20'),
+            (40, '40')
+        )
+    ASSESSMENT_TYPES = (
+            ('essay', 'Essay'),
+            ('presentation', 'Presentation'),
+            ('group_presentation', 'Group Presentation'),
+            ('legal_problem', 'Legal Problem')
+        )
+    title = models.CharField(max_length = 100)
     code = models.CharField(max_length = 20)
     instructors = models.ManyToManyField(User, limit_choices_to={'groups__name': 'teachers'}, blank=True, null=True)
     current_year = this_year()
@@ -88,7 +78,7 @@ class Module(models.Model):
     is_foundational = models.BooleanField(verbose_name="Foundational Module")
     is_pg = models.BooleanField(verbose_name="Postgraduate Module")
     is_nalp = models.BooleanField(verbose_name="Module is required for the NALP Qualification")
-    credits = models.IntegerField(default=20)
+    credits = models.IntegerField(default=20, choices=CREDITS)
     eligible = models.CharField(
             max_length = 3,
             choices = ELIGIBLE,
@@ -96,11 +86,11 @@ class Module(models.Model):
             verbose_name = "Which students can (or have to) take this module?"
         )
     first_session = models.IntegerField(default=5, verbose_name = "Week of first seminar", choices = TEACHING_WEEKS)
-    no_teaching_in = models.CharField(max_length = 20, blank=True)
+    no_teaching_in = models.CharField(max_length = 100, blank=True)
     last_session = models.IntegerField(default=15, verbose_name = "Week of last seminar", choices = TEACHING_WEEKS)
     sessions_recorded = models.IntegerField(blank=True, null=True, default=0)
     assessment_1_title = models.CharField(
-            max_length = 30,
+            max_length = 100,
             verbose_name="Assessment 1: Name",
             blank=True,
             null=True
@@ -110,8 +100,12 @@ class Module(models.Model):
             blank=True,
             null=True,
         )
+    assessment_1_type = models.ForeignKey('feedback.FeedbackCategories', blank=True, null=True, related_name="assessment_1")
+    assessment_1_available = models.BooleanField(verbose_name = "Students can see the mark/feedback")
+    assessment_1_submission_date = models.DateField(blank = True, null = True)
+    assessment_1_max_word_count = models.IntegerField(blank = True, null = True)
     assessment_2_title = models.CharField(
-            max_length = 30,
+            max_length = 100,
             verbose_name="Assessment 2: Name",
             blank=True,
             null=True
@@ -121,8 +115,12 @@ class Module(models.Model):
             blank=True,
             null=True,
         )
+    assessment_2_type = models.ForeignKey('feedback.FeedbackCategories', blank=True, null=True, related_name="assessment_2")
+    assessment_2_available = models.BooleanField(verbose_name = "Students can see the mark/feedback")
+    assessment_2_submission_date = models.DateField(blank = True, null = True)
+    assessment_2_max_word_count = models.IntegerField(blank = True, null = True)
     assessment_3_title = models.CharField(
-            max_length = 30,
+            max_length = 100,
             verbose_name="Assessment 3: Name",
             blank=True,
             null=True
@@ -132,8 +130,12 @@ class Module(models.Model):
             blank=True,
             null=True,
         )
+    assessment_3_type = models.ForeignKey('feedback.FeedbackCategories', blank=True, null=True, related_name="assessment_3")
+    assessment_3_available = models.BooleanField(verbose_name = "Students can see the mark/feedback")
+    assessment_3_submission_date = models.DateField(blank = True, null = True)
+    assessment_3_max_word_count = models.IntegerField(blank = True, null = True)
     assessment_4_title = models.CharField(
-            max_length = 30,
+            max_length = 100,
             verbose_name="Assessment 4: Name",
             blank=True,
             null=True
@@ -143,8 +145,12 @@ class Module(models.Model):
             blank=True,
             null=True,
         )
+    assessment_4_type = models.ForeignKey('feedback.FeedbackCategories', blank=True, null=True, related_name="assessment_4")
+    assessment_4_available = models.BooleanField(verbose_name = "Students can see the mark/feedback")
+    assessment_4_submission_date = models.DateField(blank = True, null = True)
+    assessment_4_max_word_count = models.IntegerField(blank = True, null = True)
     assessment_5_title = models.CharField(
-            max_length = 30,
+            max_length = 100,
             verbose_name="Assessment 5: Name",
             blank=True,
             null=True
@@ -154,8 +160,12 @@ class Module(models.Model):
             blank=True,
             null=True,
         )
+    assessment_5_type = models.ForeignKey('feedback.FeedbackCategories', blank=True, null=True, related_name="assessment_5")
+    assessment_5_available = models.BooleanField(verbose_name = "Students can see the mark/feedback")
+    assessment_5_submission_date = models.DateField(blank = True, null = True)
+    assessment_5_max_word_count = models.IntegerField(blank = True, null = True)
     assessment_6_title = models.CharField(
-            max_length = 30,
+            max_length = 100,
             verbose_name="Assessment 6: Name",
             blank=True,
             null=True
@@ -165,6 +175,10 @@ class Module(models.Model):
             blank=True,
             null=True,
         )
+    assessment_6_type = models.ForeignKey('feedback.FeedbackCategories', blank=True, null=True, related_name="assessment_6")
+    assessment_6_available = models.BooleanField(verbose_name = "Students can see the mark/feedback")
+    assessment_6_submission_date = models.DateField(blank = True, null = True)
+    assessment_6_max_word_count = models.IntegerField(blank = True, null = True)
     exam_value = models.IntegerField(verbose_name="Percentage value for the exam", default=60, blank=True, null=True)
 
     def __unicode__(self):
@@ -175,7 +189,10 @@ class Module(models.Model):
         number_of_sessions = self.last_session - self.first_session
         number_of_sessions += 1
         if self.no_teaching_in != "":
-            number_of_sessions -= len(self.no_teaching_in.split(","))
+            no_t_in = self.no_teaching_in.strip() # make sure that a "," at the end does not cause trouble
+            if no_t_in[-1] == ",":
+                no_t_in = no_t_in[:-1]
+            number_of_sessions -= len(no_t_in.split(","))
         return number_of_sessions
 
     def get_absolute_url(self):
@@ -204,7 +221,9 @@ class Module(models.Model):
 
     def get_seminar_group_overview_url(self):
         return reverse('seminar_group_overview', args=[self.code, str(self.year)])
-
+  
+    def get_remove_student_url(self):
+        return reverse('generic_remove_student_from_module', args=[self.code, str(self.year)])
 
     def get_export_marks_url(self):
         return reverse('export_marks', args=[self.code, str(self.year)])
@@ -213,32 +232,34 @@ class Module(models.Model):
         unique_together = ('code', 'year')
 
 class Student(models.Model):
-    student_id = models.CharField(max_length = 15, primary_key = True)
-    exam_id = models.CharField(max_length = 15, blank=True, null=True, unique = True, default=None)
-    first_name = models.CharField(max_length = 30)
-    last_name = models.CharField(max_length = 30)
+    student_id = models.CharField(max_length = 25, primary_key = True)
+    exam_id = models.CharField(max_length = 25, blank=True, null=True, unique = True, default=None)
+    first_name = models.CharField(max_length = 100)
+    last_name = models.CharField(max_length = 100)
+    belongs_to = models.ForeignKey(User, limit_choices_to={'groups__name': 'students'}, blank=True, null=True)
     since = models.IntegerField(choices=ACADEMIC_YEARS, blank=True, null=True) 
     year = models.IntegerField(choices=POSSIBLE_YEARS, blank=True, null=True)
     is_part_time = models.BooleanField(verbose_name = "Part Time")
     second_part_time_year = models.BooleanField()   # This box has to be ticked when a part time student is in
                                                     # the second half of a "year": student x might be in her second
                                                     # year, but still takes year 1 modules for example
-    email = models.CharField(max_length = 50, blank=True)
+    email = models.CharField(max_length = 100, blank=True)
     course = models.ForeignKey(Course, blank=True, null=True)
     qld = models.BooleanField(verbose_name="QLD Status", default=True)
-    tutor = models.ForeignKey(User, limit_choices_to={'groups__name': 'teachers'}, blank=True, null=True)
+    tutor = models.ForeignKey(User, limit_choices_to={'groups__name': 'teachers'}, blank=True, null=True, related_name="tutee")
     modules = models.ManyToManyField(Module, blank=True)
     notes = models.TextField(blank=True)
     highlighted = models.BooleanField()
     active = models.BooleanField(default=True)
     lsp = models.TextField(blank=True)
-    permanent_email = models.CharField(max_length = 50, blank=True)
-    achieved_grade = models.IntegerField(choices=DEGREES, blank=True, null=True)
+    permanent_email = models.CharField(max_length = 100, blank=True)
     address = models.TextField(blank=True, verbose_name="Term Time Address")
-    phone_no = models.CharField(max_length=20, blank=True)
+    phone_no = models.CharField(max_length=100, blank=True)
     home_address = models.TextField(blank=True)
     nalp = models.BooleanField(verbose_name = "Paralegal Pathway")
     tier_4 = models.BooleanField(verbose_name = "Tier 4 Student")
+    achieved_degree = models.IntegerField(choices=DEGREES, blank=True, null=True)
+    problems = models.TextField(blank=True)
 
     def __unicode__(self):
         return u'%s, %s' % (self.last_name, self.first_name)
@@ -261,6 +282,54 @@ class Student(models.Model):
     def get_tutee_url(self):
         return reverse('tutee_edit', args=[self.student_id])
 
+    def year_1_average(self):
+        performances = Performance.objects.filter(student=self, part_of_average=1)
+        marks = []
+        for performance in performances:
+            if performance.module.credits == 20:
+                marks.append(performance.real_average)
+            elif performance.module.credits == 40:
+                marks.append(performance.real_average)
+                marks.append(performance.real_average)
+        while len(marks) > 5:
+            marks.remove(min(marks))
+        all_marks = sum(marks)
+        all_marks += 0.0
+        average = all_marks / 5
+        return average
+
+    def year_2_average(self):
+        performances = Performance.objects.filter(student=self, part_of_average=2)
+        marks = []
+        for performance in performances:
+            if performance.module.credits == 20:
+                marks.append(performance.real_average)
+            elif performance.module.credits == 40:
+                marks.append(performance.real_average)
+                marks.append(performance.real_average)
+        while len(marks) > 5:
+            marks.remove(min(marks))
+        all_marks = sum(marks)
+        all_marks += 0.0
+        average = all_marks / 5
+        return average
+
+    def year_3_average(self):
+        performances = Performance.objects.filter(student=self, part_of_average=3)
+        marks = []
+        for performance in performances:
+            if performance.module.credits == 20:
+                marks.append(performance.real_average)
+            elif performance.module.credits == 40:
+                marks.append(performance.real_average)
+                marks.append(performance.real_average)
+        while len(marks) > 5:
+            marks.remove(min(marks))
+        all_marks = sum(marks)
+        all_marks += 0.0
+        average = all_marks / 5
+        return average
+        
     class Meta:
         ordering = ['last_name', 'first_name', 'year']
 
@@ -325,6 +394,7 @@ class Performance(models.Model):
 
     average = models.IntegerField(blank=True, null=True)
     real_average = models.FloatField(blank=True, null=True)
+    part_of_average = models.IntegerField(blank=True, null=True)
 
     attendance = models.CharField(max_length=50, blank=True)
 
@@ -335,7 +405,12 @@ class Performance(models.Model):
         ordering = ['module', 'student']
 
     def initial_save(self):
-        """ Sets the initial attendance string based on the number of sessions in the module """
+        """ 
+        Sets the initial attendance string based on the number of sessions in the module,
+
+        Also sets the part_of_average variable, which is important for the student's average.
+        """
+
         counter = 0
         initial_attendance = ""
         number_of_sessions = self.module.get_number_of_sessions()
@@ -343,6 +418,10 @@ class Performance(models.Model):
             initial_attendance = initial_attendance + "0"
             counter += 1
         self.attendance = initial_attendance
+        meta_stuff = MetaData.objects.get(data_id = 1)
+        current_year = meta_stuff.current_year
+        distance_of_years = self.module.year - current_year
+        self.part_of_average = self.student.year + distance_of_years
         self.save()
 
     def save_with_avg(self):

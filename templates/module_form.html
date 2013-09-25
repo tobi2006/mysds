@@ -125,6 +125,15 @@
     <p>
     Enter the teaching weeks for the sessions with recorded attendance below. If you need more information, refer to the <a href="http://www.canterbury.ac.uk/support/registry/documents/taro/13-14-week-numbers.pdf" target="_blank">Week Overview</a> and the <a href="http://www.canterbury.ac.uk/support/student-support-and-guidance/term-dates/2013-2014.asp" target="_blank">Term Dates</a> on the CCCU website. If your module has an Independent Study Week or something similar, please enter the weeks where you will not be recording attendance into the "No Teaching In" field, separated by a comma. The Law Team suggestions for Independent Study Weeks are 9 (term 1) and 25 (term 2).
     </p>
+    <br>
+    <label>Default options:</label>
+    <div class="btn-group">
+        <button type="button" id="sf1" class="btn btn-default">Short/Fat, term 1</button>
+        <button type="button" id="sf2" class="btn btn-default">Short/Fat, term 2</button>
+        <button type="button" id="lto" class="btn btn-default">Long/Thin module, no odd weeks</button>
+        <button type="button" id="lte" class="btn btn-default">Long/Thin module, no even weeks</button>
+    </div>
+    <br>
     <table cellpadding = "10">
         <tr> 
             <td>
@@ -158,7 +167,7 @@
                 <strong>Number of Coursework Assessments</strong>
             </td>
             <td>
-                <select id="number_of_coursework" class="form-control" onchange="put_assessment_forms()">
+                <select id="number_of_coursework" class="form-control" name="number_of_coursework">
                     {% if add %}
                     <option value="0">0</option>
                     <option value="1" selected>1</option>
@@ -187,13 +196,66 @@
         </tr>
     </table>
     <table cellpadding="10" id="assessment_forms">
-        <tr>
-            <td>Title</td>
+        <tr id="assessment_1">
+            <td><strong>Assessment 1<strong></td>
             <td>{{ module_form.assessment_1_title }}</td>
-            <td>Assessment Value</td>
+            <td>Value</td>
             <td>{{ module_form.assessment_1_value }}</td>
+            <td>Type</td>
+            <td>{{ module_form.assessment_1_type }}</td>
+            <td>Max. Wordcount</td>
+            <td>{{ module_form.assessment_1_max_word_count }}</td>
         </tr>
-
+        <tr id="assessment_2">
+            <td><strong>Assessment 2<strong></td>
+            <td>{{ module_form.assessment_2_title }}</td>
+            <td>Value</td>
+            <td>{{ module_form.assessment_2_value }}</td>
+            <td>Type</td>
+            <td>{{ module_form.assessment_2_type }}</td>
+            <td>Max. Wordcount</td>
+            <td>{{ module_form.assessment_2_max_word_count }}</td>
+        </tr>
+        <tr id="assessment_3">
+            <td><strong>Assessment 3<strong></td>
+            <td>{{ module_form.assessment_3_title }}</td>
+            <td>Value</td>
+            <td>{{ module_form.assessment_3_value }}</td>
+            <td>Type</td>
+            <td>{{ module_form.assessment_3_type }}</td>
+            <td>Max. Wordcount</td>
+            <td>{{ module_form.assessment_3_max_word_count }}</td>
+        </tr>
+        <tr id="assessment_4">
+            <td><strong>Assessment 4<strong></td>
+            <td>{{ module_form.assessment_4_title }}</td>
+            <td>Value</td>
+            <td>{{ module_form.assessment_4_value }}</td>
+            <td>Type</td>
+            <td>{{ module_form.assessment_4_type }}</td>
+            <td>Max. Wordcount</td>
+            <td>{{ module_form.assessment_4_max_word_count }}</td>
+        </tr>
+        <tr id="assessment_5">
+            <td><strong>Assessment 5<strong></td>
+            <td>{{ module_form.assessment_5_title }}</td>
+            <td>Value</td>
+            <td>{{ module_form.assessment_5_value }}</td>
+            <td>Type</td>
+            <td>{{ module_form.assessment_5_type }}</td>
+            <td>Max. Wordcount</td>
+            <td>{{ module_form.assessment_5_max_word_count }}</td>
+        </tr>
+        <tr id="assessment_6">
+            <td><strong>Assessment 6<strong></td>
+            <td>{{ module_form.assessment_6_title }}</td>
+            <td>Value</td>
+            <td>{{ module_form.assessment_6_value }}</td>
+            <td>Type</td>
+            <td>{{ module_form.assessment_6_type }}</td>
+            <td>Max. Wordcount</td>
+            <td>{{ module_form.assessment_6_max_word_count }}</td>
+        </tr>
     </table>
     <div class="form-group" id="exam_area">
         <label for="id_exam_value">Exam Value</label>
@@ -208,77 +270,162 @@
 
 {% block scripts %}
 
-    function put_assessment_forms(){
-        var element = document.getElementById("number_of_coursework");
-        var assessment_2 = '<tr><td><strong>Assessment 1:</strong></td>\
-                            <td>Title</td><td>\
-                            {{ module_form.assessment_1_title }}</td>\
-                            <td>Percentage</td><td>\
-                            {{ module_form.assessment_1_value }}</tr>\
-                            <tr><td><strong>Assessment 2:</strong></td>\
-                            <td>Title</td><td>\
-                            {{ module_form.assessment_2_title }}</td>\
-                            <td>Percentage</td><td>\
-                            {{ module_form.assessment_2_value }}</tr>';
-        var assessment_3 = '<tr><td><strong>Assessment 3:</strong></td>\
-                            <td>Title</td><td>\
-                            {{ module_form.assessment_3_title }}</td>\
-                            <td>Percentage</td><td>\
-                            {{ module_form.assessment_3_value }}</tr>';
-        var assessment_4 = '<tr><td><strong>Assessment 4:</strong></td>\
-                            <td>Title</td><td>\
-                            {{ module_form.assessment_4_title }}</td>\
-                            <td>Percentage</td><td>\
-                            {{ module_form.assessment_4_value }}</tr>';
-        var assessment_5 = '<tr><td><strong>Assessment 5:</strong></td>\
-                            <td>Title</td><td>\
-                            {{ module_form.assessment_5_title }}</td>\
-                            <td>Percentage</td><td>\
-                            {{ module_form.assessment_5_value }}</tr>';
-        var assessment_6 = '<tr><td><strong>Assessment 6:</strong></td>\
-                            <td>Title</td><td>\
-                            {{ module_form.assessment_6_title }}</td>\
-                            <td>Percentage</td><td>\
-                            {{ module_form.assessment_6_value }}</tr>';
-        if (element.value=="0"){
-            var toenter = '';
-        }
-        if(element.value=="1"){
-            var toenter = '<tr><td>Assessment Title</td><td>\
-                        {{ module_form.assessment_1_title }}\
-                        </td><td>Assessment Value</td><td>{{ module_form.assessment_1_value }}</td></tr>';
-        }
-        if(element.value=="2"){
-            var toenter = assessment_2;
-        }
-        if (element.value=="3"){
-            var toenter = assessment_2 + assessment_3;
-        }
-        if (element.value=="4"){
-            var toenter = assessment_2 + assessment_3 + assessment_4;
-        }
-        if (element.value=="5"){
-            var toenter = assessment_2 + assessment_3 + assessment_4 + assessment_5;
-        }
-        if (element.value=="6"){
-            var toenter = assessment_2 + assessment_3 + assessment_4 +
-                assessment_5 + assessment_6;
-        }
+{% comment %}
+<script type="text/javascript">
+{% endcomment %}
 
-        document.getElementById("assessment_forms").innerHTML = toenter; 
-    }
-    
-    function show_hide_exam(checkbox){
-        if (checkbox.checked == true){
-            toenter = '<strong>Exam Value</strong>{{ module_form.exam_value }}';
-        }
-        else{
-            toenter = '';
-        }
-        document.getElementById("exam_area").innerHTML = toenter;
-    }
 
-    window.onload = put_assessment_forms();
+$(document).ready(function(){
+
+    {% if add %}
+        $('#assessment_2').hide();
+        $('#assessment_3').hide();
+        $('#assessment_4').hide();
+        $('#assessment_5').hide();
+        $('#assessment_6').hide();
+    {% else %}
+        {% if assessments == 0 %}
+            $('#assessment_1').hide();
+            $('#assessment_2').hide();
+            $('#assessment_3').hide();
+            $('#assessment_4').hide();
+            $('#assessment_5').hide();
+            $('#assessment_6').hide();
+        {% elif assessments == 1 %}
+            $('#assessment_2').hide();
+            $('#assessment_3').hide();
+            $('#assessment_4').hide();
+            $('#assessment_5').hide();
+            $('#assessment_6').hide();
+        {% elif assessments == 2 %}
+            $('#assessment_3').hide();
+            $('#assessment_4').hide();
+            $('#assessment_5').hide();
+            $('#assessment_6').hide();
+        {% elif assessments == 3 %}
+            $('#assessment_4').hide();
+            $('#assessment_5').hide();
+            $('#assessment_6').hide();
+        {% elif assessments == 4 %}
+            $('#assessment_5').hide();
+            $('#assessment_6').hide();
+        {% elif assessments == 5 %}
+            $('#assessment_6').hide();
+        {% endif %}
+    {% endif %}
+
+        $(document).ready(function(){
+            $('#sf1').bind('click', function (){
+                $("#id_first_session").val('5');
+                $("#id_last_session").val('15');
+                $("#id_no_teaching_in").val('9,');
+            });
+        });
+
+        $(document).ready(function(){
+            $('#sf2').bind('click', function (){
+                $("#id_first_session").val('19');
+                $("#id_last_session").val('29');
+                $("#id_no_teaching_in").val('25,');
+            });
+        });
+
+        $(document).ready(function(){
+            $('#lto').bind('click', function (){
+                $("#id_first_session").val('6');
+                $("#id_last_session").val('28');
+                $("#id_no_teaching_in").val('7,9,11,13,15,16,17,18,19,21,23,25,27,');
+            });
+        });
+
+        $(document).ready(function(){
+            $('#lte').bind('click', function (){
+                $("#id_first_session").val('5');
+                $("#id_last_session").val('29');
+                $("#id_no_teaching_in").val('6,8,10,12,14,16,17,18,19,20,22,24,26,28');
+            });
+        });
+        {% comment %}
+        <button type="button" id="sf1" class="btn btn-default">Short/Fat, term 1</>
+        <button type="button" id="sf2" class="btn btn-default">Short/Fat, term 2</btn>
+        <button type="button" id="lto" class="btn btn-default">Long/Thin module, no odd weeks</btn>
+        <button type="button" id="lte" class="btn btn-default">Long/Thin module, no even weeks</btn>
+        {% endcomment %}
+
+
+    $('#number_of_coursework').change(function(){
+        var number = $(this).val();
+        if (number=='0'){
+            $('#assessment_1').hide();
+            $('#assessment_2').hide();
+            $('#assessment_3').hide();
+            $('#assessment_4').hide();
+            $('#assessment_5').hide();
+            $('#assessment_6').hide();
+        }
+        else if (number=='1'){
+            $('#assessment_1').show();
+            $('#assessment_2').hide();
+            $('#assessment_3').hide();
+            $('#assessment_4').hide();
+            $('#assessment_5').hide();
+            $('#assessment_6').hide();
+        }
+        else if (number=='2'){
+            $('#assessment_1').show();
+            $('#assessment_2').show();
+            $('#assessment_3').hide();
+            $('#assessment_4').hide();
+            $('#assessment_5').hide();
+            $('#assessment_6').hide();
+        }
+        else if (number=='3'){
+            $('#assessment_1').show();
+            $('#assessment_2').show();
+            $('#assessment_3').show();
+            $('#assessment_4').hide();
+            $('#assessment_5').hide();
+            $('#assessment_6').hide();
+        }
+        else if (number=='4'){
+            $('#assessment_1').show();
+            $('#assessment_2').show();
+            $('#assessment_3').show();
+            $('#assessment_4').show();
+            $('#assessment_5').hide();
+            $('#assessment_6').hide();
+        }
+        else if (number=='5'){
+            $('#assessment_1').show();
+            $('#assessment_2').show();
+            $('#assessment_3').show();
+            $('#assessment_4').show();
+            $('#assessment_5').show();
+            $('#assessment_6').hide();
+        }
+        else if (number=='6'){
+            $('#assessment_1').show();
+            $('#assessment_2').show();
+            $('#assessment_3').show();
+            $('#assessment_4').show();
+            $('#assessment_5').show();
+            $('#assessment_6').show();
+        };
+    });
+});
+
+
+function show_hide_exam(checkbox){
+    if (checkbox.checked == true){
+        toenter = '<strong>Exam Value</strong>{{ module_form.exam_value }}';
+    }
+    else{
+        toenter = '';
+    }
+    document.getElementById("exam_area").innerHTML = toenter;
+};
+
+    {% comment %}j
 
     $(document).ready(function(){
             $('.form-control').change(function(){
@@ -303,7 +450,6 @@
                     if ($('#id_assessment_4_value').val().length){
                         sum = sum + parseInt($('#id_assessment_4_value').val());
                         }
-                    };
                 if ($('#id_assessment_5_value').length){
                     if ($('#id_assessment_5_value').val().length){
                         sum = sum + parseInt($('#id_assessment_5_value').val());
@@ -319,6 +465,7 @@
             });
         });
 
+        {% endcomment %}
     {% if add %}
 
 

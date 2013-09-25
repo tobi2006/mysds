@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %} Feedback for {{ student }}{% endblock %}
+
+{% block formstart %}
+    {% if add %}
+        {% url "add_essay_feedback" as action_url %}
+    {% else %}
+        {% url "edit_essay_feedback" object.pk as action_url %}
+    {% endif %}
+    <form action="{{ action_url }}" method="post" accept-charset="utf-8" role="form">
+    {% csrf_token %}
+{% endblock %}
+
+{% block content %}
+
+<h1>{{ module }}: {{ assessment }}</h1>
+<h2>{{ student.first_name }} {{ student.last_name }}</h2>
+<br>
+
+{% if form.errors %}
+    <em>{{ form.errors }}</em>
+{% endif %}
+
+<table cellpadding=10>
+    {% if edit %}
+    <tr>
+        <td>
+            <label for="first_marker">First Marker</label>
+        </td>
+        <td>
+            {{ form.marker }}
+        </td>
+    </tr>
+    {% else %}
+        {{ form.marker.as_hidden }}
+    {% endif %}
+    <tr>
+        <td>
+            <label for="submission_date">Submission Date</label>
+        </td>
+        <td>
+            {{ form.submission_date }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label for="submission_date">Marking Date</label>
+        </td>
+        <td>
+            {{ form.marking_date }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label for="category_mark_1">{{ categories.category_1 }}</label>
+        </td>
+        <td>
+            {{ form.category_mark_1 }}
+        </td>
+        <td>
+            <span class="glyphicon glyphicon-question-sign" id="category_1"></span>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label for="category_mark_2">{{ categories.category_2 }}</label>
+        </td>
+        <td>
+            {{ form.category_mark_2 }}
+        </td>
+        <td>
+            <span class="glyphicon glyphicon-question-sign" id="category_2"></span>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label for="category_mark_3">{{ categories.category_3 }}</label>
+        </td>
+        <td>
+            {{ form.category_mark_3 }}
+        </td>
+        <td>
+            <span class="glyphicon glyphicon-question-sign" id="category_3"></span>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label for="category_mark_4">{{ categories.category_4 }}</label>
+        </td>
+        <td>
+            {{ form.category_mark_4 }}
+        </td>
+        <td>
+            <span class="glyphicon glyphicon-question-sign" id="category_4"></span>
+        </td>
+    </tr>
+</table>
+
+<h4>General Comments</h4>
+
+{{ form.comments }}
+<br>
+<div class="form-group">
+    <div class="col-lg-2">
+        <label for "mark">Mark</label>
+    </div>
+    <div class="col-lg-1">
+        <input class="form-control" id="mark" name="mark" type="text" value="{% if essay_mark %}{{ essay_mark }}{% endif %}" />
+    </div>
+</div>
+<br><br>
+    <input type = "submit" value="Save" class="btn btn-default">
+</form>
+
+
+{% endblock %}
+
+{% block scripts %}
+
+    $(document).ready(function(){
+        $( "#id_submission_date" ).datepicker();
+    });
+
+    $(document).ready(function(){
+        $( "#id_marking_date" ).datepicker();
+    });
+
+    $(document).ready(function(){
+    $("#category_1").qtip({
+        content: {
+            text: '{{ categories.category_1_helptext | linebreaksbr }}'
+            }
+        });
+    $("#category_2").qtip({
+        content: {
+            text: '{{ categories.category_2_helptext | linebreaksbr }}'
+            }
+        });
+    $("#category_3").qtip({
+        content: {
+            text: '{{ categories.category_3_helptext | linebreaksbr }}'
+            }
+        });
+    $("#category_4").qtip({
+        content: {
+            text: '{{ categories.category_4_helptext | linebreaksbr }}'
+            }
+        });
+    });
+
+{% endblock %}

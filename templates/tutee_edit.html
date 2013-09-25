@@ -200,7 +200,7 @@
 
 {% for meeting in meetings %}
 
-<h3>{{ meeting.date_of_meet }} {% if meeting.tutor != user %} (with {{ meeting.tutor }}){% endif %}</h3>
+<h3>{{ meeting.date_of_meet }} {% if meeting.tutor != user %} (with {{ meeting.tutor.first_name }} {{ meeting.tutor.last_name }}){% endif %}</h3>
 
 <p>
 {{ meeting.notes | markdown }}

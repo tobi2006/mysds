@@ -25,6 +25,7 @@ def default_page(request):
             context_instance = RequestContext(request)
             )
 
+
 def na(request):
     printstring = 'This function is not available yet'
     title = 'CCCU Law DB: Not available'
