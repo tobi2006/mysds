@@ -2,5 +2,6 @@
 *.swp
 *.pyc
 *.pyo
+*.json
 old_stuff/
 mysds/settings.py
