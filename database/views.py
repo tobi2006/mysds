@@ -15,6 +15,7 @@ from database.models import *
 from database import functions
 from database.forms import *
 from database.strings import *
+from feedback.models import FeedbackCategories, Marksheet
 
 def is_teacher(user):
     if user:
@@ -68,13 +69,52 @@ def module_view(request, module_id, year):
     students = module.student_set.all()
     number_of_groups = 1
     performances = {}
+    # Find out which marksheet template for which essay
+    feedback = {1: False, 2: False, 3: False, 4: False, 5: False, 6: False}
+    essay = FeedbackCategories.objects.get(assessment_type = 'Essay')
+    legal_problem = FeedbackCategories.objects.get(assessment_type = 'Legal Problem')
+    oral_presentation = FeedbackCategories.objects.get(assessment_type = 'Oral Presentation')
+    feedback_for = [essay, legal_problem, oral_presentation]
+    if module.assessment_1_type in feedback_for:
+        feedback[1] = True
+    if module.assessment_2_type in feedback_for:
+        feedback[2] = True
+    if module.assessment_3_type in feedback_for:
+        feedback[3] = True
+    if module.assessment_4_type in feedback_for:
+        feedback[4] = True
+    if module.assessment_5_type in feedback_for:
+        feedback[5] = True
+    if module.assessment_6_type in feedback_for:
+        feedback[6] = True
+    rows = []
     for student in students:
+        row = {}
         performance = Performance.objects.get(student=student, module=module)
         if performance.seminar_group > number_of_groups:
             number_of_groups = performance.seminar_group
-        student_name = student.last_name + ", " + student.first_name
-        performances[student_name] = performance
-    
+        row['performance'] = performance
+
+        # Check which student did not attend the last session
+        last_session = module.sessions_recorded
+        row['no_attendance_twice'] = False
+        if last_session > 2:
+            last_session -= 1
+            session_before_last = last_session - 1
+            if performance.attendance[last_session] == '0' and performance.attendance[session_before_last] == '0':
+                row['no_attendance_twice'] = True
+                
+        # Check what symbols / links to show next to assessments
+        for assessment in range(1,7):
+            row[assessment] = False
+            try:
+                marksheet = Marksheet.objects.get(student=student, module=module, assessment=assessment)
+                if marksheet.comments:
+                    if marksheet.submission_date:
+                        row[assessment] = True
+            except Marksheet.DoesNotExist:
+                pass
+        rows.append(row)
     if request.user in module.instructors.all() or is_admin(request.user):
         adminorinstructor = True
     else:
@@ -86,8 +126,8 @@ def module_view(request, module_id, year):
         groupstring += str(i+1)
 
     return render_to_response('module_view.html',
-            {'module': module, 'performances': performances, 
-            'adminorinstructor': adminorinstructor,
+            {'module': module, 'rows': rows, 
+                'adminorinstructor': adminorinstructor, 'feedback': feedback,
             'number_of_groups': groupstring},
             context_instance = RequestContext(request)
             )

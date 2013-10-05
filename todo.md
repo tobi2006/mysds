@@ -2,12 +2,12 @@
 
 # Housekeeping
 
-Finally get the Action URL crap in order
-Write sit/resit mark views
+-Finally get the Action URL crap in order
+-Write sit/resit mark views
 
 # Marksheets
 
-Adapt template in views for other forms of assessment
+-Think about and add group mark template and form
 
 # Exam board mode
 

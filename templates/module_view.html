@@ -207,6 +207,9 @@
     <thead>
         <tr>
             <th>
+                &nbsp;
+            </th>
+            <th>
                 Seminar Group
             </th>
             <th>
@@ -262,90 +265,126 @@
         </tr>
     </thead>
     <tbody>
-    {% for student, performance in performances.items|sort %}
-        <tr>
+    {% for row in rows %}
+    <tr>
+        <td>
+            {% if row.no_attendance_twice %}
+                <span class="glyphicon glyphicon-warning-sign" id="no_attendance_twice"></span>
+            {% else %}
+                &nbsp;
+            {% endif %}
+        </td>
+        <td>
+            {% if row.performance.seminar_group %}
+                {{ row.performance.seminar_group }}
+            {% endif %}
+        </td>
+        <td>
+            <a href="{{ row.performance.student.get_absolute_url }}">{{ row.performance.student.last_name }}, {{ row.performance.student.first_name|only_first_word }}</a>
+        </td>
+        <td>
+            {% if row.performance.student.lsp %}<a href="{{ row.performance.student.get_lsp_view_url }}"><span class="glyphicon glyphicon-warning-sign"></span></a>{% endif %}
+        </td>
+        <td>
+            {{ row.performance.attendance | count_attendance }} / {% if module.sessions_recorded %}{{ module.sessions_recorded }}{% else %}0{% endif %}
+        </td>
+        {% if module.assessment_1_title %} 
             <td>
-                {% if performance.seminar_group %}
-                {{ performance.seminar_group }}
+                {% if feedback.1 %}
+                    <a href = "/essay_feedback/{{ module.code }}/{{ module.year }}/1/{{ row.performance.student.student_id }}"><span class="glyphicon glyphicon-pencil"></span></a> &nbsp;
+                {% endif %}
+                {% if row.performance.assessment_1 %}
+                    {{ row.performance.assessment_1 }} 
+                {% endif %}
+                {% if row.1 %}
+                    &nbsp; <a href = "/export_feedback_sheet/{{ module.code }}/{{ module.year }}/1/{{ row.performance.student.student_id }}"><span class="glyphicon glyphicon-file"></span></a>
+                {% endif %}
+            </td> 
+        {% endif %}
+        {% if module.assessment_2_title %} 
+            <td>
+                {% if feedback.2 %}
+                    <a href = "/essay_feedback/{{ module.code }}/{{ module.year }}/2/{{ row.performance.student.student_id }}"><span class="glyphicon glyphicon-pencil"></span></a> &nbsp;
+                {% endif %}
+                {% if row.performance.assessment_2 %}
+                    {{ row.performance.assessment_2 }} 
+                {% endif %}
+                {% if row.2 %}
+                    &nbsp; <a href = "/export_feedback_sheet/{{ module.code }}/{{ module.year }}/2/{{ row.performance.student.student_id }}"><span class="glyphicon glyphicon-file"></span></a>
+                {% endif %}
+            </td> 
+        {% endif %}
+        {% if module.assessment_3_title %} 
+            <td>
+                {% if feedback.3 %}
+                    <a href = "/essay_feedback/{{ module.code }}/{{ module.year }}/3/{{ row.performance.student.student_id }}"><span class="glyphicon glyphicon-pencil"></span></a> &nbsp;
+                {% endif %}
+                {% if row.performance.assessment_3 %}
+                    {{ row.performance.assessment_3 }} 
+                {% endif %}
+                {% if row.3 %}
+                    &nbsp; <a href = "/export_feedback_sheet/{{ module.code }}/{{ module.year }}/3/{{ row.performance.student.student_id }}"><span class="glyphicon glyphicon-file"></span></a>
+                {% endif %}
+            </td> 
+        {% endif %}
+        {% if module.assessment_4_title %} 
+            <td>
+                {% if feedback.4 %}
+                    <a href = "/essay_feedback/{{ module.code }}/{{ module.year }}/4/{{ row.performance.student.student_id }}"><span class="glyphicon glyphicon-pencil"></span></a> &nbsp;
+                {% endif %}
+                {% if row.performance.assessment_4 %}
+                    {{ row.performance.assessment_4 }} 
+                {% endif %}
+                {% if row.4 %}
+                    &nbsp; <a href = "/export_feedback_sheet/{{ module.code }}/{{ module.year }}/4/{{ row.performance.student.student_id }}"><span class="glyphicon glyphicon-file"></span></a>
+                {% endif %}
+            </td> 
+        {% endif %}
+        {% if module.assessment_5_title %} 
+            <td>
+                {% if feedback.5 %}
+                    <a href = "/essay_feedback/{{ module.code }}/{{ module.year }}/5/{{ row.performance.student.student_id }}"><span class="glyphicon glyphicon-pencil"></span></a> &nbsp;
+                {% endif %}
+                {% if row.performance.assessment_5 %}
+                    {{ row.performance.assessment_5 }} 
+                {% endif %}
+                {% if row.5 %}
+                    &nbsp; <a href = "/export_feedback_sheet/{{ module.code }}/{{ module.year }}/5/{{ row.performance.student.student_id }}"><span class="glyphicon glyphicon-file"></span></a>
+                {% endif %}
+            </td> 
+        {% endif %}
+        {% if module.assessment_6_title %} 
+            <td>
+                {% if feedback.6 %}
+                    <a href = "/essay_feedback/{{ module.code }}/{{ module.year }}/6/{{ row.performance.student.student_id }}"><span class="glyphicon glyphicon-pencil"></span></a> &nbsp;
+                {% endif %}
+                {% if row.performance.assessment_6 %}
+                    {{ row.performance.assessment_6 }} 
+                {% endif %}
+                {% if row.6 %}
+                    &nbsp; <a href = "/export_feedback_sheet/{{ module.code }}/{{ module.year }}/6/{{ row.performance.student.student_id }}"><span class="glyphicon glyphicon-file"></span></a>
+                {% endif %}
+            </td> 
+        {% endif %}
+        {% if module.exam_value %}
+            <td>
+                {% if row.performance.exam %}
+                {{ row.performance.exam }}
                 {% endif %}
             </td>
-            <td>
-                <a href="{{ performance.student.get_absolute_url }}">{{ performance.student.last_name }}, {{ performance.student.first_name|only_first_word }}</a>
-            </td>
-            <td>
-                {% if performance.student.lsp %}<a href="{{ performance.student.get_lsp_view_url }}"><span class="glyphicon glyphicon-warning-sign"></span></a>{% endif %}
-            <td>
-                {{ performance.attendance | count_attendance }} / {% if module.sessions_recorded %}{{ module.sessions_recorded }}{% else %}0{% endif %}
-            </td>
-            {% if module.assessment_1_title %}
-                <td>
-                    <a href = "/essay_feedback/{{ module.code }}/{{ module.year }}/1/{{ performance.student.student_id }}"><span class="glyphicon glyphicon-pencil"></span></a>
-                    {% if performance.assessment_1 %}
-                    &nbsp;{{ performance.assessment_1 }}&nbsp; 
-                        <a href = "/export_feedback_sheet/{{ module.code }}/{{ module.year }}/1/{{ performance.student.student_id }}"><span class="glyphicon glyphicon-file"></span></a>
-                    {% endif %}
-                </td>
+        {% endif %}
+        <td>
+            {% if row.performance.average %}
+            {{ row.performance.average }}
             {% endif %}
-            {% if module.assessment_2_title %}
-                <td>
-                    {% if performance.assessment_2 %}
-                    {{ performance.assessment_2 }}&nbsp; 
-                    {% endif %}
-                    <a href = "/essay_feedback/{{ module.code }}/{{ module.year }}/2/{{ performance.student.student_id }}"><span class="glyphicon glyphicon-pencil"></span></a>
-                </td>
-            {% endif %}
-            {% if module.assessment_3_title %}
-                <td>
-                    {% if performance.assessment_3 %}
-                    {{ performance.assessment_3 }}&nbsp; 
-                    {% endif %}
-                    <a href = "/essay_feedback/{{ module.code }}/{{ module.year }}/3/{{ performance.student.student_id }}"><span class="glyphicon glyphicon-pencil"></span></a>
-                </td>
-            {% endif %}
-            {% if module.assessment_4_title %}
-                <td>
-                    {% if performance.assessment_4 %}
-                    {{ performance.assessment_4 }}&nbsp; 
-                    {% endif %}
-                    <a href = "/essay_feedback/{{ module.code }}/{{ module.year }}/4/{{ performance.student.student_id }}"><span class="glyphicon glyphicon-pencil"></span></a>
-                </td>
-            {% endif %}
-            {% if module.assessment_5_title %}
-                <td>
-                    {% if performance.assessment_5 %}
-                    {{ performance.assessment_5 }}&nbsp; 
-                    {% endif %}
-                    <a href = "/essay_feedback/{{ module.code }}/{{ module.year }}/5/{{ performance.student.student_id }}"><span class="glyphicon glyphicon-pencil"></span></a>
-                </td>
-            {% endif %}
-            {% if module.assessment_6_title %}
-                <td>
-                    {% if performance.assessment_6 %}
-                    {{ performance.assessment_6 }}&nbsp; 
-                    {% endif %}
-                    <a href = "/essay_feedback/{{ module.code }}/{{ module.year }}/6/{{ performance.student.student_id }}"><span class="glyphicon glyphicon-pencil"></span></a>
-                </td>
-            {% endif %}
-            {% if module.exam_value %}
-                <td>
-                    {% if performance.exam %}
-                    {{ performance.exam }}
-                    {% endif %}
-                </td>
-            {% endif %}
-            <td>
-                {% if performance.average %}
-                {{ performance.average }}
-                {% endif %}
-            </td>
-            <td>
-                <a href="#" class="remove""><span class="glyphicon glyphicon-remove" id="{{ performance.student.student_id }}"></span></a>
-            </td>
-        </tr>
+        </td>
+        <td>
+            <a href="#" class="remove""><span class="glyphicon glyphicon-remove" id="{{ row.performance.student.student_id }}"></span></a>
+        </td>
+    </tr>
     {% endfor %}
     </tbody>
-</table>
-
+</table> 
 
 {% endblock %}
 
@@ -372,6 +411,14 @@ $(document).on("click", ".remove", function(e) {
     });
 });
 
+
+$(document).ready(function(){
+    $("#no_attendance_twice").qtip({
+    content: {
+        text: 'This student did not attend at least the last two sessions. This information might be wrong if you already marked some, but not all attendance for this module.'
+        }
+    });
+});
 
 {% endblock %}
 

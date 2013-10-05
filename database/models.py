@@ -185,6 +185,9 @@ class Module(models.Model):
         next_year = int(self.year) + 1
         return u'%s (%s/%s)' % (self.title, self.year, next_year)
 
+    def clean(self):
+        self.code = self.code.strip()
+
     def get_number_of_sessions(self):
         number_of_sessions = self.last_session - self.first_session
         number_of_sessions += 1
@@ -263,6 +266,9 @@ class Student(models.Model):
 
     def __unicode__(self):
         return u'%s, %s' % (self.last_name, self.first_name)
+
+    def clean(self):
+        self.student_id = self.student_id.strip()
 
     def get_absolute_url(self):
         return reverse('student_view', args=[self.student_id])

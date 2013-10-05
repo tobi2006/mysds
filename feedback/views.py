@@ -24,21 +24,27 @@ def edit_essay_feedback(request, module_id, year, assessment, student_id):
     if assessment == '1':
         assessment_title = module.assessment_1_title
         essay_mark = performance.assessment_1
+        feedback_type = module.assessment_1_type
     elif assessment == '2':
         assessment_title = module.assessment_2_title
         essay_mark = performance.assessment_2
+        feedback_type = module.assessment_2_type
     elif assessment == '3':
         assessment_title = module.assessment_3_title
         essay_mark = performance.assessment_3
+        feedback_type = module.assessment_3_type
     elif assessment == '4':
         assessment_title = module.assessment_4_title
         essay_mark = performance.assessment_4
+        feedback_type = module.assessment_4_type
     elif assessment == '5':
         assessment_title = module.assessment_5_title
         essay_mark = performance.assessment_5
+        feedback_type = module.assessment_5_type
     elif assessment == '6':
         assessment_title = module.assessment_6_title
         essay_mark = performance.assessment_5
+        feedback_type = module.assessment_5_type
     try:
         feedback = Marksheet.objects.get(module=module, student=student, assessment=assessment_int)
         edit = True
@@ -51,7 +57,6 @@ def edit_essay_feedback(request, module_id, year, assessment, student_id):
                 marker = request.user,
                 marking_date = datetime.datetime.today
                 )
-    feedback_type = FeedbackCategories.objects.get(assessment_type = 'Essay')
     if request.method == 'POST':
         form = forms.EssayForm(instance=feedback, data=request.POST)
         if form.is_valid():
@@ -76,7 +81,6 @@ def edit_essay_feedback(request, module_id, year, assessment, student_id):
                         performance.save_with_avg()
                 except ValueError:
                     pass
-
             
             return HttpResponseRedirect(module.get_absolute_url())
     else:

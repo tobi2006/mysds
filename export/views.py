@@ -26,32 +26,50 @@ def export_feedback_sheet(request, code, year, assessment_str, student_id):
     if assessment == 1:
         assessment_type = module.assessment_1_type
         assessment_title_string = '<b>' + module.assessment_1_title + '</b>'
-        wordcount_string = '<b>' + str(module.assessment_1_max_word_count) + ' Words max.</b>'
+        if module.assessment_1_max_word_count:
+            wordcount_string = '<b>' + str(module.assessment_1_max_word_count) + ' Words max.</b>'
+        else:
+            wordcount_string = ''
         mark = str(performance.assessment_1)
     if assessment == 2:
         assessment_type = module.assessment_2_type
         assessment_title_string = '<b>' + module.assessment_2_title + '</b>'
-        wordcount_string = '<b>' + module.assessment_2_max_word_count + ' Words max.</b>'
+        if module.assessment_2_max_word_count:
+            wordcount_string = '<b>' + str(module.assessment_2_max_word_count) + ' Words max.</b>'
+        else:
+            wordcount_string = ''
         mark = str(performance.assessment_2)
     if assessment == 3:
         assessment_type = module.assessment_3_type
         assessment_title_string = '<b>' + module.assessment_3_title + '</b>'
-        wordcount_string = '<b>' + module.assessment_3_max_word_count + ' Words max.</b>'
+        if module.assessment_3_max_word_count:
+            wordcount_string = '<b>' + str(module.assessment_3_max_word_count) + ' Words max.</b>'
+        else:
+            wordcount_string = ''
         mark = str(performance.assessment_3)
     if assessment == 4:
         assessment_type = module.assessment_4_type
         assessment_title_string = '<b>' + module.assessment_4_title + '</b>'
-        wordcount_string = '<b>' + module.assessment_4_max_word_count + ' Words max.</b>'
+        if module.assessment_4_max_word_count:
+            wordcount_string = '<b>' + str(module.assessment_4_max_word_count) + ' Words max.</b>'
+        else:
+            wordcount_string = ''
         mark = str(performance.assessment_4)
     if assessment == 5:
         assessment_type = module.assessment_5_type
         assessment_title_string = '<b>' + module.assessment_5_title + '</b>'
-        wordcount_string = '<b>' + module.assessment_5_max_word_count + ' Words max.</b>'
+        if module.assessment_5_max_word_count:
+            wordcount_string = '<b>' + str(module.assessment_5_max_word_count) + ' Words max.</b>'
+        else:
+            wordcount_string = ''
         mark = str(performance.assessment_5)
     if assessment == 6:
         assessment_type = module.assessment_6_type
         assessment_title_string = '<b>' + module.assessment_6_title + '</b>'
-        wordcount_string = '<b>' + module.assessment_6_max_word_count + ' Words max.</b>'
+        if module.assessment_6_max_word_count:
+            wordcount_string = '<b>' + str(module.assessment_6_max_word_count) + ' Words max.</b>'
+        else:
+            wordcount_string = ''
         mark = str(performance.assessment_6)
     feedback_category = FeedbackCategories.objects.get(assessment_type = assessment_type) 
     response = HttpResponse(mimetype='application/pdf')
@@ -70,152 +88,177 @@ def export_feedback_sheet(request, code, year, assessment_str, student_id):
     elements.append(im)
     elements.append(Spacer(1,5))
     essay = FeedbackCategories.objects.get(assessment_type = 'Essay')
+    legal_problem = FeedbackCategories.objects.get(assessment_type = 'Legal Problem')
+    oral_presentation = FeedbackCategories.objects.get(assessment_type = 'Oral Presentation')
+    essay_or_legal_problem = False
     if assessment_type == essay:
         title = Paragraph('<para alignment="center">Law Undergraduate Assessment Sheet: Essay</para>', styles['Heading2'])
-        elements.append(title)
-        elements.append(Spacer(1,5))
-        last_name_string = '<b>' + student.last_name + '</b>'
-        family_name = [Paragraph('Student family name', styles['Normal']), Spacer(1,3), Paragraph(last_name_string, styles['Normal'])]
-        first_name_string = '<b>' + student.first_name + '</b>'
-        first_name = [Paragraph('First name', styles['Normal']), Spacer(1,3), Paragraph(first_name_string, styles['Normal'])]
-        module_title_string = '<b>' + module.title + '</b>'
-        module_title = [Paragraph('Module Title', styles['Normal']), Spacer(1,3), Paragraph(module_title_string, styles['Normal'])]
-        module_code_string = '<b>' + module.code + '</b>'
-        module_code = [Paragraph('Module Code', styles['Normal']), Spacer(1,3), Paragraph(module_code_string, styles['Normal'])]
-        submission_date_string = '<b>' + str(marksheet.submission_date.day) + "/" + str(marksheet.submission_date.month) + "/" + str(marksheet.submission_date.year) + '</b>'
-        submission_date = [Paragraph('Submission Date', styles['Normal']), Spacer(1,3), Paragraph(submission_date_string, styles['Normal'])]
-        assessment_title = [Paragraph('Assessment Title', styles['Normal']), Spacer(1,3), Paragraph(assessment_title_string, styles['Normal'])]
+        essay_or_legal_problem = True
+    if assessment_type == legal_problem:
+        title = Paragraph('<para alignment="center">Law Undergraduate Assessment Sheet: Legal Problem</para>', styles['Heading2'])
+        essay_or_legal_problem = True
+    if assessment_type == oral_presentation:
+        title = Paragraph('<para alignment="center">Law Undergraduate Assessment Sheet: Oral Presentation</para>', styles['Heading2'])
+        presentation = True
+    elements.append(title)
+    elements.append(Spacer(1,5))
+    last_name_string = '<b>' + student.last_name + '</b>'
+    family_name = [Paragraph('Student family name', styles['Normal']), Spacer(1,3), Paragraph(last_name_string, styles['Normal'])]
+    first_name_string = '<b>' + student.first_name + '</b>'
+    first_name = [Paragraph('First name', styles['Normal']), Spacer(1,3), Paragraph(first_name_string, styles['Normal'])]
+    module_title_string = '<b>' + module.title + '</b>'
+    module_title = [Paragraph('Module Title', styles['Normal']), Spacer(1,3), Paragraph(module_title_string, styles['Normal'])]
+    module_code_string = '<b>' + module.code + '</b>'
+    module_code = [Paragraph('Module Code', styles['Normal']), Spacer(1,3), Paragraph(module_code_string, styles['Normal'])]
+    submission_date_string = '<b>' + str(marksheet.submission_date.day) + "/" + str(marksheet.submission_date.month) + "/" + str(marksheet.submission_date.year) + '</b>'
+    submission_date = [Paragraph('Submission Date', styles['Normal']), Spacer(1,3), Paragraph(submission_date_string, styles['Normal'])]
+    assessment_title = [Paragraph('Assessment Title', styles['Normal']), Spacer(1,3), Paragraph(assessment_title_string, styles['Normal'])]
+    if essay_or_legal_problem:
         word_count = [Paragraph('Word Count', styles['Normal']), Spacer(1,3), Paragraph(wordcount_string, styles['Normal'])]
-        criteria = Paragraph('Criteria', styles['Normal'])
-        r_a_k = Paragraph('Reading and Knowledge', styles['Normal'])
-        u_a_a = Paragraph('Understanding and Analysis', styles['Normal'])
-        arg = Paragraph('Argument', styles['Normal'])
-        o_a_p = Paragraph('Organisation and Presentation', styles['Normal'])
-        marked_by_string = '<b>' + marksheet.marker.first_name + ' ' + marksheet.marker.last_name + '</b>'
-        marking_date_string = '<b>' + str(marksheet.marking_date.day) + "/" + str(marksheet.marking_date.month) + "/" + str(marksheet.marking_date.year) + '</b>'
-        marked_by = [[Paragraph('Marked by', styles['Normal']), Paragraph(marked_by_string, styles['Normal'])], 
-                    [Paragraph('Date', styles['Normal']), Paragraph(marking_date_string, styles['Normal'])]]
-        marked_table = Table(marked_by)
-        mark = [[Paragraph('Mark', styles['Normal']), Paragraph(mark, styles['Heading1'])],
-                ['', '']]
-        mark_table = Table(mark)
-        mark_table.setStyle(TableStyle([('SPAN', (1,0), (1,1))]))
+    criteria = Paragraph('Criteria', styles['Normal'])
+    r_a_k = Paragraph(assessment_type.category_1, styles['Normal'])
+    u_a_a = Paragraph(assessment_type.category_2, styles['Normal'])
+    arg = Paragraph(assessment_type.category_3, styles['Normal'])
+    if essay_or_legal_problem:
+        o_a_p = Paragraph(assessment_type.category_4, styles['Normal'])
+    marked_by_string = '<b>' + marksheet.marker.first_name + ' ' + marksheet.marker.last_name + '</b>'
+    marking_date_string = '<b>' + str(marksheet.marking_date.day) + "/" + str(marksheet.marking_date.month) + "/" + str(marksheet.marking_date.year) + '</b>'
+    marked_by = [[Paragraph('Marked by', styles['Normal']), Paragraph(marked_by_string, styles['Normal'])], 
+                [Paragraph('Date', styles['Normal']), Paragraph(marking_date_string, styles['Normal'])]]
+    marked_table = Table(marked_by)
+    mark = [[Paragraph('Mark', styles['Normal']), Paragraph(mark, styles['Heading1'])],
+            ['', '']]
+    mark_table = Table(mark)
+    mark_table.setStyle(TableStyle([('SPAN', (1,0), (1,1))]))
 
+    if essay_or_legal_problem:
         data = [[family_name, '', first_name, ''],
                 [module_title, '', module_code, submission_date, ''],
                 [assessment_title, '', word_count, '', ''],
                 [criteria, r_a_k, u_a_a, arg, o_a_p]]
-        # Fill marking grid
-        row = ['80 +']
-        if marksheet.category_mark_1 == 80:
-            row.append('X')
-        else:
-            row.append(' ')
-        if marksheet.category_mark_2 == 80:
-            row.append('X')
-        else:
-            row.append(' ')
-        if marksheet.category_mark_3 == 80:
-            row.append('X')
-        else:
-            row.append(' ')
+    elif presentation:
+        data = [[family_name, '', first_name, ''],
+                [module_title, '', module_code, submission_date],
+                [assessment_title, '', '', ''],
+                [criteria, r_a_k, u_a_a, arg]]
+    # Fill marking grid
+    row = ['80 +']
+    if marksheet.category_mark_1 == 80:
+        row.append('X')
+    else:
+        row.append(' ')
+    if marksheet.category_mark_2 == 80:
+        row.append('X')
+    else:
+        row.append(' ')
+    if marksheet.category_mark_3 == 80:
+        row.append('X')
+    else:
+        row.append(' ')
+    if essay_or_legal_problem:
         if marksheet.category_mark_4 == 80:
             row.append('X')
         else:
             row.append(' ')
-        data.append(row)
-        row = ['70 - 79']
-        if marksheet.category_mark_1 == 79:
-            row.append('X')
-        else:
-            row.append(' ')
-        if marksheet.category_mark_2 == 79:
-            row.append('X')
-        else:
-            row.append(' ')
-        if marksheet.category_mark_3 == 79:
-            row.append('X')
-        else:
-            row.append(' ')
+    data.append(row)
+    row = ['70 - 79']
+    if marksheet.category_mark_1 == 79:
+        row.append('X')
+    else:
+        row.append(' ')
+    if marksheet.category_mark_2 == 79:
+        row.append('X')
+    else:
+        row.append(' ')
+    if marksheet.category_mark_3 == 79:
+        row.append('X')
+    else:
+        row.append(' ')
+    if essay_or_legal_problem:
         if marksheet.category_mark_4 == 79:
             row.append('X')
         else:
             row.append(' ')
-        data.append(row)
-        row = ['60 - 69']
-        if marksheet.category_mark_1 == 69:
-            row.append('X')
-        else:
-            row.append(' ')
-        if marksheet.category_mark_2 == 69:
-            row.append('X')
-        else:
-            row.append(' ')
-        if marksheet.category_mark_3 == 69:
-            row.append('X')
-        else:
-            row.append(' ')
+    data.append(row)
+    row = ['60 - 69']
+    if marksheet.category_mark_1 == 69:
+        row.append('X')
+    else:
+        row.append(' ')
+    if marksheet.category_mark_2 == 69:
+        row.append('X')
+    else:
+        row.append(' ')
+    if marksheet.category_mark_3 == 69:
+        row.append('X')
+    else:
+        row.append(' ')
+    if essay_or_legal_problem:
         if marksheet.category_mark_4 == 69:
             row.append('X')
         else:
             row.append(' ')
-        data.append(row)
-        row = ['50 - 59']
-        if marksheet.category_mark_1 == 59:
-            row.append('X')
-        else:
-            row.append(' ')
-        if marksheet.category_mark_2 == 59:
-            row.append('X')
-        else:
-            row.append(' ')
-        if marksheet.category_mark_3 == 59:
-            row.append('X')
-        else:
-            row.append(' ')
+    data.append(row)
+    row = ['50 - 59']
+    if marksheet.category_mark_1 == 59:
+        row.append('X')
+    else:
+        row.append(' ')
+    if marksheet.category_mark_2 == 59:
+        row.append('X')
+    else:
+        row.append(' ')
+    if marksheet.category_mark_3 == 59:
+        row.append('X')
+    else:
+        row.append(' ')
+    if essay_or_legal_problem:
         if marksheet.category_mark_4 == 59:
             row.append('X')
         else:
             row.append(' ')
-        data.append(row)
-        row = ['40 - 49']
-        if marksheet.category_mark_1 == 49:
-            row.append('X')
-        else:
-            row.append(' ')
-        if marksheet.category_mark_2 == 49:
-            row.append('X')
-        else:
-            row.append(' ')
-        if marksheet.category_mark_3 == 49:
-            row.append('X')
-        else:
-            row.append(' ')
+    data.append(row)
+    row = ['40 - 49']
+    if marksheet.category_mark_1 == 49:
+        row.append('X')
+    else:
+        row.append(' ')
+    if marksheet.category_mark_2 == 49:
+        row.append('X')
+    else:
+        row.append(' ')
+    if marksheet.category_mark_3 == 49:
+        row.append('X')
+    else:
+        row.append(' ')
+    if essay_or_legal_problem:
         if marksheet.category_mark_4 == 49:
             row.append('X')
         else:
             row.append(' ')
-        data.append(row)
-        row = ['Under 40']
-        if marksheet.category_mark_1 == 39:
-            row.append('X')
-        else:
-            row.append(' ')
-        if marksheet.category_mark_2 == 39:
-            row.append('X')
-        else:
-            row.append(' ')
-        if marksheet.category_mark_3 == 39:
-            row.append('X')
-        else:
-            row.append(' ')
+    data.append(row)
+    row = ['Under 40']
+    if marksheet.category_mark_1 == 39:
+        row.append('X')
+    else:
+        row.append(' ')
+    if marksheet.category_mark_2 == 39:
+        row.append('X')
+    else:
+        row.append(' ')
+    if marksheet.category_mark_3 == 39:
+        row.append('X')
+    else:
+        row.append(' ')
+    if essay_or_legal_problem:
         if marksheet.category_mark_4 == 39:
             row.append('X')
         else:
             row.append(' ')
-        data.append(row)
+    data.append(row)
 
-        t = Table(data) 
+    t = Table(data) 
+    if essay_or_legal_problem:
         t.setStyle(TableStyle([('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
                                 ('SPAN', (0,0), (1,0)),
                                 ('SPAN', (2,0), (-1,0)),
@@ -227,25 +270,35 @@ def export_feedback_sheet(request, code, year, assessment_str, student_id):
                                 ('BACKGROUND', (0,4), (0,9), colors.lightgrey),
                                 ('ALIGN', (1,4), (-1,-1), 'CENTER'),
                                 ('BOX', (0,0), (-1,-1), 0.25, colors.black)]))
+    elif presentation:
+        t.setStyle(TableStyle([('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
+                                ('SPAN', (0,0), (1,0)),
+                                ('SPAN', (2,0), (-1,0)),
+                                ('SPAN', (0,1), (1,1)),
+                                ('SPAN', (0,2), (-1,2)),
+                                ('BACKGROUND', (0,3), (-1,3), colors.lightgrey),
+                                ('BACKGROUND', (0,4), (0,9), colors.lightgrey),
+                                ('ALIGN', (1,4), (-1,-1), 'CENTER'),
+                                ('BOX', (0,0), (-1,-1), 0.25, colors.black)]))
 
-        elements.append(t)
-        elements.append(Spacer(1,5))
-        comments = [Paragraph('<b>General Comments</b>', styles['Normal']), Spacer(1,4)]
-        feedbacklist = marksheet.comments.split('\n')
-        for line in feedbacklist:
-            if line != "":
-                paragraph = Paragraph(line, styles['Normal'])
-                comments.append(paragraph)
-                comments.append(Spacer(1,4))
-        for comment in comments:
-            elements.append(comment)
-        last_data = [[marked_table, '', '', mark_table, '']]
-        last_table = Table(last_data)
-        last_table.setStyle(TableStyle([('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
-                                ('BOX', (0,0), (-1,-1), 0.25, colors.black),
-                                ('SPAN', (0,0), (2,0)),
-                                ('SPAN', (3,-1), (-1,-1))]))
-        elements.append(last_table)
+    elements.append(t)
+    elements.append(Spacer(1,5))
+    comments = [Paragraph('<b>General Comments</b>', styles['Normal']), Spacer(1,4)]
+    feedbacklist = marksheet.comments.split('\n')
+    for line in feedbacklist:
+        if line != "":
+            paragraph = Paragraph(line, styles['Normal'])
+            comments.append(paragraph)
+            comments.append(Spacer(1,4))
+    for comment in comments:
+        elements.append(comment)
+    last_data = [[marked_table, '', '', mark_table, '']]
+    last_table = Table(last_data)
+    last_table.setStyle(TableStyle([('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
+                            ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                            ('SPAN', (0,0), (2,0)),
+                            ('SPAN', (3,-1), (-1,-1))]))
+    elements.append(last_table)
     document.build(elements)
     return response
 

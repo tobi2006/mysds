@@ -1,4 +1,5 @@
 exclude.txt
+initial_data.json
 mysds.db
 deploy.sh
 exam-board-mode.txt
