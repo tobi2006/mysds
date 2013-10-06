@@ -269,7 +269,7 @@
     <tr>
         <td>
             {% if row.no_attendance_twice %}
-                <span class="glyphicon glyphicon-warning-sign" id="no_attendance_twice"></span>
+                <span class="glyphicon glyphicon-warning-sign no_attendance_twice"></span>
             {% else %}
                 &nbsp;
             {% endif %}
@@ -413,7 +413,7 @@ $(document).on("click", ".remove", function(e) {
 
 
 $(document).ready(function(){
-    $("#no_attendance_twice").qtip({
+    $(".no_attendance_twice").qtip({
     content: {
         text: 'This student did not attend at least the last two sessions. This information might be wrong if you already marked some, but not all attendance for this module.'
         }
