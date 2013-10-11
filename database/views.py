@@ -98,7 +98,7 @@ def module_view(request, module_id, year):
         # Check which student did not attend the last session
         last_session = module.sessions_recorded
         row['no_attendance_twice'] = False
-        if last_session > 2:
+        if last_session > 1:
             last_session -= 1
             session_before_last = last_session - 1
             if performance.attendance[last_session] == '0' and performance.attendance[session_before_last] == '0':
@@ -504,7 +504,11 @@ def year_view(request, year):
                 student.course = course
                 student.save()
         elif selected[0] == 'since':
-            pass
+            startyear = selected[1]
+            for student_id in students_to_add:
+                student = Student.objects.get(student_id = student_id)
+                student.since = startyear
+                student.save()
         elif selected[0] == 'year':
             for student_id in students_to_add:
                 student = Student.objects.get(student_id=student_id)
@@ -571,8 +575,12 @@ def year_view(request, year):
             alumnus = True
 
     academic_years = []
+    meta_stuff = MetaData.objects.get(data_id=1)
+    current_year = meta_stuff.current_year
+    latest_start_year = current_year + 2
     for academic_year in ACADEMIC_YEARS:
-        academic_years.append(academic_year[0])
+        if academic_year[0] < latest_start_year:
+            academic_years.append(academic_year[0])
     llb = Course.objects.get(title="LLB (Hons) Bachelor Of Law")
     all_students = len(students)
 

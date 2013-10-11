@@ -188,10 +188,13 @@ There are currently no students in this category.
                               <br><br><input type="submit" value="Apply" class="btn btn-default">';
                 break;
             case "course":
-            var toenter = '<select id="specifier">{% for course in courses %}<option value="{{ course.title }}">{{ course.title }}</option>{% endfor %}</select><br><br><input type="submit" value="Apply" class="btn btn-default">';
+                var toenter = 'Enroll selected on...<br>\
+                {% for course in courses %}<input type="radio" name="modify" value="course_{{ course.title }}">{{ course.title }}<br>{% endfor %}\
+                    <br><br><input type="submit" value="Apply" class="btn btn-default">';
                 break;
             case "since":
-                var toenter = '<select id="specifier">{% for academic_year in academic_years %}<option value="academic_year">{{ academic_year }}/{{ academic_year|add:"1" }}</option>{% endfor %}</select>\
+                var toenter = '<br>Selected students started in...<br>\
+                {% for academic_year in academic_years %}<input type="radio" name="modify" value="since_{{ academic_year }}">{{ academic_year }}/{{ academic_year|add:"1" }}<br>{% endfor %}\
                               <br><br><input type="submit" value="Apply" class="btn btn-default">';
                 break;
             case "year":
