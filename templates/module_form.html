@@ -2,6 +2,13 @@
 
 {% block title %} {% if add %} Add {% else %} Edit {% endif %} Module {% endblock %}
 
+{% block style %}
+ul
+{
+  list-style-type: none
+}
+{% endblock %}
+
 {% block formstart %}
     {% if add %}
         {% url "add_module" as action_url %}
@@ -42,61 +49,50 @@
                             {{ module_form.successor_of }}
                         </td>
                     </tr>
+                    <tr>
+                        <td>
+                            <strong>Module title</strong>
+                        </td>
+                        <td>
+                            {{ module_form.title }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>Code</strong>
+                        </td>
+                        <td>
+                            {{ module_form.code }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>Number of Credits</strong>
+                        </td>
+                        <td>
+                            {{ module_form.credits }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>Who can/has to take this module?</strong>
+                        </td>
+                        <td>
+                            {{ module_form.eligible }}
+                        </td>
+                    </tr>
                 </table>
             </td>
             <td>
-                <strong>Teacher(s)</strong><br>Hold Ctrl to mark more than one<br>
+                <strong>Teacher(s)</strong><br>
                 {{ module_form.instructors }}
             </td>
         </tr>
     </table>
 
+
     <br><br>
 
-    <table cellpadding="10">            
-        <tr>
-            <td>
-                <strong>Module title</strong>
-            </td>
-            <td>
-                {{ module_form.title }}
-            </td>
-            <td>
-                <strong>Code</strong>
-            </td>
-            <td>
-                {{ module_form.code }}
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <strong>Number of Credits</strong>
-            </td>
-            <td>
-                {{ module_form.credits }}
-            </td>
-            <td>
-                <strong>Who can/has to take this module?</strong>
-            </td>
-            <td>
-                {{ module_form.eligible }}
-            </td>
-        </tr>
-        {% if module_form.errors %}
-        <tr>
-            <td>
-            </td>
-            <td>
-                {{ module_form.code.errors }}
-            </td>
-            <td>
-            </td>
-            <td>
-                {{ module_form.credits.errors }}
-            </td>
-        </tr>
-        {% endif %}
-    </table>
     <table cellpadding="10">
         <tr>
             <td>
@@ -265,15 +261,9 @@
     <input type = "submit" value="Save" class="btn btn-default">
 </form>
 
-
 {% endblock %}
 
 {% block scripts %}
-
-{% comment %}
-<script type="text/javascript">
-{% endcomment %}
-
 
 $(document).ready(function(){
 

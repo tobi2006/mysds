@@ -61,6 +61,7 @@ class ModuleForm(forms.ModelForm):
 
     instructors = UserModelMultipleChoiceField(
             User.objects.filter(groups__name='teachers'),
+            widget = forms.CheckboxSelectMultiple
             )
 
     class Meta:
