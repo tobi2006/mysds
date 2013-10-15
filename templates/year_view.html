@@ -88,6 +88,9 @@
             <th>
                 Course
             </th>
+            <th>
+                Tutor
+            </th>
         </tr>
     </thead>
     <tbody>
@@ -115,6 +118,9 @@
             </td>
             <td>
                 {{ student.course }}{% if student.qld %} (QLD){% endif %}
+            </td>
+            <td>
+                <a href="mailto:{{ student.tutor.email }}?Subject={{ student }}">{{ student.tutor.first_name }} {{student.tutor.last_name }}</a>
             </td>
         </tr>
     {% endif %}
