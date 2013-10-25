@@ -46,9 +46,9 @@ def is_student(user):
 
 ###############################################################################
 ###############################################################################
-#                       
-#                       Module Functions
-#
+#                                                                             #
+#                       Module Functions                                      #
+#                                                                             #
 ###############################################################################
 ###############################################################################
 
@@ -131,26 +131,6 @@ def module_view(request, module_id, year):
             'number_of_groups': groupstring},
             context_instance = RequestContext(request)
             )
-
-
-#####################################
-#        Module Overview            # CAN PROBABLY BE DELETED
-#####################################
-
-@login_required
-@user_passes_test(is_teacher)
-def module_overview(request, year):
-    """
-    Shows all modules for a particular year
-
-    This function is necessary to keep the menu clear of all past and future modules
-    """
-    modules = Module.objects.filter(year=year)
-    return render_to_response('module_overview.html',
-            {'modules': modules, 'year': year},
-            context_instance = RequestContext(request)
-        )
-
 
 
 #####################################
@@ -1248,3 +1228,22 @@ def import_success(request):
             'blank.html', 
             {'printstring': printstring, 'title': title},
             context_instance = RequestContext(request))
+
+
+###############################################################################
+###############################################################################
+#                                                                             #
+#                Student Accessible Functions                                 #
+#                                                                             #
+###############################################################################
+###############################################################################
+
+@login_required
+@user_passes_test(is_student)
+def student_own_view(request):
+    student = Student.objects.get(belongs_to = request.user)
+    performances = Performance.objects.filter(student=student)
+    return render_to_response(
+            'student_own.html',
+            {'student': student, 'performances': performances},
+        )

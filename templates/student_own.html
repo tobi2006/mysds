@@ -15,7 +15,7 @@
         <td><strong>ID</strong></td>
         <td>{{student.student_id}}</td>
         <td><strong>Course</strong></td>
-        <td>{{ student.course }}{% if student.qld %} (QLD{% if student.is_part_time %}, part time{% endif %}){% elif student.is_part_time %} (part time){% endif %}</td>
+        <td>{{ student.course }} ({% if not student.qld %}No {% endif %}QLD)</td>
     </tr>
     <tr>
         <td><strong>Email</strong></td>

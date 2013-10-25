@@ -77,7 +77,7 @@
                 {{ student.student_id }}
             </td>
             <td>
-                {{ student.course }}{% if student.qld %} (QLD){% endif %}
+                {{ student.course }}{% if student.qld %} (QLD{% if student.is_part_time %}, part time{% endif %}){% elif student.is_part_time %} (part time){% endif %}
             </td>
         </tr>
     {% endif %}
