@@ -2,7 +2,6 @@
 *.swp
 *.pyc
 *.pyo
-*.json
 deploy.sh
 old_stuff/
 mysds/settings.py
