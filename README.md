@@ -31,5 +31,6 @@ I am currently working on giving students access to the information held about t
 * making the application easier to adapt for other institutions and programmes
 * introducing a way to assign groups within the seminar groups and to assess group tasks
 * exporting data into machine-readable formats: csv, json, etc
+* clean up my potentially awful (hobby programmer) coding style, ask me to add comments where you don't understand the functions etc
 
 If you find any problems or bugs, or if you have any questions, use the issues form here or contact me at [tobi@tobiaskliem.de](mailto:tobi@tobiaskliem.de?subject=Mysds).
