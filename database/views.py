@@ -1,19 +1,18 @@
 import datetime
 
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import IntegrityError
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import Template, Context, RequestContext
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.db.models import Q
-from django.db import IntegrityError
-from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth.models import User
 from django.utils import simplejson
 
-# from database import models delete line if it works
-from database.models import *
 from database import functions
 from database.forms import *
+from database.models import *
 from database.strings import *
 from feedback.models import FeedbackCategories, Marksheet
 
@@ -39,6 +38,7 @@ def is_student(user):
     if user:
         if user.groups.filter(name='students').count() == 1:
             return True
+            print "A student"
         else:
             return False
     else:
@@ -1227,7 +1227,8 @@ def import_success(request):
     return render_to_response(
             'blank.html', 
             {'printstring': printstring, 'title': title},
-            context_instance = RequestContext(request))
+            context_instance = RequestContext(request)
+        )
 
 
 ###############################################################################
@@ -1240,10 +1241,75 @@ def import_success(request):
 
 @login_required
 @user_passes_test(is_student)
-def student_own_view(request):
+def student_marks(request):
     student = Student.objects.get(belongs_to = request.user)
-    performances = Performance.objects.filter(student=student)
+    all_performances = Performance.objects.filter(student=student)
+    sorted_performances = {}
+    for performance in all_performances:
+        module = performance.module
+        output = {}
+        year = module.year
+        if module.assessment_1_available:
+            output[assessment_1] = performance.assessment_1
+            try:
+                marksheet = Marksheet.objects.get(student=student, module=module, assessment=1)
+                if marksheet.comments:
+                    if marksheet.submission_date:
+                        output[assessment_1_marksheet] = True
+            except Marksheet.DoesNotExist:
+                pass
+        if module.assessment_2_available:
+            output[assessment_2] = performance.assessment_2
+            try:
+                marksheet = Marksheet.objects.get(student=student, module=module, assessment=2)
+                if marksheet.comments:
+                    if marksheet.submission_date:
+                        output[assessment_2_marksheet] = True
+            except Marksheet.DoesNotExist:
+                pass
+        if module.assessment_3_available:
+            output[assessment_3] = performance.assessment_3
+            try:
+                marksheet = Marksheet.objects.get(student=student, module=module, assessment=3)
+                if marksheet.comments:
+                    if marksheet.submission_date:
+                        output[assessment_3_marksheet] = True
+            except Marksheet.DoesNotExist:
+                pass
+        if module.assessment_4_available:
+            output[assessment_4] = performance.assessment_4
+            try:
+                marksheet = Marksheet.objects.get(student=student, module=module, assessment=4)
+                if marksheet.comments:
+                    if marksheet.submission_date:
+                        output[assessment_4_marksheet] = True
+            except Marksheet.DoesNotExist:
+                pass
+        if module.assessment_5_available:
+            output[assessment_5] = performance.assessment_5
+            try:
+                marksheet = Marksheet.objects.get(student=student, module=module, assessment=5)
+                if marksheet.comments:
+                    if marksheet.submission_date:
+                        output[assessment_5_marksheet] = True
+            except Marksheet.DoesNotExist:
+                pass
+        if module.assessment_6_available:
+            output[assessment_6] = performance.assessment_6
+            try:
+                marksheet = Marksheet.objects.get(student=student, module=module, assessment=6)
+                if marksheet.comments:
+                    if marksheet.submission_date:
+                        output[assessment_6_marksheet] = True
+            except Marksheet.DoesNotExist:
+                pass
+        if sorted_performances.get(year):
+            sorted_performances[year].append(output)
+        else:
+            sorted_performances[year] = [output,]
+
     return render_to_response(
             'student_own.html',
-            {'student': student, 'performances': performances},
+            {'student': student, 'sorted_performances': sorted_performances},
+            context_instance = RequestContext(request)
         )
