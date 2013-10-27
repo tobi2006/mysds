@@ -1248,59 +1248,60 @@ def student_marks(request):
     for performance in all_performances:
         module = performance.module
         output = {}
+        output['module'] = module
         year = module.year
         if module.assessment_1_available:
-            output[assessment_1] = performance.assessment_1
+            output['assessment_1'] = performance.assessment_1
             try:
                 marksheet = Marksheet.objects.get(student=student, module=module, assessment=1)
                 if marksheet.comments:
                     if marksheet.submission_date:
-                        output[assessment_1_marksheet] = True
+                        output['assessment_1_marksheet'] = True
             except Marksheet.DoesNotExist:
                 pass
         if module.assessment_2_available:
-            output[assessment_2] = performance.assessment_2
+            output['assessment_2'] = performance.assessment_2
             try:
                 marksheet = Marksheet.objects.get(student=student, module=module, assessment=2)
                 if marksheet.comments:
                     if marksheet.submission_date:
-                        output[assessment_2_marksheet] = True
+                        output['assessment_2_marksheet'] = True
             except Marksheet.DoesNotExist:
                 pass
         if module.assessment_3_available:
-            output[assessment_3] = performance.assessment_3
+            output['assessment_3'] = performance.assessment_3
             try:
                 marksheet = Marksheet.objects.get(student=student, module=module, assessment=3)
                 if marksheet.comments:
                     if marksheet.submission_date:
-                        output[assessment_3_marksheet] = True
+                        output['assessment_3_marksheet'] = True
             except Marksheet.DoesNotExist:
                 pass
         if module.assessment_4_available:
-            output[assessment_4] = performance.assessment_4
+            output['assessment_4'] = performance.assessment_4
             try:
                 marksheet = Marksheet.objects.get(student=student, module=module, assessment=4)
                 if marksheet.comments:
                     if marksheet.submission_date:
-                        output[assessment_4_marksheet] = True
+                        output['assessment_4_marksheet'] = True
             except Marksheet.DoesNotExist:
                 pass
         if module.assessment_5_available:
-            output[assessment_5] = performance.assessment_5
+            output['assessment_5'] = performance.assessment_5
             try:
                 marksheet = Marksheet.objects.get(student=student, module=module, assessment=5)
                 if marksheet.comments:
                     if marksheet.submission_date:
-                        output[assessment_5_marksheet] = True
+                        output['assessment_5_marksheet'] = True
             except Marksheet.DoesNotExist:
                 pass
         if module.assessment_6_available:
-            output[assessment_6] = performance.assessment_6
+            output['assessment_6'] = performance.assessment_6
             try:
                 marksheet = Marksheet.objects.get(student=student, module=module, assessment=6)
                 if marksheet.comments:
                     if marksheet.submission_date:
-                        output[assessment_6_marksheet] = True
+                        output['assessment_6_marksheet'] = True
             except Marksheet.DoesNotExist:
                 pass
         if sorted_performances.get(year):
@@ -1309,7 +1310,7 @@ def student_marks(request):
             sorted_performances[year] = [output,]
 
     return render_to_response(
-            'student_own.html',
+            'student_own_marks.html',
             {'student': student, 'sorted_performances': sorted_performances},
             context_instance = RequestContext(request)
         )
