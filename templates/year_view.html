@@ -32,7 +32,7 @@
 <br>
 <table cellpadding="5">
     <tr>
-        <select id="action_selector" onchange="put_second_option(this)">
+        <select id="action_selector">
             <option value="blank" selected>Select Action</option>
             <option value="tutor">Assign to Tutor</option>
             <option value="course">Assign to Course</option>
@@ -158,7 +158,7 @@ There are currently no students in this category.
                 $(item).trigger('click');  
             }  
         });  
-    }  
+    };  
 
     function selectLLBStudents() {  
         var selectLLB = $("#select_llb");  
@@ -167,16 +167,20 @@ There are currently no students in this category.
                 $(item).trigger('click');  
             }  
         });  
-    }  
+    };
 
-    function put_second_option(element){
-        var option = element.value;
-        switch(option)
-        {
-            case "tutor":
+    $(document).ready(function(){
+        $("#action_selector").change(function() {
+            var option = $(this).val();
+            switch(option)
+            {
+            case 'blank':
+                var toenter = '';
+                break;
+            case 'tutor':
                 var toenter = 'Assign selected to...<br>\
                 {% for tutor in tutors %}<input type="radio" name="modify" value="tutor_{{ tutor.id }}">{{ tutor.first_name }} {{ tutor.last_name }}<br>{% endfor %}\
-                              <br><br><input type="submit" value="Apply" class="btn btn-default">';
+                    <br><br><input type="submit" value="Apply" class="btn btn-default">';
                 break;
             case "qld":
                 var toenter = 'Mark selected as...<br>\
@@ -185,6 +189,11 @@ There are currently no students in this category.
                               name="modify" value="qld_off">NOT QLD students\
                               <br><br><input type="submit" value="Apply" class="btn btn-default">';
                 break;
+            case "course":
+                var toenter = 'Enroll selected on...<br>\
+                {% for course in courses %}<input type="radio" name="modify" value="course_{{ course.title }}">{{ course.title }}<br>{% endfor %}\
+                    <br><br><input type="submit" value="Apply" class="btn btn-default">';
+                break;
             case "nalp":
                 var toenter = '<br>Mark selected as...<br>\
                               <input type="radio" name="modify" value="nalp_on" checked>\
@@ -192,11 +201,6 @@ There are currently no students in this category.
                               <input type="radio" name="modify" value="nalp_off">\
                               NOT on the paralegal pathway\
                               <br><br><input type="submit" value="Apply" class="btn btn-default">';
-                break;
-            case "course":
-                var toenter = 'Enroll selected on...<br>\
-                {% for course in courses %}<input type="radio" name="modify" value="course_{{ course.title }}">{{ course.title }}<br>{% endfor %}\
-                    <br><br><input type="submit" value="Apply" class="btn btn-default">';
                 break;
             case "since":
                 var toenter = '<br>Selected students started in...<br>\
@@ -232,9 +236,10 @@ There are currently no students in this category.
                               No<br>\
                               <br><br><input type="submit" value="Apply" class="btn btn-default">';
                 break;
-        }
-        document.getElementById("second_option").innerHTML = toenter;
-    }
+            };
+            $("#second_option").html(toenter);
+        });
+    });
 
 {% endblock %}
 
