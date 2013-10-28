@@ -231,6 +231,9 @@ class Module(models.Model):
     def get_export_marks_url(self):
         return reverse('export_marks', args=[self.code, str(self.year)])
 
+    def get_toggle_assessment_availability_url(self):
+        return reverse('toggle_assessment', args=[self.code, str(self.year)])
+
     class Meta:
         unique_together = ('code', 'year')
 

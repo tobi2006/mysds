@@ -1,17 +1,19 @@
-from django.db.models import Q
-from django.template import Template, Context, RequestContext
-from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required, user_passes_test
-from database.views import is_teacher, is_student, is_admin
+from django.db.models import Q
+from django.shortcuts import render_to_response
+from django.template import Template, Context, RequestContext
+import datetime
+
 from announcer.models import *
 from database.strings import *
-import datetime
+from database.views import is_teacher, is_student, is_admin
 
 @login_required
 def show_homepage(request):
     announcements = []
     admin = False
     if is_student(request.user):
+        print "Whoohoo"
         announcements = Announcement.objects.filter(Q(announce_to='students') | Q(announce_to='all'))
     else:
         if is_admin(request.user):

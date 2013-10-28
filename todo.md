@@ -1,3 +1,8 @@
+# Student visible mode
+
+- Write template
+- Write functions to assign student to user
+
 # Export
 
 # Housekeeping

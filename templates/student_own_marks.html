@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% load custom_filters %}
+{% load markup %}
+
+{% block title %}CCCU Law - {{student.first_name}} {{student.last_name}}{% endblock %}
+
+{% block content %}
+
+<h2>Your Results So Far</h2>
+
+{% for year, performances in sorted_performances.items %}
+
+<h3>{{ year }} / {{ year | add:"1" }}</h3>
+
+<br>
+
+    {% for performance in performances %}
+
+    <h4>{{ performance.module.title }}</h4>
+
+    <table class="table table-bordered">
+        {% if performance.module.assessment_1_title %}
+            <tr>
+                <td>
+                    {{ performance.module.assessment_1_title }} ({{ performance.module.assessment_1_value }} %)
+                </td>
+                <td>
+                    {% if performance.assessment_1 %}
+                        {{ performance.assessment_1 }}
+                    {% else %}
+                        Not available yet
+                    {% endif %}
+                </td>
+                <td>
+                    {% if performance.assessment_1_marksheet %}
+                        <a href = "/export_feedback_sheet/{{ performance.module.code }}/{{ performance.module.year }}/1/{{ student.student_id }}">Download Marksheet</span></a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endif %}
+        {% if performance.module.assessment_2_title %}
+            <tr>
+                <td>
+                    {{ performance.module.assessment_2_title }} ({{ performance.module.assessment_2_value }} %)
+                </td>
+                <td>
+                    {% if performance.assessment_2 %}
+                        {{ performance.assessment_2 }}
+                    {% else %}
+                        Not available yet
+                    {% endif %}
+                </td>
+                <td>
+                    {% if performance.assessment_2_marksheet %}
+                        <a href = "/export_feedback_sheet/{{ performance.module.code }}/{{ performance.module.year }}/2/{{ student.student_id }}">Download Marksheet</span></a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endif %}
+        {% if performance.module.assessment_3_title %}
+            <tr>
+                <td>
+                    {{ performance.module.assessment_3_title }} ({{ performance.module.assessment_3_value }} %)
+                </td>
+                <td>
+                    {% if performance.assessment_3 %}
+                        {{ performance.assessment_3 }}
+                    {% else %}
+                        Not available yet
+                    {% endif %}
+                </td>
+                <td>
+                    {% if performance.assessment_3_marksheet %}
+                        <a href = "/export_feedback_sheet/{{ performance.module.code }}/{{ performance.module.year }}/3/{{ student.student_id }}">Download Marksheet</span></a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endif %}
+        {% if performance.module.assessment_4_title %}
+            <tr>
+                <td>
+                    {{ performance.module.assessment_4_title }} ({{ performance.module.assessment_4_value }} %)
+                </td>
+                <td>
+                    {% if performance.assessment_4 %}
+                        {{ performance.assessment_4 }}
+                    {% else %}
+                        Not available yet
+                    {% endif %}
+                </td>
+                <td>
+                    {% if performance.assessment_4_marksheet %}
+                        <a href = "/export_feedback_sheet/{{ performance.module.code }}/{{ performance.module.year }}/4/{{ student.student_id }}">Download Marksheet</span></a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endif %}
+        {% if performance.module.assessment_5_title %}
+            <tr>
+                <td>
+                    {{ performance.module.assessment_5_title }} ({{ performance.module.assessment_5_value }} %)
+                </td>
+                <td>
+                    {% if performance.assessment_5 %}
+                        {{ performance.assessment_5 }}
+                    {% else %}
+                        Not available yet
+                    {% endif %}
+                </td>
+                <td>
+                    {% if performance.assessment_5_marksheet %}
+                        <a href = "/export_feedback_sheet/{{ performance.module.code }}/{{ performance.module.year }}/5/{{ student.student_id }}">Download Marksheet</span></a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endif %}
+        {% if performance.module.assessment_6_title %}
+            <tr>
+                <td>
+                    {{ performance.module.assessment_6_title }} ({{ performance.module.assessment_6_value }} %)
+                </td>
+                <td>
+                    {% if performance.assessment_6 %}
+                        {{ performance.assessment_6 }}
+                    {% else %}
+                        Not available yet
+                    {% endif %}
+                </td>
+                <td>
+                    {% if performance.assessment_6_marksheet %}
+                        <a href = "/export_feedback_sheet/{{ performance.module.code }}/{{ performance.module.year }}/6/{{ student.student_id }}">Download Marksheet</span></a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endif %}
+        {% if performance.module.exam_value %}
+            <tr>
+                <td>
+                    Exam ({{ performance.module.exam_value }} %)
+                </td>
+                <td>
+                    {% if performance.exam %}
+                        {{ performance.exam }}
+                    {% else %}
+                        Not available yet
+                    {% endif %}
+                </td>
+            </tr>
+        {% endif %}
+    </table>
+
+    <br><br>
+
+    {% endfor %}
+{% endfor %}
+
+{% endblock %}
