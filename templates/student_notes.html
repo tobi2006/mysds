@@ -27,6 +27,8 @@
 
 {% block scripts %}
 
+<script type="text/javascript">
+
     $(document).ready(function(){
         $("#md-helptext").hide();
     });
@@ -37,15 +39,6 @@
         });
     });
 
-    {% comment %}
-    $(document).ready(function(){
-        $("#md-helper").hover(function(){
-            $("#md-helptext").show();
-        },
-        function(){
-            $("#md-helptext").hide();
-        });
-    });
-    {% endcomment %}
+</script>
 
 {% endblock %}

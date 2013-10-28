@@ -467,47 +467,50 @@
 
 {% block scripts %}
 
-$(document).on("click", ".delete", function(e) {
-    bootbox.confirm("Are you sure you want to delete this module and all associated marks?", function(confirm) {
-    if (confirm)
-    {
-    window.location.replace("/delete_module/{{ module.code }}/{{ module.year }}")
-    }
-});
-});
+<script type="text/javascript">
 
-
-$(document).on("click", ".remove", function(e) {
-    bootbox.confirm("Are you sure you want to remove this student from the module and delete all marks the students might have in this module? If the student is just temporary absent, it is better to mark them inactive.", function(confirm) {
+    $(document).on("click", ".delete", function(e) {
+        bootbox.confirm("Are you sure you want to delete this module and all associated marks?", function(confirm) {
         if (confirm)
         {
-        var student_id = e.target.id;
-        var remove = "{{ module.get_remove_student_url }}" + student_id;
-        window.location.replace(remove);
+        window.location.replace("/delete_module/{{ module.code }}/{{ module.year }}")
         }
     });
-});
-
-
-$(document).ready(function(){
-    $(".no_attendance_twice").qtip({
-    content: {
-        text: 'This student did not attend at least the last two sessions. This information might be wrong if you already marked some, but not all attendance for this module.'
-        }
-    });
-    
-    $(".glyphicon-eye-open").qtip({
-    content: {
-        text: 'Students can see the results and the marksheets for this assessment. You can change that with the menu under Availablity to Students.'
-        }
     });
 
-    $(".glyphicon-eye-close").qtip({
-    content: {
-        text: 'Students cannot see the results and the marksheets for this assessment. You can change that with the menu under Availablity to Students.'
-        }
+
+    $(document).on("click", ".remove", function(e) {
+        bootbox.confirm("Are you sure you want to remove this student from the module and delete all marks the students might have in this module? If the student is just temporary absent, it is better to mark them inactive.", function(confirm) {
+            if (confirm)
+            {
+            var student_id = e.target.id;
+            var remove = "{{ module.get_remove_student_url }}" + student_id;
+            window.location.replace(remove);
+            }
+        });
     });
-});
+
+
+    $(document).ready(function(){
+        $(".no_attendance_twice").qtip({
+        content: {
+            text: 'This student did not attend at least the last two sessions. This information might be wrong if you already marked some, but not all attendance for this module.'
+            }
+        });
+        
+        $(".glyphicon-eye-open").qtip({
+        content: {
+            text: 'Students can see the results and the marksheets for this assessment. You can change that with the menu under Availablity to Students.'
+            }
+        });
+
+        $(".glyphicon-eye-close").qtip({
+        content: {
+            text: 'Students cannot see the results and the marksheets for this assessment. You can change that with the menu under Availablity to Students.'
+            }
+        });
+    });
+</script>
 
 {% endblock %}
 

@@ -179,6 +179,8 @@
 
 {% block scripts %}
 
+<script type="text/javascript">
+
 function process(elem, student_id){
     var errortag = student_id + "_error"
 	var numericExpression = /^[0-9]+$/;
@@ -320,5 +322,6 @@ function process(elem, student_id){
 		elem.focus();
 	}
 }
+</script>
 
 {% endblock %}

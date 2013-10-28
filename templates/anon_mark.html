@@ -14,15 +14,6 @@
     Marks for {{ current_module.title }} ({{ current_module.year }}/{{ current_module.year | add:1 }})
 </h2>
 
-{% comment %}
-{% if to_mark != 9 %}
-    <form action="mark_anonymously/{{ current_module.code }}/{{ current_module.year }}/{{ to_mark }}" id="markForm" method="post"> 
-{% else %}
-    <form action="mark_anonymously/{{ current_module.code }}/{{ current_module.year }}/exam" id="markForm" method="post"> 
-{% endif %} 
-{% endcomment %}
-
-
 <table id ="sortable_table" class="table table-striped table-sortable">
     <thead>
         <tr>
@@ -141,6 +132,9 @@
 {% endblock %}
 
 {% block scripts %}
+
+<script type="text/javascript">
+
     $(document).ready(function(){
         $(".form-control").change(function(){
             value = $(this).val()
@@ -159,5 +153,7 @@
             }
         });
     });
+
+</script>
 
 {% endblock %}

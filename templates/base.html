@@ -6,6 +6,7 @@
     <title> {% block title %} CCCU Law Database {% endblock %}</title>
     <meta name="description" content="">
     <meta name="author" content="Tobias Kliem">
+    <link rel="shortcut icon" href="{{ STATIC_URL }}images/favicon.ico" />
     <link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet" media="screen">
     <link href="{{ STATIC_URL }}css/jquery.qtip.min.css" rel="stylesheet">
     <style type="text/css">
@@ -16,6 +17,7 @@
         .sidebar-nav{
             padding: 9px 0;
         }
+
     {% block style %}
     {% endblock %}
     </style>
@@ -183,12 +185,10 @@
         }
     );
 
-
+</script>
 
 {% block scripts %}
 {% endblock %}
-
-</script>
 
 </body>
 </html>

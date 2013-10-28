@@ -88,6 +88,7 @@ Randomly assign students (number of groups / maximum number of students per grou
 {% endblock %}
 
 {% block scripts %}
+<script type="text/javascript">
 
     function assign_randomly(number_of_groups){
         var all_students=[];
@@ -148,4 +149,5 @@ Randomly assign students (number of groups / maximum number of students per grou
 
     window.onload = count_groups();
 
+</script>
 {% endblock %}
