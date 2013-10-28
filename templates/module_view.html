@@ -156,6 +156,53 @@
         </ul>
     </div>
     <div class="btn-group dropdown">
+        <a class = "btn btn-default dropdown-toggle" data-toggle="dropdown">Availability to Students<span class="caret"></span></a>
+        <ul class="dropdown-menu" role="menu">
+            {% if module.assessment_1_title %}
+                <li>
+                    <a href="{{ module.get_toggle_assessment_availability_url }}1">
+                        {% if module.assessment_1_available %}Hide {% else %}Show {% endif %}{{ module.assessment_1_title }}
+                    </a>
+                </li>
+            {% endif %}
+            {% if module.assessment_2_title %}
+                <li>
+                    <a href="{{ module.get_toggle_assessment_availability_url }}2">
+                        {% if module.assessment_2_available %}Hide {% else %}Show {% endif %}{{ module.assessment_2_title }}
+                    </a>
+                </li>
+            {% endif %}
+            {% if module.assessment_3_title %}
+                <li>
+                    <a href="{{ module.get_toggle_assessment_availability_url }}3">
+                        {% if module.assessment_3_available %}Hide {% else %}Show {% endif %}{{ module.assessment_3_title }}
+                    </a>
+                </li>
+            {% endif %}
+            {% if module.assessment_4_title %}
+                <li>
+                    <a href="{{ module.get_toggle_assessment_availability_url }}4">
+                        {% if module.assessment_4_available %}Hide {% else %}Show {% endif %}{{ module.assessment_4_title }}
+                    </a>
+                </li>
+            {% endif %}
+            {% if module.assessment_5_title %}
+                <li>
+                    <a href="{{ module.get_toggle_assessment_availability_url }}5">
+                        {% if module.assessment_5_available %}Hide {% else %}Show {% endif %}{{ module.assessment_5_title }}
+                    </a>
+                </li>
+            {% endif %}
+            {% if module.assessment_6_title %}
+                <li>
+                    <a href="{{ module.get_toggle_assessment_availability_url }}6">
+                        {% if module.assessment_6_available %}Hide {% else %}Show {% endif %}{{ module.assessment_6_title }}
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+    <div class="btn-group dropdown">
         <a class = "btn btn-default dropdown-toggle" data-toggle="dropdown">Attendance<span class="caret"></span></a>
         <ul class="dropdown-menu" role="menu">
             <li>
@@ -199,6 +246,9 @@
 </div>
 
 <br><br>
+{% comment %}
+{% endcomment %}
+
 
 <table id ="sortable_table" class="table table-striped table-sortable">
     <thead>
@@ -221,31 +271,61 @@
             {% if module.assessment_1_title %}
                 <th>
                     {{ module.assessment_1_title }} ({{ module.assessment_1_value }}%)
+                    {% if module.assessment_1_available %}
+                        <span class="glyphicon glyphicon-eye-open"></span>
+                    {% else %}
+                        <span class="glyphicon glyphicon-eye-close"></span>
+                    {% endif %}
                 </th>
             {% endif %}
             {% if module.assessment_2_title %}
                 <th>
                     {{ module.assessment_2_title }} ({{ module.assessment_2_value }}%)
+                    {% if module.assessment_2_available %}
+                        <span class="glyphicon glyphicon-eye-open"></span>
+                    {% else %}
+                        <span class="glyphicon glyphicon-eye-close"></span>
+                    {% endif %}
                 </th>
             {% endif %}
             {% if module.assessment_3_title %}
                 <th>
                     {{ module.assessment_3_title }} ({{ module.assessment_3_value }}%)
+                    {% if module.assessment_3_available %}
+                        <span class="glyphicon glyphicon-eye-open"></span>
+                    {% else %}
+                        <span class="glyphicon glyphicon-eye-close"></span>
+                    {% endif %}
                 </th>
             {% endif %}
             {% if module.assessment_4_title %}
                 <th>
                     {{ module.assessment_4_title }} ({{ module.assessment_4_value }}%)
+                    {% if module.assessment_4_available %}
+                        <span class="glyphicon glyphicon-eye-open"></span>
+                    {% else %}
+                        <span class="glyphicon glyphicon-eye-close"></span>
+                    {% endif %}
                 </th>
             {% endif %}
             {% if module.assessment_5_title %}
                 <th>
                     {{ module.assessment_5_title }} ({{ module.assessment_5_value }}%)
+                    {% if module.assessment_5_available %}
+                        <span class="glyphicon glyphicon-eye-open"></span>
+                    {% else %}
+                        <span class="glyphicon glyphicon-eye-close"></span>
+                    {% endif %}
                 </th>
             {% endif %}
             {% if module.assessment_6_title %}
                 <th>
                     {{ module.assessment_6_title }} ({{ module.assessment_6_value }}%)
+                    {% if module.assessment_6_available %}
+                        <span class="glyphicon glyphicon-eye-open"></span>
+                    {% else %}
+                        <span class="glyphicon glyphicon-eye-close"></span>
+                    {% endif %}
                 </th>
             {% endif %}
             {% if module.exam_value %}
@@ -413,6 +493,18 @@ $(document).ready(function(){
     $(".no_attendance_twice").qtip({
     content: {
         text: 'This student did not attend at least the last two sessions. This information might be wrong if you already marked some, but not all attendance for this module.'
+        }
+    });
+    
+    $(".glyphicon-eye-open").qtip({
+    content: {
+        text: 'Students can see the results and the marksheets for this assessment. You can change that with the menu under Availablity to Students.'
+        }
+    });
+
+    $(".glyphicon-eye-close").qtip({
+    content: {
+        text: 'Students cannot see the results and the marksheets for this assessment. You can change that with the menu under Availablity to Students.'
         }
     });
 });

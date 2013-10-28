@@ -24,6 +24,7 @@ urlpatterns += patterns('mysds.views',
     url(r'^export_anonymous_exam_marks/$', 'na', name='export_anonymous_exam_marks_year'), #Dummy to enable get_mark_url method
     url(r'^mark/(\w+)/(\d{4})/$', 'na', name = 'mark_no'), #Dummy to enable get_mark_url method
     url(r'^mark_anonymously/(\w+)/(\d{4})/$', 'na', name = 'mark_anon'), #Dummy to enable get_mark_url method
+    url(r'^toggle_assessment_availability/(\w+)/(\d{4})/$', 'na', name = 'toggle_assessment'), #Dummy to enable get_mark_url method
     url(r'^na/$', 'na', name = 'na'),
     url(r'^remove_student_from_module/(\w+)/(\d{4})/$', 'na', name = 'generic_remove_student_from_module'),
 )
@@ -50,6 +51,7 @@ urlpatterns += patterns('database.views',
     url(r'^seminar_groups/(\w+)/(\d{4})/$', 'seminar_groups', name = 'seminar_groups'),
     url(r'^student/(\w+)/$', 'student_view', name = 'student_view'),
     url(r'^student_marks/$', 'student_marks', name='student_marks'),
+    url(r'^toggle_assessment_availability/(\w+)/(\d{4})/(\d{1})/$', 'toggle_assessment_availability', name = 'toggle_assessment_availability'),
     url(r'^tutee/(\w+)/$', 'tutee_edit', name='tutee_edit'),
     url(r'^tutee/(\w+)/(\d+)/$', 'tutee_edit', name='edit_tutee_meeting'),
     url(r'^tutee_list/$', 'tutee_list', name='tutee_list'),

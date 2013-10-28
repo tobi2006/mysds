@@ -10,7 +10,7 @@ def menubar(request):
     inactive = False
     alumni = False
     unassigned = False
-    student = False
+    user_is_student = False
     if is_teacher(request.user) or is_admin(request.user):
         future = []
         past = []
@@ -49,11 +49,11 @@ def menubar(request):
         module_dict = {'current': current, 'past': past, 'future': future}
     else: # Student View
         module_dict = {}
-        student = True
+        user_is_student = True
         
 
     return {
             'module_dict': module_dict, 'admin': admin, 'inactive': inactive,
-            'alumni': alumni, 'unassigned': unassigned, 'student': student
+            'alumni': alumni, 'unassigned': unassigned, 'user_is_student': user_is_student
             }
 

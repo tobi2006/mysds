@@ -361,6 +361,47 @@ def seminar_group_overview(request, code, year):
             context_instance = RequestContext(request))
 
 
+#####################################
+#  Toggle Assessment Availability   #
+#####################################
+
+@login_required
+@user_passes_test(is_teacher)
+def toggle_assessment_availability(request, code, year, assessment):
+    module = Module.objects.get(code=code, year=year)
+    if assessment == '1':
+        if module.assessment_1_available == True:
+            module.assessment_1_available = False
+        else:
+            print "Toggling."
+            module.assessment_1_available = True
+    elif assessment == '2':
+        if module.assessment_2_available == True:
+            module.assessment_2_available = False
+        else:
+            module.assessment_2_available = True
+    elif assessment == '3':
+        if module.assessment_3_available == True:
+            module.assessment_3_available = False
+        else:
+            module.assessment_3_available = True
+    elif assessment == '4':
+        if module.assessment_4_available == True:
+            module.assessment_4_available = False
+        else:
+            module.assessment_4_available = True
+    elif assessment == '5':
+        if module.assessment_5_available == True:
+            module.assessment_5_available = False
+        else:
+            module.assessment_5_available = True
+    elif assessment == '6':
+        if module.assessment_6_available == True:
+            module.assessment_6_available = False
+        else:
+            module.assessment_6_available = True
+    module.save()
+    return HttpResponseRedirect(module.get_absolute_url())
 
 
 ###############################################################################

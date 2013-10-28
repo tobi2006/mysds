@@ -43,7 +43,7 @@
 <div class="collapse navbar-collapse navbar-ex1-collapse">
     <ul class="nav navbar-nav">
         <li class="dropdown">
-        {% if student %}
+        {% if user_is_student %}
             <li><a href="{% url "student_marks" %}">My Marks</a></li>
             <li><a href="{% url "add_student" %}">My Details</a></li>
         {% else %}
