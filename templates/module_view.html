@@ -240,6 +240,19 @@
     <a class="btn btn-default" href="{{ module.get_export_marks_url }}">
         Export Mark Overview
     </a>
+    {% comment %} 
+    <div class="btn-group dropdown">
+        <a class = "btn btn-default dropdown-toggle" data-toggle="dropdown">Email Students<span class="caret"></span></a>
+        <ul class="dropdown-menu" role="menu">
+            <li>Email specific seminar groups</li>
+            <li>
+            <a href = "mailto:{{ user.email }}?bcc={% for performance in performances %}{{ performance.student.email }},{% endfor %}">
+                    Email all students
+                </a>
+            </li>
+        </ul>
+    </div>
+    {% endcomment %}
     <a class="btn btn-default" href="{{ module.get_add_students_url }}">
         Add Student(s)
     </a>
