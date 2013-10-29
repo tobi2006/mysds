@@ -240,28 +240,40 @@
     <a class="btn btn-default" href="{{ module.get_export_marks_url }}">
         Export Mark Overview
     </a>
-    {% comment %} 
-    <div class="btn-group dropdown">
-        <a class = "btn btn-default dropdown-toggle" data-toggle="dropdown">Email Students<span class="caret"></span></a>
-        <ul class="dropdown-menu" role="menu">
-            <li>Email specific seminar groups</li>
-            <li>
-            <a href = "mailto:{{ user.email }}?bcc={% for performance in performances %}{{ performance.student.email }},{% endfor %}">
-                    Email all students
-                </a>
-            </li>
-        </ul>
-    </div>
-    {% endcomment %}
+    <a class="btn btn-default" id="select_addressees">Email Students</a>
     <a class="btn btn-default" href="{{ module.get_add_students_url }}">
         Add Student(s)
     </a>
 </div>
 
-<br><br>
-{% comment %}
-{% endcomment %}
+<br>
 
+<div id="email_space">
+<br>
+<h3>Write an Email</h3>
+<table cellpadding="15">
+    <tr>
+        <td>
+            <h4>To:</h4>
+            <ul class ="list-unstyled">
+                <li><input type="checkbox" id="email_to_all" class="email_checkbox">All Groups</li>
+                {% for i in number_of_groups %}
+                    <li><input type="checkbox" id="email_to_group_{{ i }}" class="email_checkbox email_group_checkbox"> Seminar Group {{ i }}</li>
+                {% endfor %}
+        </td>
+        <td id="write_mail_button">
+            &nbsp;
+        </td>
+        <td id="email_copy_and_paste">
+            &nbsp;
+        </td>
+    </tr>
+</table>
+
+<br>
+</div>
+
+<br>
 
 <table id ="sortable_table" class="table table-striped table-sortable">
     <thead>
@@ -469,7 +481,7 @@
             {% endif %}
         </td>
         <td>
-            <a href="#" class="remove""><span class="glyphicon glyphicon-remove" id="{{ row.performance.student.student_id }}"></span></a>
+            <a href="#" class="remove"><span class="glyphicon glyphicon-remove" id="{{ row.performance.student.student_id }}"></span></a>
         </td>
     </tr>
     {% endfor %}
@@ -523,8 +535,62 @@
             }
         });
     });
+
+    $(document).ready(function(){
+
+            $("#email_space").hide();
+
+            $(".email_checkbox").prop("checked", false);
+
+            $("#select_addressees").click(function(){
+                $("#email_space").toggle();
+            });
+
+            $("#email_to_all").change(function(){
+                if ($(this).attr("checked"))
+                {
+                    $(".email_group_checkbox").prop("checked", true);
+                }
+                else
+                {
+                    $(".email_group_checkbox").prop("checked", false);
+                }
+            });
+
+            $(".email_checkbox").change(function(){
+                var bcc_field = '';
+                {% for i in number_of_groups %}
+                    if ($("#email_to_group_{{ i }}").attr("checked"))
+                    {
+                        bcc_field += "{{ email_dict|get_item:i }}";
+                    };
+                {% endfor %}
+                var mail_button_string = '';
+                mail_button_string += '<a class="btn btn-default" href="mailto:'
+                mail_button_string += '{{ user.email }}';
+                mail_button_string += '?bcc='
+                mail_button_string += bcc_field;
+                mail_button_string += '&subject=';
+                mail_button_string += '{{ module }}';
+                mail_button_string += '">Write Email with your Email Client</a>';
+                $("#write_mail_button").html(mail_button_string);
+                var copy_and_paste_button = '<a class="btn btn-default">Copy and Paste</a>';
+                var copy_and_paste_text = 'Or copy and paste the addresses:<br><textarea class="form-control" id="copy_and_paste">';
+                copy_and_paste_text += bcc_field;
+                copy_and_paste_text += '</textarea>';
+                $("#email_copy_and_paste").html(copy_and_paste_text);
+                $("#copy_and_paste").select();
+            });
+
+        });
+
+
 </script>
 
+{% comment %}
+email_copy_and_paste
+            <a href = "mailto:{{ user.email }}?bcc={% for address in email_dict.iteritems %}{{ address }},{% endfor %}">
+{% endcomment %}
 {% endblock %}
 
 

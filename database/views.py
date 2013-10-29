@@ -88,13 +88,19 @@ def module_view(request, module_id, year):
     if module.assessment_6_type in feedback_for:
         feedback[6] = True
     rows = []
+    email_dict = {}
     for student in students:
         row = {}
         performance = Performance.objects.get(student=student, module=module)
         if performance.seminar_group > number_of_groups:
             number_of_groups = performance.seminar_group
         row['performance'] = performance
-
+        # Add all email addresses sorted by seminar groups
+        sg = str(performance.seminar_group)
+        if sg not in email_dict:
+            email_dict[sg] = str(student.email) + ','
+        else:
+            email_dict[sg] = email_dict[sg] + str(student.email) + ','
         # Check which student did not attend the last session
         last_session = module.sessions_recorded
         row['no_attendance_twice'] = False
@@ -120,13 +126,13 @@ def module_view(request, module_id, year):
     else:
         adminorinstructor = False
 
-    #create string to make it iterable
+    #create string of seminar groups to make this iterable (not the nicest hack, but it works)
     groupstring = ''
     for i in range(0, number_of_groups):
         groupstring += str(i+1)
 
     return render_to_response('module_view.html',
-            {'module': module, 'rows': rows, 
+            {'module': module, 'rows': rows, 'email_dict': email_dict,
                 'adminorinstructor': adminorinstructor, 'feedback': feedback,
             'number_of_groups': groupstring},
             context_instance = RequestContext(request)

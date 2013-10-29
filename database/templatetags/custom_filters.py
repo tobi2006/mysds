@@ -62,3 +62,7 @@ def listsort_reverse(value):
         else:
             return value
         listsort.is_safe = True
+
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(key)
