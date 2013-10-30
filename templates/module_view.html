@@ -270,6 +270,17 @@
     </tr>
 </table>
 
+{% if no_email_addresses %}
+    <br><br>
+    Be aware that the email addresses for the following students are not currently in the database:
+    <br>
+    <ul>
+        {% for name in no_email_addresses %}
+        <li>{{ name }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
 <br>
 </div>
 
@@ -579,7 +590,9 @@
                 copy_and_paste_text += bcc_field;
                 copy_and_paste_text += '</textarea>';
                 $("#email_copy_and_paste").html(copy_and_paste_text);
-                $("#copy_and_paste").select();
+                $("#copy_and_paste").hover(function(){
+                    $(this).select();
+                });
             });
 
         });

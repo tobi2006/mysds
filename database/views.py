@@ -89,6 +89,7 @@ def module_view(request, module_id, year):
         feedback[6] = True
     rows = []
     email_dict = {}
+    no_email_addresses = []
     for student in students:
         row = {}
         performance = Performance.objects.get(student=student, module=module)
@@ -96,11 +97,15 @@ def module_view(request, module_id, year):
             number_of_groups = performance.seminar_group
         row['performance'] = performance
         # Add all email addresses sorted by seminar groups
-        sg = str(performance.seminar_group)
-        if sg not in email_dict:
-            email_dict[sg] = str(student.email) + ','
+        if student.email:
+            sg = str(performance.seminar_group)
+            if sg not in email_dict:
+                email_dict[sg] = str(student.email) + ';'
+            else:
+                email_dict[sg] = email_dict[sg] + str(student.email) + ';'
         else:
-            email_dict[sg] = email_dict[sg] + str(student.email) + ','
+            student_name = student.first_name + " " + student.last_name
+            no_email_addresses.append(student_name)
         # Check which student did not attend the last session
         last_session = module.sessions_recorded
         row['no_attendance_twice'] = False
@@ -132,7 +137,7 @@ def module_view(request, module_id, year):
         groupstring += str(i+1)
 
     return render_to_response('module_view.html',
-            {'module': module, 'rows': rows, 'email_dict': email_dict,
+            {'module': module, 'rows': rows, 'email_dict': email_dict, 'no_email_addresses': no_email_addresses,
                 'adminorinstructor': adminorinstructor, 'feedback': feedback,
             'number_of_groups': groupstring},
             context_instance = RequestContext(request)
@@ -635,8 +640,18 @@ def year_view(request, year):
 @user_passes_test(is_teacher)
 def tutee_list(request):
     tutees = Student.objects.filter(tutor=request.user)
+    email_addresses = ""
+    no_email_addresses = []
+    for tutee in tutees:
+        if tutee.email:
+            email_addresses += tutee.email + ";"
+        else:
+            name = tutee.first_name + " " + tutee.last_name
+            no_email_addresses.append(name)
+
     return render_to_response('tutee_list.html',
-            {'tutees': tutees},
+            {'tutees': tutees, 'email_addresses': email_addresses,
+            'no_email_addresses': no_email_addresses},
             context_instance=RequestContext(request)
         )
 

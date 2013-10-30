@@ -1,11 +1,11 @@
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import IntegrityError
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import Template, Context, RequestContext
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.db.models import Q
-from django.db import IntegrityError
-from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth.models import User
 from django.utils import simplejson
 
 from database.models import *
@@ -13,7 +13,6 @@ from database import functions
 from database.forms import *
 from anonymous_marking.models import *
 from database.views import is_teacher, is_admin 
-
 
 @login_required
 @user_passes_test(is_admin)
