@@ -42,13 +42,13 @@
     <thead>
         <tr>
             <th>
+                Concern
+            </th>
+            <th>
                 Year
             </th>
             <th>
                 Student
-            </th>
-            <th>
-                Concern
             </th>
             <th>
                 Course
@@ -59,13 +59,17 @@
         {% for tutee in tutees %}
             <tr>
                 <td>
+                    {% if tutee in problem_students %}
+                        Hallo
+                    {% else %}
+                        &nbsp;
+                    {% endif %}
+                </td>
+                <td>
                     {{ tutee.year }}
                 </td>
                 <td>
                     <a href = "{{ tutee.get_tutee_url }}">{{ tutee }}</a>
-                </td>
-                <td>
-                    &nbsp;
                 </td>
                 <td>
                     {{ tutee.course }}

@@ -653,7 +653,7 @@ def tutee_list(request):
             no_email_addresses.append(name)
         #Check if there are any issues the tutor should see in the overview
         problems = []
-        performances = Performance.objects.filter(student=student)
+        performances = Performance.objects.filter(student=tutee)
         for performance in performances:
             module = performance.module
             if module.year == current_year:
@@ -696,10 +696,16 @@ def tutee_list(request):
             if performance.average:
                 if performance.average < 40:
                     problemstring = "Student failed " + module.title
+                    problems.append(problemstring)
+            if len(problems) > 0:
+                problem_students[tutee] = problems
+                for problem in problems:
+                    print problem
+                print tutee
 
     return render_to_response('tutee_list.html',
             {'tutees': tutees, 'email_addresses': email_addresses,
-            'no_email_addresses': no_email_addresses},
+                'no_email_addresses': no_email_addresses, 'problem_students': problem_students},
             context_instance=RequestContext(request)
         )
 
