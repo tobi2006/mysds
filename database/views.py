@@ -642,12 +642,60 @@ def tutee_list(request):
     tutees = Student.objects.filter(tutor=request.user)
     email_addresses = ""
     no_email_addresses = []
+    problem_students = {}
+    meta_stuff = MetaData.objects.get(data_id=1)
+    current_year = meta_stuff.current_year
     for tutee in tutees:
         if tutee.email:
             email_addresses += tutee.email + ";"
         else:
             name = tutee.first_name + " " + tutee.last_name
             no_email_addresses.append(name)
+        #Check if there are any issues the tutor should see in the overview
+        problems = []
+        performances = Performance.objects.filter(student=student)
+        for performance in performances:
+            module = performance.module
+            if module.year == current_year:
+                last_session = module.sessions_recorded
+                if last_session > 1:
+                    last_session -= 1
+                    session_before_last = last_session - 1
+                    if performance.attendance[last_session] == '0' and performance.attendance[session_before_last] == '0':
+                        problemstring = "Student did not attend at least the last two sessions in " + module.title
+                        problems.append(problemstring)
+            if module.is_foundational:
+                if performance.assessment_1:
+                    if performance.assessment_1 < 40:
+                        problemstring = "Student failed " + module.assessment_1_title + "for " + module.title
+                        problems.append(problemstring)
+                if performance.assessment_2:
+                    if performance.assessment_2 < 40:
+                        problemstring = "Student failed " + module.assessment_2_title + "for " + module.title
+                        problems.append(problemstring)
+                if performance.assessment_3:
+                    if performance.assessment_3 < 40:
+                        problemstring = "Student failed " + module.assessment_3_title + "for " + module.title
+                        problems.append(problemstring)
+                if performance.assessment_4:
+                    if performance.assessment_4 < 40:
+                        problemstring = "Student failed " + module.assessment_4_title + "for " + module.title
+                        problems.append(problemstring)
+                if performance.assessment_5:
+                    if performance.assessment_5 < 40:
+                        problemstring = "Student failed " + module.assessment_5_title + "for " + module.title
+                        problems.append(problemstring)
+                if performance.assessment_6:
+                    if performance.assessment_6 < 40:
+                        problemstring = "Student failed " + module.assessment_6_title + "for " + module.title
+                        problems.append(problemstring)
+                if performance.exam:
+                    if performance.exam < 40:
+                        problemstring = "Student failed the exam for " + module.title
+                        problems.append(problemstring)
+            if performance.average:
+                if performance.average < 40:
+                    problemstring = "Student failed " + module.title
 
     return render_to_response('tutee_list.html',
             {'tutees': tutees, 'email_addresses': email_addresses,
