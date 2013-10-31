@@ -189,10 +189,14 @@
             <td>
                 <strong>Module Mark</strong>
             </td>
-            <td>
-                {{ performance.average }}
-            </td>
-        </tr> 
+                <td>
+                {% if performance.average_makes_sense %}
+                    {{ performance.average }}
+                {% else %}
+                    Not available yet
+                {% endif %}
+                </td>
+            </tr>
     </table>
 
     {% comment %}

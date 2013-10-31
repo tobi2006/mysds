@@ -9,7 +9,6 @@
 <br>
 
 <a class="btn btn-default" id="show_mail_field">Email all tutees</a>
-
 <div id="mail_field">
     <table cellpadding="10">
         <tr>
@@ -35,15 +34,13 @@
         </tr>
     </table>
 
-    <br><br>
 </div>
+
+    <br><br>
 
 <table id="sortable_table" class="table table-striped table-sortable">
     <thead>
         <tr>
-            <th>
-                Concern
-            </th>
             <th>
                 Year
             </th>
@@ -53,18 +50,14 @@
             <th>
                 Course
             </th>
+            <th>
+                Concern
+            </th>
         </tr>
     </thead>
     <tbody>
         {% for tutee in tutees %}
             <tr>
-                <td>
-                    {% if tutee in problem_students %}
-                        Hallo
-                    {% else %}
-                        &nbsp;
-                    {% endif %}
-                </td>
                 <td>
                     {{ tutee.year }}
                 </td>
@@ -73,6 +66,13 @@
                 </td>
                 <td>
                     {{ tutee.course }}
+                </td>
+                <td>
+                    {% if tutee in problem_students %}
+                    <span class="glyphicon glyphicon-warning-sign" id="{{ tutee.student_id }}-warning"></span>
+                    {% else %}
+                        &nbsp;
+                    {% endif %}
                 </td>
             </tr>
         {% endfor %}
@@ -95,6 +95,16 @@
         $("#copy_and_paste_field").hover(function(){
             $(this).select();
         });
+
+        {% for tutee, problems in problem_students.items %}
+            $("#{{ tutee.student_id }}-warning").qtip({
+                content: {
+                    text: '<ul>{% for problem in problems %}<li>{{ problem }}</li>{% endfor %}</ul>'
+                    }
+                });
+        {% endfor %}
+
+
     });
 </script>
 {% endblock %}

@@ -504,6 +504,38 @@ class Performance(models.Model):
         self.real_average = average
         self.save()
 
+    def average_makes_sense(self): #Only return true if there are marks in all categories, otherwise average is useless
+        result = True
+        if self.module.assessment_1_value:
+            if not self.assessment_1:
+                result = False
+        if result == True:
+            if self.module.assessment_2_value:
+                if not self.assessment_2:
+                    result = False
+        if result == True:
+            if self.module.assessment_3_value:
+                if not self.assessment_3:
+                    result = False
+        if result == True:
+            if self.module.assessment_4_value:
+                if not self.assessment_4:
+                    result = False
+        if result == True:
+            if self.module.assessment_5_value:
+                if not self.assessment_5:
+                    result = False
+        if result == True:
+            if self.module.assessment_6_value:
+                if not self.assessment_6:
+                    result = False
+        if result == True:
+            if self.module.exam_value:
+                if not self.exam:
+                    result = False
+        return result
+
+
 class Tutee_Session(models.Model):
     tutee = models.ForeignKey(Student)
     tutor = models.ForeignKey(User, limit_choices_to={'groups__name': 'teachers'})

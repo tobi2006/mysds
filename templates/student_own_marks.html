@@ -147,6 +147,16 @@
                 </td>
             </tr>
         {% endif %}
+        {% if performance.average_makes_sense %}
+            <tr>
+                <td>
+                    Module Mark
+                </td>
+                <td>
+                    {{ performance.average }}
+                </td>
+            </tr>
+        {% endif %}
     </table>
 
     <br><br>
