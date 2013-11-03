@@ -80,3 +80,6 @@ urlpatterns += patterns('feedback.views',
     url(r'^essay_feedback/$', 'add_essay_feedback', name = 'add_essay_feedback')
 )
 
+urlpatterns += patterns('scheduler.views',
+    url(r'^set_up_appointments/$', 'set_up_appointments', name = 'set_up_appointments')
+)

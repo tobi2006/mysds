@@ -138,7 +138,8 @@ INSTALLED_APPS = (
     'export',
     'anonymous_marking',
     'feedback',
-    'announcer'
+    'announcer',
+    'scheduler'
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )

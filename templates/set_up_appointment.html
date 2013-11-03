@@ -1,0 +1,279 @@
+{% extends "base.html" %}
+{% load custom_filters %}
+{% load markup %}
+
+{% block title %}CCCU Law - Appointments{% endblock %}
+
+{% block formstart %}
+    <form action="" method="post" accept-charset="utf-8" role="form">
+    {% csrf_token %}
+{% endblock %}
+
+{% block content %}
+
+<h2>Schedule appointments with students</h2>
+
+<h3>Message</h3>
+
+<textarea name="message" class="form-control" rows="6" placeholder="Any Details you want to tell the students - what they need to bring or prepare, location of the meeting etc">
+</textarea>
+
+<br><hr>
+
+<h3>Details</h3>
+
+The meetings will be held<br><br>
+
+<div class="row">
+    <div class="col-xs-2">
+        <input class="form-control input-sm slot_date" data-date-format="dd/mm/yyyy" id="slot_1_date" name="slot_1_date" type="text" placeholder="Meeting Date"/>
+    </div>
+    <div class="col-xs-3">
+        <input class="form-control input-sm" name="slot_1_from" type="text" placeholder="Start time in 24h format (eg 14:30)">
+    </div>
+    <div class="col-xs-3">
+        <input class="form-control input-sm" name="slot_1_until" type="text" placeholder="End time in 24h format (eg 18:00)">
+    </div>
+    <div class="col-xs-1">
+        <span class="glyphicon glyphicon-plus-sign" id="add_2"></span>
+    </div>
+    <br><br>
+</div>
+<div class="row more_appointments" id="slot_2">
+    <div class="col-xs-2">
+        <input class="form-control input-sm slot_date" data-date-format="dd/mm/yyyy" id="slot_2_date" name="slot_2_date" type="text" placeholder="Meeting Date"/>
+    </div>
+    <div class="col-xs-3">
+        <input class="form-control input-sm" name="slot_2_from" type="text" placeholder="Start time in 24h format (eg 14:30)">
+    </div>
+    <div class="col-xs-3">
+        <input class="form-control input-sm" name="slot_2_until" type="text" placeholder="End time in 24h format (eg 18:00)">
+    </div>
+    <div class="col-xs-1">
+        <span class="glyphicon glyphicon-plus-sign" id="add_3"></span>
+    </div>
+    <br><br>
+</div>
+<div class="row more_appointments" id="slot_3">
+    <div class="col-xs-2">
+        <input class="form-control input-sm slot_date" data-date-format="dd/mm/yyyy" id="slot_3_date" name="slot_3_date" type="text" placeholder="Meeting Date"/>
+    </div>
+    <div class="col-xs-3">
+        <input class="form-control input-sm" name="slot_3_from" type="text" placeholder="Start time in 24h format (eg 14:30)">
+    </div>
+    <div class="col-xs-3">
+        <input class="form-control input-sm" name="slot_3_until" type="text" placeholder="End time in 24h format (eg 18:00)">
+    </div>
+    <div class="col-xs-1">
+        <span class="glyphicon glyphicon-plus-sign" id="add_4"></span>
+    </div>
+    <br><br>
+</div>
+<div class="row more_appointments" id="slot_4">
+    <div class="col-xs-2">
+        <input class="form-control input-sm slot_date" data-date-format="dd/mm/yyyy" id="slot_4_date" name="slot_4_date" type="text" placeholder="Meeting Date"/>
+    </div>
+    <div class="col-xs-3">
+        <input class="form-control input-sm" name="slot_4_from" type="text" placeholder="Start time in 24h format (eg 14:30)">
+    </div>
+    <div class="col-xs-3">
+        <input class="form-control input-sm" name="slot_4_until" type="text" placeholder="End time in 24h format (eg 18:00)">
+    </div>
+    <div class="col-xs-1">
+        <span class="glyphicon glyphicon-plus-sign" id="add_5"></span>
+    </div>
+    <br><br>
+</div>
+<div class="row more_appointments" id="slot_5">
+    <div class="col-xs-2">
+        <input class="form-control input-sm slot_date" data-date-format="dd/mm/yyyy" id="slot_5_date" name="slot_5_date" type="text" placeholder="Meeting Date"/>
+    </div>
+    <div class="col-xs-3">
+        <input class="form-control input-sm" name="slot_5_from" type="text" placeholder="Start time in 24h format (eg 14:30)">
+    </div>
+    <div class="col-xs-3">
+        <input class="form-control input-sm" name="slot_5_until" type="text" placeholder="End time in 24h format (eg 18:00)">
+    </div>
+    <div class="col-xs-1">
+        <span class="glyphicon glyphicon-plus-sign" id="add_6"></span>
+    </div>
+    <br><br>
+</div>
+<div class="row more_appointments" id="slot_6">
+    <div class="col-xs-2">
+        <input class="form-control input-sm slot_date" data-date-format="dd/mm/yyyy" id="slot_6_date" name="slot_6_date" type="text" placeholder="Meeting Date"/>
+    </div>
+    <div class="col-xs-3">
+        <input class="form-control input-sm" name="slot_6_from" type="text" placeholder="Start time in 24h format (eg 14:30)">
+    </div>
+    <div class="col-xs-3">
+        <input class="form-control input-sm" name="slot_6_until" type="text" placeholder="End time in 24h format (eg 18:00)">
+    </div>
+    <br><br>
+</div>
+
+<br>
+
+<div class="row">
+    <div class="col-xs-1">
+        &nbsp;
+    </div>
+    <div class="col-xs-1">
+        <label>For</label>
+    </div>
+    <div class="col-xs-2">
+        <select name="time">
+            <option value="5">5 Minutes</option>
+            <option value="10">10 Minutes</option>
+            <option value="15" selected>15 Minutes</option>
+            <option value="20">20 Minutes</option>
+            <option value="25">25 Minutes</option>
+            <option value="30">30 Minutes</option>
+            <option value="35">35 Minutes</option>
+            <option value="40">40 Minutes</option>
+            <option value="45">45 Minutes</option>
+            <option value="50">50 Minutes</option>
+            <option value="55">55 Minutes</option>
+            <option value="60">1 Hour</option>
+        </select>
+    </div>
+    <div class="col-xs-1">
+        <label>each</label>
+    </div>
+</div>
+
+<br><hr>
+
+<h3>Students to Invite</h3>
+
+Choose from <select id="selector">
+    <option value="none">...</option>
+    <option value="tutee">My Tutees</option>
+    {% for key, value in current_modules.items %}
+    <option value="{{ key }}">{{ value }}</option>
+    {% endfor %}
+    <option value="year_1">Year 1</option>
+    <option value="year_2">Year 2</option>
+    <option value="year_3">Year 3</option>
+    <option value="student">All Students</option>
+</select>
+
+<br><br>
+
+<input type="checkbox" id="select_all_visible"> Select all
+
+<br><br>
+
+<table class="table table-striped table-sortable" id="sortable_table">
+    <thead>
+        <tr>
+            <th>
+                Invite
+            </th>
+            <th>
+                Student
+            </th>
+            <th>
+                Course
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in rows %}
+        <tr class="student year_{{ row.student.year }}{% if row.modules %}{{ row.modules }}{% endif %}{% if row.tutee %} tutee{% endif %}">
+            <td>
+                <input type="checkbox" class="checkbox" name="selected_student_id" value="{{ row.student.student_id }}">
+            </td>
+            <td>
+                {{ row.student.last_name }}, {{ row.student.first_name }}
+            </td>
+            <td>
+                {{ row.student.course }}{% if row.student.qld %} (QLD{% if row.student.is_part_time %}, part time{% endif %}){% elif row.student.is_part_time %} (part time){% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<input type = "submit" value="Announce Appointments" class="btn btn-default">
+</form>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script type="text/javascript">
+
+    $(document).ready(function(){
+
+        $(".slot_date").datepicker();
+
+        $(".more_appointments").hide();
+
+        $(".glyphicon-plus-sign").qtip({
+            content: {
+                text: 'Add another timeslot'
+            }
+        });
+
+        $(".time").qtip({
+            content: {
+                text: 'Enter the time in 24 h format (14:30 for 2:30 pm)'
+            }
+        });
+
+        $("#add_2").click(function(){
+            $("#slot_2").show();
+            $("#add_2").hide()
+        });
+
+        $("#add_3").click(function(){
+            $("#slot_3").show();
+            $("#add_3").hide()
+        });
+
+        $("#add_4").click(function(){
+            $("#slot_4").show();
+            $("#add_4").hide();
+        });
+
+        $("#add_5").click(function(){
+            $("#slot_5").show();
+            $("#add_5").hide();
+        });
+
+        $("#add_6").click(function(){
+            $("#slot_6").show();
+            $("#add_6").hide();
+        });
+
+        $(".student").hide();
+
+        $("#selector").change(function(){
+            value = $(this).val();
+            $(".student").hide();
+            if (value != "none"){
+                $("." + value).show();
+            };
+        });
+
+        $("#select_all_visible").change(function(){
+            $(".checkbox").each(function(){
+                if ($(this).is(":visible"))
+                {
+                    if ($("#select_all_visible").attr('checked'))
+                    {
+                        $(this).attr('checked', 'checked');
+                    }
+                    else
+                    {
+                        $(this).removeAttr('checked');
+                    };
+                };
+            });
+        });
+
+    });
+
+</script>
+{% endblock %}
