@@ -1,4 +1,4 @@
-{% extends "sidebar.html" %}
+{% extends "base.html" %}
 {% load custom_filters %}
 
 {% block title %}CCCU Law -  Year {{year}} Overview{% endblock %}
@@ -8,10 +8,14 @@
 <form action="{{ action_url }}" id="students_form" method="post"> 
 {% endblock %}
 
-{% block sidebar %}
-                
-<div class="well" data-spy="affix" data-offset-top="0">
-    <strong>
+{% block content %}
+
+{% if students %}
+
+<h1>Student Overview</h1>
+
+<div class="well">
+    <h2>
         {% if ug %}
             {% if year == "all" %}
                 Undergraduate ({{ all_students }} students)
@@ -25,7 +29,7 @@
         {% elif alumnus %}
             Alumni ({{ all_students }})
         {% endif %}
-    </strong>
+    </h2>
 
 <br><br>
 <strong>Apply actions to selected students</strong>
@@ -48,13 +52,7 @@
     </tr>
 </table>
 </div>
-{% endblock %}
 
-{% block content %}
-
-{% if students %}
-
-<h1>Student Overview</h1>
 
 <br><br>
 
@@ -86,6 +84,9 @@
                 ID
             </th>
             <th>
+                LSP
+            </th>
+            <th>
                 Course
             </th>
             <th>
@@ -115,6 +116,9 @@
             </td>
             <td>
                 {{ student.student_id }}
+            </td>
+            <td>
+                {% if row.performance.student.lsp %}<a href="{{ row.performance.student.get_lsp_view_url }}"><span class="glyphicon glyphicon-warning-sign"></span></a>{% endif %}
             </td>
             <td>
                 {{ student.course }}{% if student.qld %} (QLD{% if student.is_part_time %}, part time{% endif %}){% elif student.is_part_time %} (part time){% endif %}
