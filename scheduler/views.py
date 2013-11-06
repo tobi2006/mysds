@@ -5,10 +5,37 @@ from django.template import Template, Context, RequestContext
 
 from database.models import Student, Module, MetaData
 from database.views import is_admin, is_student, is_teacher
+from scheduler.models import *
 
 @login_required
 @user_passes_test(is_teacher)
 def set_up_appointments(request):
+    errors = []
+    if request.method == 'POST':
+        invitees = request.POST.getlist('selected_student_id')
+        if len(invitees) == 0:
+            errors.append("No students selected")
+        else:
+            date_1 = request.POST['slot_1_date']
+            if  date_1 == None:
+                errors.append("Specify at least one date")
+            elif len(date_1.split('/')) != 3:
+                errors.append("Enter a valid date")
+            else:
+                time_from = request.POST['slot_1_from'].split(':')
+                hour_from = time_from[0]
+                minute_from = time_from[1]
+
+                
+
+
+
+
+            appointment = StudentTeacherAppointment(
+                )
+
+        return HttpResponseRedirect()
+
     all_students = Student.objects.filter(active=True)
     meta_stuff = MetaData.objects.get(data_id=1)
     current_year = meta_stuff.current_year
