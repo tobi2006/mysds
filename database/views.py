@@ -437,11 +437,29 @@ def student_view(request, student_id):
     all_performances = Performance.objects.filter(student = student)
     sorted_performances = {}
     for performance in all_performances:
-        year = performance.module.year
-        if sorted_performances.get(year):
-            sorted_performances[year].append(performance)
-        else:
-            sorted_performances[year] = [performance,]
+        use_performance = False
+        if performance.module.sessions_recorded != None:
+            use_performance = True
+        elif performance.assessment_1:
+            use_performance = True
+        elif performance.assessment_2:
+            use_performance = True
+        elif performance.assessment_3:
+            use_performance = True
+        elif performance.assessment_4:
+            use_performance = True
+        elif performance.assessment_5:
+            use_performance = True
+        elif performance.assessment_6:
+            use_performance = True
+        elif performance.exam:
+            use_performance = True
+        if use_performance:
+            year = performance.module.year
+            if sorted_performances.get(year):
+                sorted_performances[year].append(performance)
+            else:
+                sorted_performances[year] = [performance,]
             
 
     return render_to_response('student_view.html',
@@ -731,11 +749,29 @@ def tutee_edit(request, student_id, meeting_id=None):
     all_performances = Performance.objects.filter(student = student)
     sorted_performances = {}
     for performance in all_performances:
-        year = performance.module.year
-        if sorted_performances.get(year):
-            sorted_performances[year].append(performance)
-        else:
-            sorted_performances[year] = [performance,]
+        use_performance = False
+        if performance.module.sessions_recorded != None:
+            use_performance = True
+        elif performance.assessment_1:
+            use_performance = True
+        elif performance.assessment_2:
+            use_performance = True
+        elif performance.assessment_3:
+            use_performance = True
+        elif performance.assessment_4:
+            use_performance = True
+        elif performance.assessment_5:
+            use_performance = True
+        elif performance.assessment_6:
+            use_performance = True
+        elif performance.exam:
+            use_performance = True
+        if use_performance:
+            year = performance.module.year
+            if sorted_performances.get(year):
+                sorted_performances[year].append(performance)
+            else:
+                sorted_performances[year] = [performance,]
     tutee_sessions = Tutee_Session.objects.filter(tutee=student)
 
     return render_to_response('tutee_edit.html',
