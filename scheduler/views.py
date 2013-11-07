@@ -19,8 +19,14 @@ def set_up_appointments(request):
     if request.method == 'POST':
         form = AppointmentForm(request.POST)
         invitees = request.POST.getlist('selected_student_id') # Do Validation for these in Javascript
-        if form.is_valid():
+        if len(invitees) > 0 and form.is_valid():
+            teacher = request.user
             message = form.cleaned_data['message']
+            appointment_block = AppointmentBlock(teacher=teacher, message=message)
+            appointment_block.save()
+            for student_id in invitees:
+                student = Student.objects.get(student_id = student_id)
+                appointment_block.invited.add(student)
             minutes = int(form.cleaned_data['appointment_length'])
             length = datetime.timedelta(minutes=minutes)
             slots = []
@@ -65,12 +71,10 @@ def set_up_appointments(request):
                 slot_end = datetime.datetime.combine(date, slot['until'])
                 start = slot_start
                 while start + length < slot_end:
-                    print "From:"
-                    print start.time()
+                    end = start + length
+                    appointment = StudentTeacherAppointment(start = start, end = end, belongs_to = appointment_block)
+                    appointment.save()
                     start += length
-                    print "Until:"
-                    print start.time()
-                    print "---"
             return HttpResponseRedirect('/set_up_appointments')
     else:
         form = AppointmentForm(initial={'appointment_length': 15})
