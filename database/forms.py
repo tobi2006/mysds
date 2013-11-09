@@ -149,6 +149,7 @@ class CSVParseForm(forms.Form):
             ('email', 'University email'),
             ('course', 'Course'),
             ('tutor', 'Tutor'),
+            ('phone_no', 'Phone Number'),
             ('permanent_email', 'Private email'),
             ('achieved_grade', 'Achieved grade'),
             ('address', 'Term time address'),

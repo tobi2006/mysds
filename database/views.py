@@ -1225,6 +1225,8 @@ def parse_csv(request):
                             current.year = int(tmp[0])
                         if 'is_part_time' in result:
                             current.is_part_time = result['is_part_time']
+                        if 'phone_no' in result:
+                            current.phone_no = result['phone_no']
                         if 'email' in result:
                             current.email = result['email']
                         if 'course' in result:
@@ -1273,6 +1275,8 @@ def parse_csv(request):
                             result['is_part_time'] = False 
                         if 'email' not in result:
                             result['email'] = ""
+                        if 'phone_no' not in result:
+                            result['phone_no'] = ""
                         if 'course' not in result:
                             result['course'] = None
                         else:
@@ -1322,6 +1326,7 @@ def parse_csv(request):
                                 lsp = result['lsp'],
                                 permanent_email = result['permanent_email'],
     #                            achieved_grade = result['achieved_grade'],
+                                phone_no = result['phone_no'],
                                 address = result['address'],
                                 home_address = result['home_address']
                             )
