@@ -209,7 +209,7 @@
 {% if meeting.tutor == user %}
     <p align="right">
     <small>
-        <a href="{{ student.get_tutee_url }}{{ meeting.id }}">Edit</a> | <a href=# class="delete" id="{{ meeting.id }}">Delete</a>
+        <a href="{{ student.get_tutee_url }}{{ meeting.id }}#meeting_record">Edit</a> | <a href=# class="delete" id="{{ meeting.id }}">Delete</a>
     </small>
     </p>
 {% endif %}
@@ -226,7 +226,7 @@ No meetings recorded yet.
 
 <br><hr><br>
 
-<h2>Add New Meeting Record</h2>
+<h2 id="meeting_record">Meeting Record</h2>
 
     <p align="right">
         <button class="btn btn-sm" type="button" id="md-helper">Help with Formatting</button>
