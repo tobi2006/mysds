@@ -648,6 +648,37 @@ def year_view(request, year):
             context_instance = RequestContext(request)
         )
 
+#####################################
+#    All Performances View          #
+#####################################
+
+@login_required
+@user_passes_test(is_admin)
+def all_performances(request, year):
+    """
+    This shows all performances per year.
+    
+    The template allows to show the different parts (assessments, attendance) via JQuery.
+
+    """
+    students = Student.objects.filter(year = year, active=True)
+    all_performances = {}
+    meta_stuff = MetaData.objects.get(data_id=1)
+    current_year = meta_stuff.current_year
+    for student in students:
+        performances = []
+        for module in student.modules:
+            if module.year = current_year:
+                performance = Performance.objects.get(student = student, module = module)
+                performances.append(performance)
+        all_performances[student] = performances
+
+    return render_to_response('all_performances.html',
+            {'performances': all_performances},
+            context_instance = RequestContext(request)
+        )
+
+
 
 #####################################
 #        Tutor Stuff                #
