@@ -80,7 +80,7 @@
                     <li><a href="{{ module.get_absolute_url }}">{{ module.title }}</a></li>
                 {% endfor %}
                 <li class="divider"></li>
-                <li><a href="{% url "add_module" %}">Add Module(s)</a></li>
+                <li><a href="{% url "add_module" %}">Add Module</a></li>
             </ul>
         </li>
         {% if module_dict.past %}
