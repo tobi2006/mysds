@@ -245,8 +245,7 @@ No meetings recorded yet.
     <form action="/tutee/{{ student.student_id }}/{% if edit %}{{ edit }}/{% endif %}" method="post" accept-charset="utf-8">
         {% csrf_token %}
         <div class="row">
-            <div class="col-lg-2">
-                <label for="id_date_of_meet">Date</label>
+            <div class="col-lg-3">
                 {{ form.date_of_meet }}
             </div>
         </div>
