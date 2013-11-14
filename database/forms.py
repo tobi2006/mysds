@@ -127,8 +127,8 @@ class TuteeForm(forms.ModelForm):
         model = Tutee_Session
         fields = ('date_of_meet', 'notes', )
         widgets = {
-                'date_of_meet': forms.DateInput(attrs={'data-date-format': 'dd/mm/yyyy', 'class': 'form-control'}),
-                'notes': forms.Textarea(attrs={'class': 'form-control'}),
+                'date_of_meet': forms.DateInput(attrs={'data-date-format': 'dd/mm/yyyy', 'class': 'form-control', 'placeholder': 'Date of meeting, e.g. 20/6/1980'}),
+                'notes': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Notes from the meeting'}),
                 }
 
 class CSVUploadForm(forms.Form):
