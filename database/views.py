@@ -649,32 +649,50 @@ def year_view(request, year):
         )
 
 #####################################
-#    All Performances View          #
+#    All Attendances View          #
 #####################################
 
 @login_required
 @user_passes_test(is_admin)
-def all_performances(request, year):
+def all_attendances(request, year):
     """
-    This shows all performances per year.
-    
-    The template allows to show the different parts (assessments, attendance) via JQuery.
-
+    This shows all assessments per year.
     """
+    year = int(year)
     students = Student.objects.filter(year = year, active=True)
-    all_performances = {}
+    all_attendances = {}
     meta_stuff = MetaData.objects.get(data_id=1)
     current_year = meta_stuff.current_year
     for student in students:
-        performances = []
-        for module in student.modules:
-            if module.year = current_year:
+        attendance_per_module = {}
+        modules = student.modules.all()
+        for module in modules:
+            if module.year == current_year:
                 performance = Performance.objects.get(student = student, module = module)
-                performances.append(performance)
-        all_performances[student] = performances
+                attendance = []
+                no_teaching = []
+                tmp = module.no_teaching_in.split(',')
+                for item in tmp:
+                    try:
+                        no_teaching.append(int(item))
+                    except ValueError: # Ignore trailing whitespace or wrong entries
+                        pass
+
+
+
+
+                attendance_per_module[module] = attendance
+                
+#                    if module.first_session < 15:
+#                        for week in range(5,16):
+#                            if week < module.last_session and str(week) not in module.no_teaching_in:
+#
+
+            attendances.append(attendance)
+        all_attendances[student] = performances
 
     return render_to_response('all_performances.html',
-            {'performances': all_performances},
+            {'all_attendances': all_attendances},
             context_instance = RequestContext(request)
         )
 
