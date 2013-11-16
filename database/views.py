@@ -663,12 +663,21 @@ def all_attendances(request, year):
     all_attendances = {}
     meta_stuff = MetaData.objects.get(data_id=1)
     current_year = meta_stuff.current_year
+    all_rows = []
     for student in students:
-        attendance_per_module = {}
         modules = student.modules.all()
         for module in modules:
             if module.year == current_year:
+                email_string = '<a href="mailto:' + student.email 
+                email_string += '?Subject=Attendance for ' + module.title + '">'
+                email_string += '<span class="glyphicon glyphicon-envelope"></span></a>'
+                url = student.get_absolute_url()
+                student_string = '<a href="' + url + '">' + student.last_name + ', '+ student.first_name + '</a>'
+                url = module.get_absolute_url()
+                module_string = '<a href="' + url + '">' + module.title + ' ('+ module.code + ')</a>'
+                row = [email_string, student_string, module_string]
                 performance = Performance.objects.get(student = student, module = module)
+                attendance_list = performance.attendance
                 attendance = []
                 no_teaching = []
                 tmp = module.no_teaching_in.split(',')
@@ -677,22 +686,21 @@ def all_attendances(request, year):
                         no_teaching.append(int(item))
                     except ValueError: # Ignore trailing whitespace or wrong entries
                         pass
+                first = int(module.first_session)
+                counter = 0
+                for week in range(5,30):
+                    attendance = 'NT' # No teaching
+                    if week >= first:
+                        week_no = counter + 1
+                        if week_no <= module.sessions_recorded:
+                            if week not in no_teaching:
+                                attendance = attendance_list[counter]
+                                counter += 1
+                    row.append(attendance)
+                all_rows.append(row)
 
-
-
-
-                attendance_per_module[module] = attendance
-                
-#                    if module.first_session < 15:
-#                        for week in range(5,16):
-#                            if week < module.last_session and str(week) not in module.no_teaching_in:
-#
-
-            attendances.append(attendance)
-        all_attendances[student] = performances
-
-    return render_to_response('all_performances.html',
-            {'all_attendances': all_attendances},
+    return render_to_response('all_attendances.html',
+            {'all_rows': all_rows},
             context_instance = RequestContext(request)
         )
 

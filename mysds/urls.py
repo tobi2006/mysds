@@ -19,12 +19,13 @@ urlpatterns += patterns('announcer.views',
 
 urlpatterns += patterns('mysds.views',
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^attendance/(\w+)/(\d{4})/$', 'na', name = 'attendance_no'), #Dummy to enable get_mark_url method
-    url(r'^delete_tutee_meeting/$', 'na', name='delete_tutee_meeting_no'), #Dummy to enable get_mark_url method
-    url(r'^export_anonymous_exam_marks/$', 'na', name='export_anonymous_exam_marks_year'), #Dummy to enable get_mark_url method
-    url(r'^mark/(\w+)/(\d{4})/$', 'na', name = 'mark_no'), #Dummy to enable get_mark_url method
-    url(r'^mark_anonymously/(\w+)/(\d{4})/$', 'na', name = 'mark_anon'), #Dummy to enable get_mark_url method
-    url(r'^toggle_assessment_availability/(\w+)/(\d{4})/$', 'na', name = 'toggle_assessment'), #Dummy to enable get_mark_url method
+    url(r'^all_attendances/$', 'na', name = 'all_attendances_year'), #Dummy to enable url method
+    url(r'^attendance/(\w+)/(\d{4})/$', 'na', name = 'attendance_no'), #Dummy to enable url method
+    url(r'^delete_tutee_meeting/$', 'na', name='delete_tutee_meeting_no'), #Dummy to enable url method
+    url(r'^export_anonymous_exam_marks/$', 'na', name='export_anonymous_exam_marks_year'), #Dummy to enable url method
+    url(r'^mark/(\w+)/(\d{4})/$', 'na', name = 'mark_no'), #Dummy to enable url method
+    url(r'^mark_anonymously/(\w+)/(\d{4})/$', 'na', name = 'mark_anon'), #Dummy to enable url method
+    url(r'^toggle_assessment_availability/(\w+)/(\d{4})/$', 'na', name = 'toggle_assessment'), #Dummy to enable url method
     url(r'^na/$', 'na', name = 'na'),
     url(r'^remove_student_from_module/(\w+)/(\d{4})/$', 'na', name = 'generic_remove_student_from_module'),
 )
@@ -33,7 +34,7 @@ urlpatterns += patterns('database.views',
     url(r'^add_module/$', 'add_module', name='add_module'),
     url(r'^add_student/$', 'add_student', name='add_student'),
     url(r'^add_students_to_module/(\w+)/(\d{4})/$', 'add_students_to_module', name='add_students_to_module'),
-    url(r'^all_performances/(\w+)/$', 'all_performances', name = 'all_performances'),
+    url(r'^all_attendances/(\w+)/$', 'all_attendances', name = 'all_attendances'),
     url(r'^attendance/(\w+)/(\d{4})/(\w+)/$', 'attendance', name = 'attendance'),
     url(r'^delete_module/(\w+)/(\d{4})/$', 'delete_module', name = 'delete_module'),
     url(r'^delete_tutee_meeting/(\d+)/$', 'delete_tutee_meeting', name='delete_tutee_meeting'),
