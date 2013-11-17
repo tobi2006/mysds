@@ -29,6 +29,7 @@ This project is still a work in progress, so if you want to use it for productio
 I am currently working on giving students access to the information held about them and to marksheets. A lot of other things are planned as well, and I would appreciate contributions, particularly for:
 
 * making the application easier to adapt for other institutions and programmes
+* making sure the templates are mobile responsive, so that the application can be used on phones
 * introducing a way to assign groups within the seminar groups and to assess group tasks
 * exporting data into machine-readable formats: csv, json, etc
 * clean up my potentially awful (hobby programmer) coding style, ask me to add comments where you don't understand the functions etc
