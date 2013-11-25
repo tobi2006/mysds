@@ -329,7 +329,8 @@ def export_attendance_sheet(request, code, year):
     elements = []
     module = Module.objects.get(code=code, year=year)
     styles = getSampleStyleSheet()
-    heading = module.title + " (" + str(module.year) + ")"
+    next_year = str(module.year + 1)
+    heading = module.title + " (" + module.code + ") " + str(module.year) + "/" + next_year
     performances = Performance.objects.filter(module=module)
     no_of_seminar_groups = 0
     for performance in performances:
