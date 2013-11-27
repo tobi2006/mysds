@@ -551,7 +551,6 @@ class Tutee_Session(models.Model):
 
     def get_absolute_url(self):
         tutee_url = reverse('tutee_edit', args=[self.tutee.student_id])
-        tutee_url = tutee_url.rstrip("/")
         tutee_url += "#"
         tutee_url += "start_with_"
         tutee_url += str(self.id)

@@ -6,6 +6,7 @@
 
 {% block content %}
 
+
 <div class="jumbotron">
     <h2>{{student.first_name}} {{student.last_name}}</h2>
 <!--<table cellpadding="5">-->
@@ -202,9 +203,7 @@
 
 {% for meeting in meetings %}
 
-<a name="start_with_{{ meeting.id }}">&nbsp;</a>
-<h3>{{ meeting.date_of_meet }} {% if meeting.tutor != user %} (with {{ meeting.tutor.first_name }} {{ meeting.tutor.last_name }}){% endif %}</h3>
-
+<h3 id="start_with_{{ meeting.id }}" style="padding-top: 60px; margin-top: -60px;">{{ meeting.date_of_meet }} {% if meeting.tutor != user %} (with {{ meeting.tutor.first_name }} {{ meeting.tutor.last_name }}){% endif %}</h3>
 
 {{ meeting.notes | markdown }}
 
