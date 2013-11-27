@@ -8,7 +8,6 @@
 
 <div class="jumbotron">
     <h2>{{student.first_name}} {{student.last_name}}</h2>
-<p>
 <!--<table cellpadding="5">-->
 <table class="table">
     <tr>
@@ -32,7 +31,6 @@
         <td>{{ student.phone_no }}</td>
     </tr>
 </table>
-</p>  
 
 </div>
 
@@ -204,11 +202,11 @@
 
 {% for meeting in meetings %}
 
+<a name="start_with_{{ meeting.id }}">&nbsp;</a>
 <h3>{{ meeting.date_of_meet }} {% if meeting.tutor != user %} (with {{ meeting.tutor.first_name }} {{ meeting.tutor.last_name }}){% endif %}</h3>
 
-<p>
+
 {{ meeting.notes | markdown }}
-</p>
 
 {% if meeting.tutor == user %}
     <p align="right">

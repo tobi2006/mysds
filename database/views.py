@@ -854,6 +854,30 @@ def delete_tutee_meeting(request, meeting_id):
                 {'printstring': printstring, 'title': title},
                 context_instance = RequestContext(request))
 
+@login_required
+@user_passes_test(is_admin)
+def all_tutees(request, year):
+    students = Student.objects.filter(year = year)
+    tutee_dict = {}
+    most_sessions = 0
+    for student in students:
+        sessions = []
+        try:
+            tutee_sessions = Tutee_Session.objects.filter(tutee = student)
+            for session in tutee_sessions:
+                sessions.append(session)
+        except Tutee_Session.DoesNotExist:
+            pass
+        if len(sessions) > most_sessions:
+            most_sessions = len(sessions)
+        tutee_dict[student] = sessions 
+    return render_to_response('all_tutees.html',
+            {'year': year, 'tutee_dict': tutee_dict, 'most_sessions': most_sessions},
+            context_instance=RequestContext(request)
+        )
+
+
+
 
 
 #####################################

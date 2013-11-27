@@ -276,6 +276,10 @@ class Student(models.Model):
     def get_absolute_url(self):
         return reverse('student_view', args=[self.student_id])
 
+    def short_first_name(self):
+        first_names = self.first_name.split(" ")
+        return first_names[0]
+
     def get_edit_url(self):
         return reverse('edit_student', args=[self.student_id])
 
@@ -542,6 +546,13 @@ class Tutee_Session(models.Model):
     date_of_meet = models.DateField()
     notes = models.TextField()
 
-
     class Meta:
         ordering = ['date_of_meet', 'tutor']
+
+    def get_absolute_url(self):
+        tutee_url = reverse('tutee_edit', args=[self.tutee.student_id])
+        tutee_url = tutee_url.rstrip("/")
+        tutee_url += "#"
+        tutee_url += "start_with_"
+        tutee_url += str(self.id)
+        return tutee_url

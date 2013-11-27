@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load custom_filters %}
+
+{% block title %}CCCU Law - All Tutees Year {{ year }}{% endblock %}
+
+{% block content %}
+
+<h2>List of All Tutee Meetings for Year {{ year }}</h2>
+
+<br>
+
+<table id="sortable_table" class="table table-hover table-sortable">
+    <thead>
+        <tr>
+            <th>
+                Student
+            </th>
+            <th>
+                Tutor
+            </th>
+            {% for number in most_sessions|get_range %}
+            <th>
+                {{ number|add:"1" }}
+            </th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for student, sessions in tutee_dict.items %}
+        <tr>
+            <td>
+                <a href="{{ student.get_tutee_url }}">{{ student.last_name }}, {{ student.short_first_name }}</a>
+            </td>
+            <td>
+                <a href="mailto:{{ student.tutor.email }}?Subject={{ student }}">{{ student.tutor.first_name }} {{student.tutor.last_name }}</a>
+            </td>
+            {% for session in sessions %}
+            <td>
+                <a href="{{ session.get_absolute_url }}">{{ session.date_of_meet }}</a>
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
