@@ -98,7 +98,8 @@ def export_feedback_sheet(request, code, year, assessment_str, student_id):
         document.setAuthor = 'Canterbury Christ Church University'
         elements = []
         styles = getSampleStyleSheet()
-        logo = "https://cccu.tobiaskliem.de/static/images/cccu.jpg"
+        #logo = static('images/cccu.jpg')
+        logo = 'localhost:8000/static/images/cccu.jpg'
         im = Image(logo, 2.45*inch, 1*inch)
         elements.append(im)
         elements.append(Spacer(1,5))
