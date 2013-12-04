@@ -1,6 +1,7 @@
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, BaseDocTemplate, Frame, PageTemplate, Image
+from reportlab.lib.pagesizes import A4, LETTER, landscape, portrait 
 from reportlab.platypus.flowables import PageBreak
 from reportlab.lib.units import inch
 from database.models import *
@@ -98,6 +99,8 @@ def export_feedback_sheet(request, code, year, assessment_str, student_id):
         document.setAuthor = 'Canterbury Christ Church University'
         elements = []
         styles = getSampleStyleSheet()
+        #logo = static('images/cccu.jpg')
+        #logo = 'localhost:8000/static/images/cccu.jpg'
         logo = "https://cccu.tobiaskliem.de/static/images/cccu.jpg"
         im = Image(logo, 2.45*inch, 1*inch)
         elements.append(im)
@@ -427,6 +430,7 @@ def export_marks(request, code, year):
     #response['Content-Disposition'] = 'attachment; filename=anonymous_exam_marks.pdf'
     response['Content-Disposition'] = responsestring 
     doc = SimpleDocTemplate(response)
+    doc.pagesize = landscape(A4)
     elements = []
     styles = getSampleStyleSheet()
     d = date.today()
