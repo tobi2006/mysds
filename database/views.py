@@ -1280,6 +1280,12 @@ def parse_csv(request):
                                                         list_of_columns.append(form.cleaned_data['column_11'])
                                                         if no_of_columns > 11:
                                                             list_of_columns.append(form.cleaned_data['column_12'])
+                                                            if no_of_columns > 12:
+                                                                list_of_columns.append(form.cleaned_data['column_13'])
+                                                                if no_of_columns > 13:
+                                                                    list_of_columns.append(form.cleaned_data['column_14'])
+                                                                    if no_of_columns > 14:
+                                                                        list_of_columns.append(form.cleaned_data['column_15'])
             successful_entrys = 0
             item_in_table = 0
             ignore_students = request.POST.getlist('exclude')
@@ -1334,10 +1340,52 @@ def parse_csv(request):
                             current.permanent_email = result['permanent_email']
     #                    if 'achieved_grade' in result:
     #                        current.achieved_grade = result['achieved_grade']
-                        if 'address' in result:
-                            current.address = result['address']
-                        if 'home_address' in result:
-                            current.home_address = result['home_address']
+                        change_address = False
+                        if 'address1' in result:
+                            change_address = True
+                        if 'address2' in result:
+                            change_address = True
+                        if 'address3' in result:
+                            change_address = True
+                        if 'address4' in result:
+                            change_address = True
+                        if 'address5' in result:
+                            change_address = True
+                        if change_address:
+                            current.address = ""
+                            if 'address1' in result:
+                                current.address += result['address1'] + "\n"
+                            if 'address2' in result:
+                                current.address += result['address2'] + "\n"
+                            if 'address3' in result:
+                                current.address += result['address3'] + "\n"
+                            if 'address4' in result:
+                                current.address += result['address4'] + "\n"
+                            if 'address5' in result:
+                                current.address += result['address5']
+                        change_home_address = False
+                        if 'home_address1' in result:
+                            change_home_address = True
+                        if 'home_address2' in result:
+                            change_home_address = True
+                        if 'home_address3' in result:
+                            change_home_address = True
+                        if 'home_address4' in result:
+                            change_home_address = True
+                        if 'home_address5' in result:
+                            change_home_address = True
+                        if change_home_address:
+                            current.home_address = ""
+                            if 'home_address1' in result:
+                                current.home_address += result['home_address1'] + "\n"
+                            if 'home_address2' in result:
+                                current.home_address += result['home_address2'] + "\n"
+                            if 'home_address3' in result:
+                                current.home_address += result['home_address3'] + "\n"
+                            if 'home_address3' in result:
+                                current.home_address += result['home_address4'] + "\n"
+                            if 'home_address5' in result:
+                                current.home_address += result['home_address5'] + "\n"
                         current.save()
 
                     except Student.DoesNotExist: # Enter new student
@@ -1387,10 +1435,29 @@ def parse_csv(request):
                             result['lsp'] = ""
                         if 'permanent_email' not in result:
                             result['permanent_email'] = ""
-                        if 'address' not in result:
-                            result['address'] = ""
-                        if 'home_address' not in result:
-                            result['home_address'] = ""
+                        address = ""
+                        if 'address1' in result:
+                            address += result['address1'] + "\n"
+                        if 'address2' in result:
+                            address += result['address2'] + "\n"
+                        if 'address3' in result:
+                            address += result['address3'] + "\n"
+                        if 'address4' in result:
+                            address += result['address4'] + "\n"
+                        if 'address5' in result:
+                            address += result['address5']
+                        home_address = ""
+                        if 'home_address1' in result:
+                            home_address += result['home_address1'] + "\n"
+                        if 'home_address2' in result:
+                            home_address += result['home_address2'] + "\n"
+                        if 'home_address3' in result:
+                            home_address += result['home_address3'] + "\n"
+                        if 'home_address3' in result:
+                            home_address += result['home_address4'] + "\n"
+                        if 'home_address5' in result:
+                            home_address += result['home_address5'] + "\n"
+
                         new = Student(
                                 student_id = result['student_id'],
                                 first_name = result['first_name'],
@@ -1408,8 +1475,8 @@ def parse_csv(request):
                                 permanent_email = result['permanent_email'],
     #                            achieved_grade = result['achieved_grade'],
                                 phone_no = result['phone_no'],
-                                address = result['address'],
-                                home_address = result['home_address']
+                                address = address,
+                                home_address = home_address
                             )
                         new.save()
                         successful_entrys += 1

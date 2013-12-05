@@ -152,8 +152,16 @@ class CSVParseForm(forms.Form):
             ('phone_no', 'Phone Number'),
             ('permanent_email', 'Private email'),
             ('achieved_grade', 'Achieved grade'),
-            ('address', 'Term time address'),
-            ('home_address', 'Home address')
+            ('address1', 'Term time address line 1'),
+            ('address2', 'Term time address line 2'),
+            ('address3', 'Term time address line 3'),
+            ('address4', 'Term time address line 4'),
+            ('address5', 'Term time address line 5'),
+            ('home_address1', 'Home address line 1'),
+            ('home_address2', 'Home address line 2'),
+            ('home_address3', 'Home address line 3'),
+            ('home_address4', 'Home address line 4'),
+            ('home_address5', 'Home address line 5')
         )
     column_1 = forms.ChoiceField(choices=ATTRIBUTES, required = False)
     column_2 = forms.ChoiceField(choices=ATTRIBUTES, required = False)
@@ -167,3 +175,6 @@ class CSVParseForm(forms.Form):
     column_10 = forms.ChoiceField(choices=ATTRIBUTES, required = False)
     column_11 = forms.ChoiceField(choices=ATTRIBUTES, required = False)
     column_12 = forms.ChoiceField(choices=ATTRIBUTES, required = False)
+    column_13 = forms.ChoiceField(choices=ATTRIBUTES, required = False)
+    column_14 = forms.ChoiceField(choices=ATTRIBUTES, required = False)
+    column_15 = forms.ChoiceField(choices=ATTRIBUTES, required = False)
