@@ -31,7 +31,7 @@
     </tr>
     <tr>
         <td>
-            <a class="btn btn-small" id="toggle_address">Show Address</a>
+            <a class="btn btn-default btn-sm" id="toggle_address">Show Address</a>
         </td>
         <td>
             &nbsp;
@@ -62,26 +62,36 @@
 </p>
 </div>
 
-<h2>Notes</h2>
-
 {% if student.notes %}
+
+<a class="btn btn-default btn-sm" id="toggle_notes">Show Notes</a>
+
+<div id="notes">
+
+    <h2>Notes</h2>
+
     <p>
         {{ student.notes | markdown }}
     </p>  
+
+    <p align="right">
+        <a class="btn btn-default" href="{{ student.get_notes_edit_url }}">
+            Edit
+        </a>
+    </p>
+</div>
+
 {% else %}
-    <em>
-        No notes for this student.
-    </em>
+
+<a class="btn btn-default btn-sm" href="{{ student.get_notes_edit_url }}">
+    No notes - Add something
+</a>
+
 {% endif %}
-<p align="right">
-    <a class="btn btn-default" href="{{ student.get_notes_edit_url }}">
-        Edit
-    </a>
-</p>
 
 <hr>
 
-<a class="btn btn-small" id="toggle_performance">Show Performance</a>
+<a class="btn btn-default btn-sm" id="toggle_performance">Show Performance</a>
 
 <div id="performance">
 
@@ -343,6 +353,23 @@ No meetings recorded yet.
             });
         });
 
+    $(document).ready(function(){
+        $("#notes").hide()
+    });
+
+    $(document).ready(function(){
+        $("#toggle_notes").click(function(){
+            $("#notes").toggle()
+        if ($(this).text() == "Show Notes") 
+                  { 
+                     $(this).text("Hide Notes"); 
+                  } 
+                  else 
+                  { 
+                     $(this).text("Show Notes"); 
+                  }; 
+            });
+        });
 </script>
 
 {% endblock %}
