@@ -30,8 +30,28 @@
         <td>{% if student.lsp %}<a href="{{ student.get_lsp_view_url }}">View</a> / <a href="{{ student.get_lsp_edit_url }}">Edit</a>{% else %}No LSP - <a href="{{ student.get_lsp_edit_url }}">Add</a>{% endif %}</a></td>
     </tr>
     <tr>
+        <td>
+            <a class="btn btn-small" id="toggle_address">Show Address</a>
+        </td>
+        <td>
+            &nbsp;
+        </td>
+        <td>
+            &nbsp;
+        </td>
+        <td>
+            &nbsp;
+        </td>
+    </tr>
+    <tr class="address">
         <td><strong>Phone No</strong></td>
         <td>{{ student.phone_no }}</td>
+    </tr>
+    <tr class="address">
+        <td><strong>Home Address</strong></td>
+        <td>{{ student.html_home_address|safe }}</td>
+        <td><strong>Term Address</strong></td>
+        <td>{{ student.html_address|safe }}</td>
     </tr>
 </table>
 </p>  
@@ -58,6 +78,12 @@
         Edit
     </a>
 </p>
+
+<hr>
+
+<a class="btn btn-small" id="toggle_performance">Show Performance</a>
+
+<div id="performance">
 
 {% for year, performances_per_year in years_performances.items|sort_reverse %}
 
@@ -214,5 +240,109 @@
     {% endfor %}
 {% endfor %}
 
+</div>
+
+{% if tutor %}
+
+<h2>Meeting Records</h2>
+
+{% if meetings %}
+
+{% for meeting in meetings %}
+
+<h3 id="start_with_{{ meeting.id }}" style="padding-top: 60px; margin-top: -60px;">{{ meeting.date_of_meet }} {% if meeting.tutor != user %} (with {{ meeting.tutor.first_name }} {{ meeting.tutor.last_name }}){% endif %}</h3>
+
+{{ meeting.notes | markdown }}
+
+{% if meeting.tutor == user %}
+    <p align="right">
+    <small>
+        <a href="{{ student.get_tutee_url }}{{ meeting.id }}#meeting_record">Edit</a> | <a href=# class="delete" id="{{ meeting.id }}">Delete</a>
+    </small>
+    </p>
+{% endif %}
+
+{% endfor %}
+
+{% else %}
+
+No meetings recorded yet.
+
+{% endif %}
+
+{% if student.tutor == user %}
+
+<br><hr><br>
+
+<h2 id="meeting_record">Meeting Record</h2>
+
+    <p align="right">
+        <button class="btn btn-sm" type="button" id="md-helper">Help with Formatting</button>
+    </p>
+
+
+    <div id="md-helptext">
+    {{ mdexplanation | safe }}
+    </div><br>
+
+
+    <form action="/tutee/{{ student.student_id }}/{% if edit %}{{ edit }}/{% endif %}" method="post" accept-charset="utf-8">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-lg-3">
+                {{ form.date_of_meet }}
+            </div>
+        </div>
+        <br><br>
+        {{ form.notes }}<br>
+        <input type="submit" value="Save" class="btn btn-default">
+    </form>
+
+{% endif %}
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+
+<script type="text/javascript">
+
+    $(document).ready(function(){
+        $(".address").hide()
+    });
+
+    $(document).ready(function(){
+        $("#toggle_address").click(function(){
+            $(".address").toggle()
+        if ($(this).text() == "Show Address") 
+                  { 
+                     $(this).text("Hide Address"); 
+                  } 
+                  else 
+                  { 
+                     $(this).text("Show Address"); 
+                  }; 
+            });
+        });
+
+    $(document).ready(function(){
+        $("#performance").hide()
+    });
+
+    $(document).ready(function(){
+        $("#toggle_performance").click(function(){
+            $("#performance").toggle()
+        if ($(this).text() == "Show Performance") 
+                  { 
+                     $(this).text("Hide Performance"); 
+                  } 
+                  else 
+                  { 
+                     $(this).text("Show Performance"); 
+                  }; 
+            });
+        });
+
+</script>
 
 {% endblock %}

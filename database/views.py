@@ -38,7 +38,6 @@ def is_student(user):
     if user:
         if user.groups.filter(name='students').count() == 1:
             return True
-            print "A student"
         else:
             return False
     else:
@@ -384,7 +383,6 @@ def toggle_assessment_availability(request, code, year, assessment):
         if module.assessment_1_available == True:
             module.assessment_1_available = False
         else:
-            print "Toggling."
             module.assessment_1_available = True
     elif assessment == '2':
         if module.assessment_2_available == True:

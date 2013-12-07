@@ -295,6 +295,14 @@ class Student(models.Model):
     def get_tutee_url(self):
         return reverse('tutee_edit', args=[self.student_id])
 
+    def html_address(self):
+        address = self.address.replace("\n", "<br>")
+        return address
+    
+    def html_home_address(self):
+        address = self.home_address.replace("\n", "<br>")
+        return address
+
     def year_1_average(self):
         performances = Performance.objects.filter(student=self, part_of_average=1)
         marks = []
