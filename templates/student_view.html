@@ -65,7 +65,7 @@
                 <p><em>No phone number in the database</em></p>
                 {% endif %}
                 {% if student.home_address and student.address %}
-                <table>
+                <table cellpadding="10">
                     <tr>
                         <td>
                             <strong>Home Address</strong><br>
@@ -78,7 +78,7 @@
                     </tr>
                 </table>
                 {% elif student.home_address %}
-                <table>
+                <table cellpadding="10">
                     <tr>
                         <td>
                             <strong>Home Address</strong><br>
@@ -88,14 +88,14 @@
                 </table>
                 <p><em>No term time address in the database</em></p>
                 {% elif student.address %}
-                <table>
+                <table cellpadding="10">
                     <tr>
                         <td>
                             <strong>Term Address</strong><br>
                             {{ student.html_address|safe }}
                         </td>
                     </tr>
-                </table>
+                </table cellpadding="10">
                 <p><em>No home address in the database</em></p>
                 {% else %}
                 <p><em>No addresses in the database</em></p>
