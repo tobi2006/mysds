@@ -43,6 +43,16 @@ def is_student(user):
     else:
         return False
 
+def is_pastoral(user):
+    if user:
+        if user.groups.filter(name='pastoral').count() == 1:
+            return True
+        else:
+            return False
+    else:
+        return False
+
+
 ###############################################################################
 ###############################################################################
 #                                                                             #
@@ -427,11 +437,43 @@ def toggle_assessment_availability(request, code, year, assessment):
 
 @login_required
 @user_passes_test(is_teacher)
-def student_view(request, student_id):
+def student_view(request, student_id, meeting_id=None):
     """
     Shows all information about a student.
+
+    If the person looking at this is the personal tutor of the student, he / she will
+    also see the meeting records and a form to enter new meeting records. Members of the
+    'pastoral' group responsible for the oversight of the tutor system will see the records
+    but will not get the form. If a meeting_id is given, this will switch to edit that record.
     """
     student = Student.objects.get(student_id=student_id)
+    tutor = False
+    pastoral = False
+
+    if student.tutor == request.user:
+        tutor = True
+        tutee_sessions = Tutee_Session.objects.filter(tutee=student)
+        if meeting_id:
+            tutee_session = Tutee_Session.objects.get(id=meeting_id)
+            edit = meeting_id
+        else:
+            tutee_session = Tutee_Session(tutee=student, tutor=request.user)
+            edit = False
+        if request.method == 'POST':
+            form = TuteeForm(instance = tutee_session, data = request.POST)
+            if form.is_valid():
+                if meeting_id:
+                    to_delete = Tutee_Session.objects.get(id=meeting_id)
+                    to_delete.delete()
+                form.save()
+                url = student.get_absolute_url()
+                return HttpResponseRedirect(url)
+        else:
+            form = TuteeForm(instance=tutee_session)
+    elif is_pastoral(request.user):
+        pastoral = True
+        tutee_sessions = Tutee_Session.objects.filter(tutee=student)
+
     all_performances = Performance.objects.filter(student = student)
     sorted_performances = {}
     for performance in all_performances:
@@ -459,11 +501,24 @@ def student_view(request, student_id):
             else:
                 sorted_performances[year] = [performance,]
             
-
-    return render_to_response('student_view.html',
-            {'student': student, 'years_performances': sorted_performances},
-            context_instance = RequestContext(request)
-        )
+    if tutor:
+        return render_to_response('student_view.html',
+                {'form': form, 'student': student, 'years_performances': sorted_performances,
+                    'tutor': True, 'show_meeting_notes': True, 'edit': edit, 'meetings': tutee_sessions,
+                    'mdexplanation': MD_EXPLANATION},
+                context_instance = RequestContext(request)
+            )
+    elif pastoral:
+        return render_to_response('student_view.html',
+                {'student': student, 'years_performances': sorted_performances,
+                    'show_meeting_notes': True, 'meetings': tutee_sessions},
+                context_instance = RequestContext(request)
+            )
+    else:
+        return render_to_response('student_view.html',
+                {'student': student, 'years_performances': sorted_performances},
+                context_instance = RequestContext(request)
+            )
 
 #####################################
 #       Search Student              #
@@ -780,60 +835,60 @@ def tutee_list(request):
             context_instance=RequestContext(request)
         )
 
-@login_required
-@user_passes_test(is_teacher)
-def tutee_edit(request, student_id, meeting_id=None):
-    student = Student.objects.get(student_id=student_id)
-    if meeting_id:
-        tutee_session = Tutee_Session.objects.get(id=meeting_id)
-        edit = meeting_id
-    else:
-        tutee_session = Tutee_Session(tutee=student, tutor=request.user)
-        edit = False
-    if request.method == 'POST':
-        form = TuteeForm(instance = tutee_session, data = request.POST)
-        if form.is_valid():
-            if meeting_id:
-                to_delete = Tutee_Session.objects.get(id=meeting_id)
-                to_delete.delete()
-            form.save()
-            url = '/tutee/' + student.student_id
-            return HttpResponseRedirect(url)
-    else:
-        form = TuteeForm(instance=tutee_session)
-    all_performances = Performance.objects.filter(student = student)
-    sorted_performances = {}
-    for performance in all_performances:
-        use_performance = False
-        if performance.module.sessions_recorded != None:
-            use_performance = True
-        elif performance.assessment_1:
-            use_performance = True
-        elif performance.assessment_2:
-            use_performance = True
-        elif performance.assessment_3:
-            use_performance = True
-        elif performance.assessment_4:
-            use_performance = True
-        elif performance.assessment_5:
-            use_performance = True
-        elif performance.assessment_6:
-            use_performance = True
-        elif performance.exam:
-            use_performance = True
-        if use_performance:
-            year = performance.module.year
-            if sorted_performances.get(year):
-                sorted_performances[year].append(performance)
-            else:
-                sorted_performances[year] = [performance,]
-    tutee_sessions = Tutee_Session.objects.filter(tutee=student)
-
-    return render_to_response('tutee_edit.html',
-            {'form': form, 'student': student, 'years_performances': sorted_performances,
-                'edit': edit, 'meetings': tutee_sessions, 'mdexplanation': MD_EXPLANATION},
-            context_instance = RequestContext(request)
-        )
+#@login_required
+#@user_passes_test(is_teacher)
+#def tutee_edit(request, student_id, meeting_id=None):
+#    student = Student.objects.get(student_id=student_id)
+#    if meeting_id:
+#        tutee_session = Tutee_Session.objects.get(id=meeting_id)
+#        edit = meeting_id
+#    else:
+#        tutee_session = Tutee_Session(tutee=student, tutor=request.user)
+#        edit = False
+#    if request.method == 'POST':
+#        form = TuteeForm(instance = tutee_session, data = request.POST)
+#        if form.is_valid():
+#            if meeting_id:
+#                to_delete = Tutee_Session.objects.get(id=meeting_id)
+#                to_delete.delete()
+#            form.save()
+#            url = '/tutee/' + student.student_id
+#            return HttpResponseRedirect(url)
+#    else:
+#        form = TuteeForm(instance=tutee_session)
+#    all_performances = Performance.objects.filter(student = student)
+#    sorted_performances = {}
+#    for performance in all_performances:
+#        use_performance = False
+#        if performance.module.sessions_recorded != None:
+#            use_performance = True
+#        elif performance.assessment_1:
+#            use_performance = True
+#        elif performance.assessment_2:
+#            use_performance = True
+#        elif performance.assessment_3:
+#            use_performance = True
+#        elif performance.assessment_4:
+#            use_performance = True
+#        elif performance.assessment_5:
+#            use_performance = True
+#        elif performance.assessment_6:
+#            use_performance = True
+#        elif performance.exam:
+#            use_performance = True
+#        if use_performance:
+#            year = performance.module.year
+#            if sorted_performances.get(year):
+#                sorted_performances[year].append(performance)
+#            else:
+#                sorted_performances[year] = [performance,]
+#    tutee_sessions = Tutee_Session.objects.filter(tutee=student)
+#
+#    return render_to_response('tutee_edit.html',
+#            {'form': form, 'student': student, 'years_performances': sorted_performances,
+#                'edit': edit, 'meetings': tutee_sessions, 'mdexplanation': MD_EXPLANATION},
+#            context_instance = RequestContext(request)
+#        )
 
 @login_required
 @user_passes_test(is_teacher)
@@ -841,7 +896,7 @@ def delete_tutee_meeting(request, meeting_id):
     meeting = Tutee_Session.objects.get(id=meeting_id)
     if request.user == meeting.tutor or is_admin(request.user):
         tutee = meeting.tutee
-        url = '/tutee/' + tutee.student_id
+        url = tutee.get_absolute_url()
         meeting.delete()
         return HttpResponseRedirect(url)
     else:

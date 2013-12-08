@@ -292,8 +292,8 @@ class Student(models.Model):
     def get_notes_edit_url(self):
         return reverse('notes_edit', args=[self.student_id])
 
-    def get_tutee_url(self):
-        return reverse('tutee_edit', args=[self.student_id])
+#    def get_tutee_url(self):
+#        return reverse('tutee_edit', args=[self.student_id])
 
     def html_address(self):
         address = self.address.replace("\n", "<br>")
@@ -558,8 +558,7 @@ class Tutee_Session(models.Model):
         ordering = ['date_of_meet', 'tutor']
 
     def get_absolute_url(self):
-        tutee_url = reverse('tutee_edit', args=[self.tutee.student_id])
+        tutee_url = reverse('student_view', args=[self.tutee.student_id])
         tutee_url += "#"
-        tutee_url += "start_with_"
         tutee_url += str(self.id)
         return tutee_url

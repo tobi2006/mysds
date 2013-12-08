@@ -6,310 +6,346 @@
 
 {% block content %}
 
-<div class="jumbotron">
-    <h2>{{student.first_name}} {{student.last_name}} {% if not student.active %}(Inactive){% endif %}</h2>
-<p>
-<!--<table cellpadding="5">-->
-<table class="table">
-    <tr>
-        <td><strong>ID</strong></td>
-        <td>{{student.student_id}}</td>
-        <td><strong>Course</strong></td>
-        <td>{{ student.course }}{% if student.qld %} (QLD{% if student.is_part_time %}, part time{% endif %}){% elif student.is_part_time %} (part time){% endif %}</td>
-    </tr>
-    <tr>
-        <td><strong>Email</strong></td>
-        <td><a href="mailto:{{ student.email }}">{{ student.email }}</a></td>
-        <td><strong>Tutor</strong></td>
-        <td><a href="mailto:{{ student.tutor.email }}?Subject={{ student }}">{{ student.tutor.first_name }} {{ student.tutor.last_name }}</a></td>
-    </tr>
-    <tr>
-        <td><strong>Year</strong></td>
-        <td>{{ student.year }} {% if student.since %} (Since {{ student.since }}/{{ student.since|add:"1" }}) {% endif %}</td>
-        <td><strong>LSP</strong></td>
-        <td>{% if student.lsp %}<a href="{{ student.get_lsp_view_url }}">View</a> / <a href="{{ student.get_lsp_edit_url }}">Edit</a>{% else %}No LSP - <a href="{{ student.get_lsp_edit_url }}">Add</a>{% endif %}</a></td>
-    </tr>
-    <tr>
-        <td>
-            <a class="btn btn-default btn-sm" id="toggle_address">Show Address</a>
-        </td>
-        <td>
-            &nbsp;
-        </td>
-        <td>
-            &nbsp;
-        </td>
-        <td>
-            &nbsp;
-        </td>
-    </tr>
-    <tr class="address">
-        <td><strong>Phone No</strong></td>
-        <td>{{ student.phone_no }}</td>
-    </tr>
-    <tr class="address">
-        <td><strong>Home Address</strong></td>
-        <td>{{ student.html_home_address|safe }}</td>
-        <td><strong>Term Address</strong></td>
-        <td>{{ student.html_address|safe }}</td>
-    </tr>
-</table>
-</p>  
- <p align="right">
- <a class="btn btn-default" href="{{ student.get_edit_url }}">
-        Edit
-    </a>
-</p>
-</div>
+<h2>{{student.first_name}} {{student.last_name}} {% if not student.active %}(Inactive){% endif %}</h2>
 
-{% if student.notes %}
-
-<a class="btn btn-default btn-sm" id="toggle_notes">Show Notes</a>
-
-<div id="notes">
-
-    <h2>Notes</h2>
-
-    <p>
-        {{ student.notes | markdown }}
-    </p>  
-
-    <p align="right">
-        <a class="btn btn-default" href="{{ student.get_notes_edit_url }}">
-            Edit
-        </a>
-    </p>
-</div>
-
-{% else %}
-
-<a class="btn btn-default btn-sm" href="{{ student.get_notes_edit_url }}">
-    No notes - Add something
-</a>
-
-{% endif %}
-
-<hr>
-
-<a class="btn btn-default btn-sm" id="toggle_performance">Show Performance</a>
-
-<div id="performance">
-
-{% for year, performances_per_year in years_performances.items|sort_reverse %}
-
-    <hr>
-    <h2>{{ year }}/{{ year|add:"1" }}</h2>
-    
-    {% for performance in performances_per_year|sort %}
-
-    <h3><a href = "{{ performance.module.get_absolute_url }}">{{ performance.module.title }}</a></h3>
-
-    <table class="table table-bordered">
-        <tr>
-            <td>
-                Attendance
-            </td>
-            <td>
-                {{ performance.attendance | count_attendance }} / {{ performance.module.sessions_recorded }}
-            </td>
-        </tr>
-        {% if performance.module.assessment_1_title %}
-            <tr>
-                <td>
-                    {{ performance.module.assessment_1_title }} ({{ performance.module.assessment_1_value }} %)
-                </td>
-                <td>
-                    {% if performance.q_assessment_1 %}
-                        {{ performance.q_assessment_1 }} (QLD Resit, resit: {{ performance.r_assessment_1 }}, first: {{ performance.assessment_1 }})
-                    {% elif performance.r_assessment_1 %}
-                        {{ performance.r_assessment_1 }} (Resit, first: {{ performance.assessment_1 }})
-                    {% else %}
-                        {{ performance.assessment_1 }}
-                    {% endif %}
-                </td>
-            </tr>
-        {% endif %}
-        {% if performance.module.assessment_2_title %}
-            <tr>
-                <td>
-                    {{ performance.module.assessment_2_title }} ({{ performance.module.assessment_2_value }} %)
-                </td>
-                <td>
-                    {% if performance.q_assessment_2 %}
-                        {{ performance.q_assessment_2 }} (QLD Resit, resit: {{ performance.r_assessment_2 }}, first: {{ performance.assessment_2 }})
-                    {% elif performance.r_assessment_2 %}
-                        {{ performance.r_assessment_2 }} (Resit, first: {{ performance.assessment_2 }})
-                    {% else %}
-                        {{ performance.assessment_2 }}
-                    {% endif %}
-                </td>
-            </tr>
-        {% endif %}
-        {% if performance.module.assessment_3_title %}
-            <tr>
-                <td>
-                    {{ performance.module.assessment_3_title }} ({{ performance.module.assessment_3_value }} %)
-                </td>
-                <td>
-                    {% if performance.q_assessment_3 %}
-                        {{ performance.q_assessment_3 }} (QLD Resit, resit: {{ performance.r_assessment_3 }}, first: {{ performance.assessment_3 }})
-                    {% elif performance.r_assessment_3 %}
-                        {{ performance.r_assessment_3 }} (Resit, first: {{ performance.assessment_3 }})
-                    {% else %}
-                        {{ performance.assessment_3 }}
-                    {% endif %}
-                </td>
-            </tr>
-        {% endif %}
-        {% if performance.module.assessment_4_title %}
-            <tr>
-                <td>
-                    {{ performance.module.assessment_4_title }} ({{ performance.module.assessment_4_value }} %)
-                </td>
-                <td>
-                    {% if performance.q_assessment_4 %}
-                        {{ performance.q_assessment_4 }} (QLD Resit, resit: {{ performance.r_assessment_4 }}, first: {{ performance.assessment_4 }})
-                    {% elif performance.r_assessment_4 %}
-                        {{ performance.r_assessment_4 }} (Resit, first: {{ performance.assessment_4 }})
-                    {% else %}
-                        {{ performance.assessment_4 }}
-                    {% endif %}
-                </td>
-            </tr>
-        {% endif %}
-        {% if performance.module.assessment_5_title %}
-            <tr>
-                <td>
-                    {{ performance.module.assessment_5_title }} ({{ performance.module.assessment_5_value }} %)
-                </td>
-                <td>
-                    {% if performance.q_assessment_5 %}
-                        {{ performance.q_assessment_5 }} (QLD Resit, resit: {{ performance.r_assessment_5 }}, first: {{ performance.assessment_5 }})
-                    {% elif performance.r_assessment_5 %}
-                        {{ performance.r_assessment_5 }} (Resit, first: {{ performance.assessment_5 }})
-                    {% else %}
-                        {{ performance.assessment_5 }}
-                    {% endif %}
-                </td>
-            </tr>
-        {% endif %}
-        {% if performance.module.assessment_6_title %}
-            <tr>
-                <td>
-                    {{ performance.module.assessment_6_title }} ({{ performance.module.assessment_6_value }} %)
-                </td>
-                <td>
-                    {% if performance.q_assessment_6 %}
-                        {{ performance.q_assessment_6 }} (QLD Resit, resit: {{ performance.r_assessment_6 }}, first: {{ performance.assessment_6 }})
-                    {% elif performance.r_assessment_6 %}
-                        {{ performance.r_assessment_6 }} (Resit, first: {{ performance.assessment_6 }})
-                    {% else %}
-                        {{ performance.assessment_6 }}
-                    {% endif %}
-                </td>
-            </tr>
-        {% endif %}
-        {% if performance.module.exam_value %}
-            <tr>
-                <td>
-                    Exam ({{ performance.module.exam_value }} %)
-                </td>
-                <td>
-                    {% if performance.q_exam %}
-                        {{ performance.q_exam }} (QLD Resit, resit: {{ performance.r_exam }}, first: {{ performance.exam }})
-                    {% elif performance.r_exam %}
-                        {{ performance.r_exam }} (Resit, first: {{ performance.exam }})
-                    {% else %}
-                        {{ performance.exam }}
-                    {% endif %}
-                </td>
-            </tr>
-        {% endif %}
-        <tr>
-            <td>
-                <strong>Module Mark</strong>
-            </td>
-                <td>
-                {% if performance.average_makes_sense %}
-                    {{ performance.average }}
-                {% else %}
-                    Not available yet
-                {% endif %}
-                </td>
-            </tr>
-    </table>
-
-    {% comment %}
-     <p align="right">
-        <a class="btn btn-default">
-            Edit
-        </a>
-    </p>
-    {% endcomment %}
-
-    {% endfor %}
-{% endfor %}
-
-</div>
-
-{% if tutor %}
-
-<h2>Meeting Records</h2>
-
-{% if meetings %}
-
-{% for meeting in meetings %}
-
-<h3 id="start_with_{{ meeting.id }}" style="padding-top: 60px; margin-top: -60px;">{{ meeting.date_of_meet }} {% if meeting.tutor != user %} (with {{ meeting.tutor.first_name }} {{ meeting.tutor.last_name }}){% endif %}</h3>
-
-{{ meeting.notes | markdown }}
-
-{% if meeting.tutor == user %}
-    <p align="right">
-    <small>
-        <a href="{{ student.get_tutee_url }}{{ meeting.id }}#meeting_record">Edit</a> | <a href=# class="delete" id="{{ meeting.id }}">Delete</a>
-    </small>
-    </p>
-{% endif %}
-
-{% endfor %}
-
-{% else %}
-
-No meetings recorded yet.
-
-{% endif %}
-
-{% if student.tutor == user %}
-
-<br><hr><br>
-
-<h2 id="meeting_record">Meeting Record</h2>
-
-    <p align="right">
-        <button class="btn btn-sm" type="button" id="md-helper">Help with Formatting</button>
-    </p>
-
-
-    <div id="md-helptext">
-    {{ mdexplanation | safe }}
-    </div><br>
-
-
-    <form action="/tutee/{{ student.student_id }}/{% if edit %}{{ edit }}/{% endif %}" method="post" accept-charset="utf-8">
-        {% csrf_token %}
-        <div class="row">
-            <div class="col-lg-3">
-                {{ form.date_of_meet }}
+<div class="panel-group" id="accordion">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseProgramme">
+                    Programme Details
+                </a>
+            </h4>
+        </div>
+        <div id="collapseProgramme" class="panel-collapse collapse in">
+            <div class="panel-body">
+                <table class="table">
+                    <tr>
+                        <td><strong>ID</strong></td>
+                        <td>{{student.student_id}}</td>
+                        <td><strong>Course</strong></td>
+                        <td>{{ student.course }}{% if student.qld %} (QLD{% if student.is_part_time %}, part time{% endif %}){% elif student.is_part_time %} (part time){% endif %}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Email</strong></td>
+                        <td><a href="mailto:{{ student.email }}">{{ student.email }}</a></td>
+                        <td><strong>Tutor</strong></td>
+                        <td><a href="mailto:{{ student.tutor.email }}?Subject={{ student }}">{{ student.tutor.first_name }} {{ student.tutor.last_name }}</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Year</strong></td>
+                        <td>{{ student.year }} {% if student.since %} (Since {{ student.since }}/{{ student.since|add:"1" }}) {% endif %}</td>
+                        <td><strong>LSP</strong></td>
+                        <td>{% if student.lsp %}<a href="{{ student.get_lsp_view_url }}">View</a> / <a href="{{ student.get_lsp_edit_url }}">Edit</a>{% else %}No LSP - <a href="{{ student.get_lsp_edit_url }}">Add</a>{% endif %}</a></td>
+                    </tr>
+                </table>
+                <p align="right">
+                     <a class="btn btn-default btn-sm" href="{{ student.get_edit_url }}">
+                        Edit
+                    </a>
+                </p>
             </div>
         </div>
-        <br><br>
-        {{ form.notes }}<br>
-        <input type="submit" value="Save" class="btn btn-default">
-    </form>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseAddress">
+                    Address
+                </a>
+            </h4>
+        </div>
+        <div id="collapseAddress" class="panel-collapse collapse">
+            <div class="panel-body">
+                {% if student.phone_no %}
+                <p>
+                    <strong>Phone No:</strong> {{ student.phone_no }}
+                </p>
+                {% else %}
+                <p><em>No phone number in the database</em></p>
+                {% endif %}
+                {% if student.home_address and student.address %}
+                <table>
+                    <tr>
+                        <td>
+                            <strong>Home Address</strong><br>
+                            {{ student.html_home_address|safe }}
+                        </td>
+                        <td>
+                            <strong>Term Address</strong><br>
+                            {{ student.html_address|safe }}
+                        </td>
+                    </tr>
+                </table>
+                {% elif student.home_address %}
+                <table>
+                    <tr>
+                        <td>
+                            <strong>Home Address</strong><br>
+                            {{ student.html_home_address|safe }}
+                        </td>
+                    </tr>
+                </table>
+                <p><em>No term time address in the database</em></p>
+                {% elif student.address %}
+                <table>
+                    <tr>
+                        <td>
+                            <strong>Term Address</strong><br>
+                            {{ student.html_address|safe }}
+                        </td>
+                    </tr>
+                </table>
+                <p><em>No home address in the database</em></p>
+                {% else %}
+                <p><em>No addresses in the database</em></p>
+                {% endif %}
+                <p align="right">
+                     <a class="btn btn-default btn-sm" href="{{ student.get_edit_url }}">
+                        Edit
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseNotes">
+                    Notes
+                </a>
+            </h4>
+        </div>
+        <div id="collapseNotes" class="panel-collapse collapse">
+            <div class="panel-body">
+                {% if student.notes %}
+                    {{ student.notes | markdown }}
+                {% else %}
+                    <em>There are currently no notes for this student.</em>
+                {% endif %}
+                <p align="right">
+                     <a class="btn btn-default btn-sm" href="{{ student.get_notes_edit_url }}">
+                        Edit
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+    {% for year, performances_per_year in years_performances.items|sort_reverse %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseYear{{ year }}">
+                    Performance {{ year }}/{{ year|add:"1" }}
+                </a>
+            </h4>
+        </div>
+        <div id="collapseYear{{ year }}" class="panel-collapse collapse">
+            <div class="panel-body">
+                {% for performance in performances_per_year|sort %}
 
-{% endif %}
-{% endif %}
+                <h3><a href = "{{ performance.module.get_absolute_url }}">{{ performance.module.title }}</a></h3>
+
+                <table class="table table-bordered">
+                    <tr>
+                        <td>
+                            Attendance
+                        </td>
+                        <td>
+                            {{ performance.attendance | count_attendance }} / {{ performance.module.sessions_recorded }}
+                        </td>
+                    </tr>
+                    {% if performance.module.assessment_1_title %}
+                        <tr>
+                            <td>
+                                {{ performance.module.assessment_1_title }} ({{ performance.module.assessment_1_value }} %)
+                            </td>
+                            <td>
+                                {% if performance.q_assessment_1 %}
+                                    {{ performance.q_assessment_1 }} (QLD Resit, resit: {{ performance.r_assessment_1 }}, first: {{ performance.assessment_1 }})
+                                {% elif performance.r_assessment_1 %}
+                                    {{ performance.r_assessment_1 }} (Resit, first: {{ performance.assessment_1 }})
+                                {% else %}
+                                    {{ performance.assessment_1 }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endif %}
+                    {% if performance.module.assessment_2_title %}
+                        <tr>
+                            <td>
+                                {{ performance.module.assessment_2_title }} ({{ performance.module.assessment_2_value }} %)
+                            </td>
+                            <td>
+                                {% if performance.q_assessment_2 %}
+                                    {{ performance.q_assessment_2 }} (QLD Resit, resit: {{ performance.r_assessment_2 }}, first: {{ performance.assessment_2 }})
+                                {% elif performance.r_assessment_2 %}
+                                    {{ performance.r_assessment_2 }} (Resit, first: {{ performance.assessment_2 }})
+                                {% else %}
+                                    {{ performance.assessment_2 }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endif %}
+                    {% if performance.module.assessment_3_title %}
+                        <tr>
+                            <td>
+                                {{ performance.module.assessment_3_title }} ({{ performance.module.assessment_3_value }} %)
+                            </td>
+                            <td>
+                                {% if performance.q_assessment_3 %}
+                                    {{ performance.q_assessment_3 }} (QLD Resit, resit: {{ performance.r_assessment_3 }}, first: {{ performance.assessment_3 }})
+                                {% elif performance.r_assessment_3 %}
+                                    {{ performance.r_assessment_3 }} (Resit, first: {{ performance.assessment_3 }})
+                                {% else %}
+                                    {{ performance.assessment_3 }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endif %}
+                    {% if performance.module.assessment_4_title %}
+                        <tr>
+                            <td>
+                                {{ performance.module.assessment_4_title }} ({{ performance.module.assessment_4_value }} %)
+                            </td>
+                            <td>
+                                {% if performance.q_assessment_4 %}
+                                    {{ performance.q_assessment_4 }} (QLD Resit, resit: {{ performance.r_assessment_4 }}, first: {{ performance.assessment_4 }})
+                                {% elif performance.r_assessment_4 %}
+                                    {{ performance.r_assessment_4 }} (Resit, first: {{ performance.assessment_4 }})
+                                {% else %}
+                                    {{ performance.assessment_4 }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endif %}
+                    {% if performance.module.assessment_5_title %}
+                        <tr>
+                            <td>
+                                {{ performance.module.assessment_5_title }} ({{ performance.module.assessment_5_value }} %)
+                            </td>
+                            <td>
+                                {% if performance.q_assessment_5 %}
+                                    {{ performance.q_assessment_5 }} (QLD Resit, resit: {{ performance.r_assessment_5 }}, first: {{ performance.assessment_5 }})
+                                {% elif performance.r_assessment_5 %}
+                                    {{ performance.r_assessment_5 }} (Resit, first: {{ performance.assessment_5 }})
+                                {% else %}
+                                    {{ performance.assessment_5 }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endif %}
+                    {% if performance.module.assessment_6_title %}
+                        <tr>
+                            <td>
+                                {{ performance.module.assessment_6_title }} ({{ performance.module.assessment_6_value }} %)
+                            </td>
+                            <td>
+                                {% if performance.q_assessment_6 %}
+                                    {{ performance.q_assessment_6 }} (QLD Resit, resit: {{ performance.r_assessment_6 }}, first: {{ performance.assessment_6 }})
+                                {% elif performance.r_assessment_6 %}
+                                    {{ performance.r_assessment_6 }} (Resit, first: {{ performance.assessment_6 }})
+                                {% else %}
+                                    {{ performance.assessment_6 }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endif %}
+                    {% if performance.module.exam_value %}
+                        <tr>
+                            <td>
+                                Exam ({{ performance.module.exam_value }} %)
+                            </td>
+                            <td>
+                                {% if performance.q_exam %}
+                                    {{ performance.q_exam }} (QLD Resit, resit: {{ performance.r_exam }}, first: {{ performance.exam }})
+                                {% elif performance.r_exam %}
+                                    {{ performance.r_exam }} (Resit, first: {{ performance.exam }})
+                                {% else %}
+                                    {{ performance.exam }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endif %}
+                    <tr>
+                        <td>
+                            <strong>Module Mark</strong>
+                        </td>
+                            <td>
+                            {% if performance.average_makes_sense %}
+                                {{ performance.average }}
+                            {% else %}
+                                Not available yet
+                            {% endif %}
+                            </td>
+                        </tr>
+                </table>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% if show_meeting_notes %}
+    <div class="panel panel-default" id="tutee_meetings">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseMeetingNotes">
+                    Tutorials
+                </a>
+            </h4>
+        </div>
+        <div id="collapseMeetingNotes" class="panel-collapse collapse">
+            <div class="panel-body">
+            {% if meetings %}
+
+                {% for meeting in meetings|sort %}
+
+                    <h4 id="start_with_{{ meeting.id }}" style="padding-top: 60px; margin-top: -60px;">{{ meeting.date_of_meet }} {% if meeting.tutor != user %} (with {{ meeting.tutor.first_name }} {{ meeting.tutor.last_name }}){% endif %}</h3>
+
+                    {{ meeting.notes | markdown }}
+
+                    {% if meeting.tutor == user %}
+                        <p align="right">
+                        <small>
+                            <a href="{{ student.get_absolute_url }}{{ meeting.id }}#edit">Edit</a> | <a href=# class="delete" id="{{ meeting.id }}">Delete</a>
+                        </small>
+                        </p>
+                    {% endif %}
+
+                {% endfor %}
+
+            {% else %}
+
+                No meetings recorded yet.
+
+            {% endif %}
+
+            {% if tutor %}
+                <div id="meeting_notes">
+                    <p align="right">
+                        <button class="btn btn-sm" type="button" id="md-helper">Help with Formatting</button>
+                    </p>
+                    <div id="md-helptext">
+                    {{ mdexplanation | safe }}
+                    </div><br>
+                    <form action="/student/{{ student.student_id }}/{% if edit %}{{ edit }}/{% endif %}" method="post" accept-charset="utf-8">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-lg-3">
+                                {{ form.date_of_meet }}
+                            </div>
+                        </div>
+                        <br><br>
+                        {{ form.notes }}<br>
+                        <input type="submit" value="Save" class="btn btn-default">
+                    </form>
+                </div>
+            {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
 
 {% endblock %}
 
@@ -317,59 +353,55 @@ No meetings recorded yet.
 
 <script type="text/javascript">
 
-    $(document).ready(function(){
-        $(".address").hide()
+    $(document).ready(function() {
+        if (window.location.hash)
+        {
+            var anchor = window.location.hash.replace("#", "");
+            $("#collapseProgramme").collapse('hide');
+            // Maybe add conditionals here, so it would be possible to open other things
+            if (anchor == "edit")
+            {
+                $("#collapseMeetingNotes").collapse('show');
+                location.hash = "#meeting_notes";
+            }
+            //$("#" + anchor).collapse('show');
+        };
     });
 
     $(document).ready(function(){
-        $("#toggle_address").click(function(){
-            $(".address").toggle()
-        if ($(this).text() == "Show Address") 
-                  { 
-                     $(this).text("Hide Address"); 
-                  } 
-                  else 
-                  { 
-                     $(this).text("Show Address"); 
-                  }; 
-            });
-        });
-
-    $(document).ready(function(){
-        $("#performance").hide()
+        $("#md-helptext").hide();
     });
 
     $(document).ready(function(){
-        $("#toggle_performance").click(function(){
-            $("#performance").toggle()
-        if ($(this).text() == "Show Performance") 
-                  { 
-                     $(this).text("Hide Performance"); 
-                  } 
-                  else 
-                  { 
-                     $(this).text("Show Performance"); 
-                  }; 
+            $('#md-helper').click(function(){
+                $("#md-helptext").toggle();
+                    if ($(this).text() == "Help with Formatting") 
+                    { 
+                     $(this).text("Hide Formatting Help"); 
+                    } 
+                    else 
+                    { 
+                     $(this).text("Help with Formatting"); 
+                    }; 
+                });
             });
-        });
 
     $(document).ready(function(){
-        $("#notes").hide()
+        $( "#id_date_of_meet" ).datepicker();
+
+        $(document).on("click", ".delete", function(e) {
+            bootbox.confirm("Are you sure you want to delete this meeting record?", function(confirm) {
+                if (confirm)
+                {
+                    var meeting_id = e.target.id;
+                    var url = "{% url 'delete_tutee_meeting_no' %}" + meeting_id;
+                    window.location.replace(url);
+                }
+            });
+        });
     });
 
-    $(document).ready(function(){
-        $("#toggle_notes").click(function(){
-            $("#notes").toggle()
-        if ($(this).text() == "Show Notes") 
-                  { 
-                     $(this).text("Hide Notes"); 
-                  } 
-                  else 
-                  { 
-                     $(this).text("Show Notes"); 
-                  }; 
-            });
-        });
+
 </script>
 
 {% endblock %}

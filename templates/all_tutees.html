@@ -29,7 +29,7 @@
         {% for student, sessions in tutee_dict.items %}
         <tr>
             <td>
-                <a href="{{ student.get_tutee_url }}">{{ student.last_name }}, {{ student.short_first_name }}</a>
+                <a href="{{ student.get_absolute_url }}">{{ student.last_name }}, {{ student.short_first_name }}</a>
             </td>
             <td>
                 <a href="mailto:{{ student.tutor.email }}?Subject={{ student }}">{{ student.tutor.first_name }} {{student.tutor.last_name }}</a>
