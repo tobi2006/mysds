@@ -29,6 +29,7 @@ urlpatterns += patterns('mysds.views',
     url(r'^toggle_assessment_availability/(\w+)/(\d{4})/$', 'na', name = 'toggle_assessment'), #Dummy to enable url method
     url(r'^na/$', 'na', name = 'na'),
     url(r'^remove_student_from_module/(\w+)/(\d{4})/$', 'na', name = 'generic_remove_student_from_module'),
+    url(r'^reset_password/$', 'reset_password', name = 'reset_password'),
 )
 
 urlpatterns += patterns('database.views',
