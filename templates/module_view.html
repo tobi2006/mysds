@@ -237,9 +237,60 @@
     <a class="btn btn-default" href="/na">
         Sits/Resits
     </a>
-    <a class="btn btn-default" href="{{ module.get_export_marks_url }}">
-        Export Mark Overview
-    </a>
+    {% if adminorinstructor %}
+        <div class="btn-group dropdown">
+            <a class = "btn btn-default dropdown-toggle" data-toggle="dropdown">Export<span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+                <li>
+                    <a href="{{ module.get_export_marks_url }}">
+                        Mark Overview
+                    </a>
+                </li>
+                {% if marksheets_exists.1 %}
+                    <li>
+                        <a href = "/export_feedback_sheet/{{ module.code }}/{{ module.year }}/1/all">
+                            All marksheets for {{ module.assessment_1_title }}
+                        </a>
+                    </li>
+                {% endif %}
+                {% if marksheet_exists.2 %}
+                    <li>
+                        <a href = "/export_feedback_sheet/{{ module.code }}/{{ module.year }}/2/all">
+                            All marksheets for {{ module.assessment_2_title }}
+                        </a>
+                    </li>
+                {% endif %}
+                {% if marksheet_exists.3 %}
+                    <li>
+                        <a href = "/export_feedback_sheet/{{ module.code }}/{{ module.year }}/3/all">
+                            All marksheets for {{ module.assessment_3_title }}
+                        </a>
+                    </li>
+                {% endif %}
+                {% if marksheet_exists.4 %}
+                    <li>
+                        <a href = "/export_feedback_sheet/{{ module.code }}/{{ module.year }}/4/all">
+                            All marksheets for {{ module.assessment_4_title }}
+                        </a>
+                    </li>
+                {% endif %}
+                {% if marksheet_exists.5 %}
+                    <li>
+                        <a href = "/export_feedback_sheet/{{ module.code }}/{{ module.year }}/5/all">
+                            All marksheets for {{ module.assessment_5_title }}
+                        </a>
+                    </li>
+                {% endif %}
+                {% if marksheet_exists.6 %}
+                    <li>
+                        <a href = "/export_feedback_sheet/{{ module.code }}/{{ module.year }}/6/all">
+                            All marksheets for {{ module.assessment_6_title }}
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    {% endif %}
     <a class="btn btn-default" id="select_addressees">Email Students</a>
     <a class="btn btn-default" href="{{ module.get_add_students_url }}">
         Add Student(s)

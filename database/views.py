@@ -84,18 +84,31 @@ def module_view(request, module_id, year):
     legal_problem = FeedbackCategories.objects.get(assessment_type = 'Legal Problem')
     oral_presentation = FeedbackCategories.objects.get(assessment_type = 'Oral Presentation')
     feedback_for = [essay, legal_problem, oral_presentation]
+    marksheet_exists = {}
     if module.assessment_1_type in feedback_for:
         feedback[1] = True
+        if Marksheet.objects.filter(module = module, assessment = 1).exists():
+            marksheet_exists[1] = True
     if module.assessment_2_type in feedback_for:
         feedback[2] = True
+        if Marksheet.objects.filter(module = module, assessment = 2).exists():
+            marksheet_exists[2] = True
     if module.assessment_3_type in feedback_for:
         feedback[3] = True
+        if Marksheet.objects.filter(module = module, assessment = 3).exists():
+            marksheet_exists[3] = True
     if module.assessment_4_type in feedback_for:
         feedback[4] = True
+        if Marksheet.objects.filter(module = module, assessment = 4).exists():
+            marksheet_exists[4] = True
     if module.assessment_5_type in feedback_for:
         feedback[5] = True
+        if Marksheet.objects.filter(module = module, assessment = 5).exists():
+            marksheet_exists[5] = True
     if module.assessment_6_type in feedback_for:
         feedback[6] = True
+        if Marksheet.objects.filter(module = module, assessment = 6).exists():
+            marksheet_exists[6] = True
     rows = []
     email_dict = {}
     no_email_addresses = []
@@ -147,7 +160,7 @@ def module_view(request, module_id, year):
 
     return render_to_response('module_view.html',
             {'module': module, 'rows': rows, 'email_dict': email_dict, 'no_email_addresses': no_email_addresses,
-                'adminorinstructor': adminorinstructor, 'feedback': feedback,
+                'adminorinstructor': adminorinstructor, 'feedback': feedback, 'marksheet_exists': marksheet_exists,
             'number_of_groups': groupstring},
             context_instance = RequestContext(request)
             )
