@@ -69,9 +69,9 @@ def get_one_feedback_sheet(student, module, assessment):
     feedback_category = FeedbackCategories.objects.get(assessment_type = assessment_type) 
     elements = []
     styles = getSampleStyleSheet()
-    #logo = "https://cccu.tobiaskliem.de/static/images/cccu.jpg"
-    #im = Image(logo, 2.45*inch, 1*inch)
-    #elements.append(im)
+    logo = "https://cccu.tobiaskliem.de/static/images/cccu.jpg"
+    im = Image(logo, 2.45*inch, 1*inch)
+    elements.append(im)
     elements.append(Spacer(1,5))
     essay = FeedbackCategories.objects.get(assessment_type = 'Essay')
     legal_problem = FeedbackCategories.objects.get(assessment_type = 'Legal Problem')
