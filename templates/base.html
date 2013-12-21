@@ -120,9 +120,12 @@
                 <li><a href="{% url 'all_attendances_year' %}1">Attendances for Year 1</a></li>
                 <li><a href="{% url 'all_attendances_year' %}2">Attendances for Year 2</a></li>
                 <li><a href="{% url 'all_attendances_year' %}3">Attendances for Year 3</a></li>
+                <li class="divider"></li>
                 <li><a href="{% url 'all_tutees_year' %}1">Tutee Meetings for Year 1</a></li>
                 <li><a href="{% url 'all_tutees_year' %}2">Tutee Meetings for Year 2</a></li>
                 <li><a href="{% url 'all_tutees_year' %}3">Tutee Meetings for Year 3</a></li>
+                <li class="divider"></li>
+                <li><a href="{% url 'invite_students' %}">Invite Students to the Database</a></li>
             </ul>
         </li>
         {% endif %}
