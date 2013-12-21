@@ -19,6 +19,11 @@ urlpatterns += patterns('announcer.views',
 
 urlpatterns += patterns('mysds.views',
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^na/$', 'na', name = 'na'),
+    url(r'^remove_student_from_module/(\w+)/(\d{4})/$', 'na', name = 'generic_remove_student_from_module'),
+    url(r'^reset_password/$', 'reset_password', name = 'reset_password'),
+    url(r'^invite_students/$', 'invite_students', name = 'invite_students'),
+    #Dummies
     url(r'^all_attendances/$', 'na', name = 'all_attendances_year'), #Dummy to enable url method
     url(r'^all_tutees/$', 'na', name = 'all_tutees_year'), #Dummy to enable url method
     url(r'^attendance/(\w+)/(\d{4})/$', 'na', name = 'attendance_no'), #Dummy to enable url method
@@ -27,9 +32,6 @@ urlpatterns += patterns('mysds.views',
     url(r'^mark/(\w+)/(\d{4})/$', 'na', name = 'mark_no'), #Dummy to enable url method
     url(r'^mark_anonymously/(\w+)/(\d{4})/$', 'na', name = 'mark_anon'), #Dummy to enable url method
     url(r'^toggle_assessment_availability/(\w+)/(\d{4})/$', 'na', name = 'toggle_assessment'), #Dummy to enable url method
-    url(r'^na/$', 'na', name = 'na'),
-    url(r'^remove_student_from_module/(\w+)/(\d{4})/$', 'na', name = 'generic_remove_student_from_module'),
-    url(r'^reset_password/$', 'reset_password', name = 'reset_password'),
 )
 
 urlpatterns += patterns('database.views',

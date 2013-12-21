@@ -3,7 +3,8 @@ from django.core.mail import send_mail
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
+from django.core.exceptions import ObjectDoesNotExist
 
 from database.models import Student, Module, Course
 from database import functions
@@ -33,28 +34,92 @@ def reset_password(request):
         new_password = User.objects.make_random_password()
         user.set_password(new_password)
         user.save()
-
+        first_name = user.first_name.split(" ")[0] # only first forename
         message = """
         Dear %s,
         
-        You have requested your details from MySDS, the CCCU database. Here they are:
+You have requested your details from MySDS, the CCCU database. Here they are:
 
-        Username: %s
-        Password: %s
+Username: %s
+Password: %s
 
-        Please be aware that the form is case sensitive, so make sure you use upper- and lowercase correctly.
+Please be aware that the form is case sensitive, so make sure you use upper- and lowercase correctly.
 
-        After successfully logging in with the above details, please click on "My Account" and change your password to one that is both easy to remember and difficult to guess. Make sure you do not use the same password for many different websites. A good way to ensure password safety and convenience is to use a password manager like KeepassX, Last Pass or One Password. All of them are available for almost all browsers and platforms.
+After successfully logging in with the above details, please click on "My Account" and change your password to one that is both easy to remember and difficult to guess. Make sure you do not use the same password for many different websites. A good way to ensure password safety and convenience is to use a password manager like KeepassX, Last Pass or One Password. All of them are available for almost all browsers and platforms.
 
-        Best wishes,
+Best wishes,
 
-        Your friendly MySDS Admin
-        """%(user.first_name, user.username, new_password)
+Your friendly MySDS Admin
+        """%(first_name, user.username, new_password)
 
         send_mail('MySDS - New login information', message, 'cccu@tobiaskliem.de', [user.email,])
 #        print message #Just for local testing (no SMTP server on this machine)
 
     return HttpResponseRedirect('/')
+
+@login_required
+def invite_students(request):
+    if request.method == 'POST':
+        student_ids = request.POST.getlist('selected_student_id')
+        student_group = Group.objects.get(name = 'students')
+        for student_id in student_ids:
+            student = Student.objects.get(student_id = student_id)
+            first_part = student.first_name[0] + student.last_name[0]
+            first_part = first_part.lower()
+            number = 1
+            still_searching = True
+            while still_searching:
+                username = first_part + str(number)
+                if User.objects.filter(username = username).exists():
+                    number += 1
+                else:
+                    still_searching = False
+            user = User(username = username, email = student.email)
+            user.save()
+            password = User.objects.make_random_password()
+            user.set_password(password)
+            user.save()
+            student.belongs_to = user
+            student.save()
+            student_group.user_set.add(user)
+            student_group.save()
+            first_name = student.first_name.split(" ")[0] # only first forename
+            message = """
+Dear %s,
+
+You now have access to MySDS, the Student Database for Law at Canterbury Christ Church, with the following details:
+
+Username: %s
+Password: %s
+
+When you log in, you can change your password if you click on 'My Account'.
+
+On the database, you will be able to see your marks, download your marksheets and book meetings with teachers.
+
+More functions are in planning.
+
+If you experience problems, please contact cccu@tobiaskliem.de - thanks a lot!
+
+Enjoy the experience,
+
+Your friendly MySDS admin.
+"""%(first_name, user.username, password) 
+        #        send_mail('MySDS - New login information', message, 'cccu@tobiaskliem.de', [user.email,])
+            print message #Just for local testing (no SMTP server on the testing machine)
+        return HttpResponseRedirect('/')
+    else:
+        all_students = Student.objects.all()
+        students = [] 
+        year = {}
+        for student in all_students:
+            if student.belongs_to == None:
+                students.append(student)
+                year[student.year] = True
+        return render_to_response('invite_students.html',
+                {'students': students, 'year': year},
+                context_instance = RequestContext(request))
+
+
 
 
 def na(request):
