@@ -104,8 +104,8 @@ Enjoy the experience,
 
 Your friendly MySDS admin.
 """%(first_name, user.username, password) 
-        #        send_mail('MySDS - New login information', message, 'cccu@tobiaskliem.de', [user.email,])
-            print message #Just for local testing (no SMTP server on the testing machine)
+            send_mail('MySDS - New login information', message, 'cccu@tobiaskliem.de', [user.email,])
+            #print message #Just for local testing (no SMTP server on the testing machine)
         return HttpResponseRedirect('/')
     else:
         all_students = Student.objects.all()
