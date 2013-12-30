@@ -25,11 +25,7 @@
                     {{ performance.module.assessment_1_title }} ({{ performance.module.assessment_1_value }} %)
                 </td>
                 <td>
-                    {% if performance.assessment_1 %}
-                        {{ performance.assessment_1 }}
-                    {% else %}
-                        Not available yet
-                    {% endif %}
+                    {{ performance.assessment_1|default_if_none:"Not available yet"  }}
                 </td>
                 <td>
                     {% if performance.assessment_1_marksheet %}
@@ -44,11 +40,7 @@
                     {{ performance.module.assessment_2_title }} ({{ performance.module.assessment_2_value }} %)
                 </td>
                 <td>
-                    {% if performance.assessment_2 %}
-                        {{ performance.assessment_2 }}
-                    {% else %}
-                        Not available yet
-                    {% endif %}
+                    {{ performance.assessment_2|default_if_none:"Not available yet"  }}
                 </td>
                 <td>
                     {% if performance.assessment_2_marksheet %}
@@ -63,11 +55,7 @@
                     {{ performance.module.assessment_3_title }} ({{ performance.module.assessment_3_value }} %)
                 </td>
                 <td>
-                    {% if performance.assessment_3 %}
-                        {{ performance.assessment_3 }}
-                    {% else %}
-                        Not available yet
-                    {% endif %}
+                    {{ performance.assessment_3|default_if_none:"Not available yet"  }}
                 </td>
                 <td>
                     {% if performance.assessment_3_marksheet %}
@@ -82,11 +70,7 @@
                     {{ performance.module.assessment_4_title }} ({{ performance.module.assessment_4_value }} %)
                 </td>
                 <td>
-                    {% if performance.assessment_4 %}
-                        {{ performance.assessment_4 }}
-                    {% else %}
-                        Not available yet
-                    {% endif %}
+                    {{ performance.assessment_4|default_if_none:"Not available yet"  }}
                 </td>
                 <td>
                     {% if performance.assessment_4_marksheet %}
@@ -101,11 +85,7 @@
                     {{ performance.module.assessment_5_title }} ({{ performance.module.assessment_5_value }} %)
                 </td>
                 <td>
-                    {% if performance.assessment_5 %}
-                        {{ performance.assessment_5 }}
-                    {% else %}
-                        Not available yet
-                    {% endif %}
+                    {{ performance.assessment_5|default_if_none:"Not available yet"  }}
                 </td>
                 <td>
                     {% if performance.assessment_5_marksheet %}
@@ -120,11 +100,7 @@
                     {{ performance.module.assessment_6_title }} ({{ performance.module.assessment_6_value }} %)
                 </td>
                 <td>
-                    {% if performance.assessment_6 %}
-                        {{ performance.assessment_6 }}
-                    {% else %}
-                        Not available yet
-                    {% endif %}
+                    {{ performance.assessment_6|default_if_none:"Not available yet"  }}
                 </td>
                 <td>
                     {% if performance.assessment_6_marksheet %}
@@ -139,11 +115,7 @@
                     Exam ({{ performance.module.exam_value }} %)
                 </td>
                 <td>
-                    {% if performance.exam %}
-                        {{ performance.exam }}
-                    {% else %}
-                        Not available yet
-                    {% endif %}
+                    {{ performance.exam|default_if_none:"Not available yet"  }}
                 </td>
             </tr>
         {% endif %}

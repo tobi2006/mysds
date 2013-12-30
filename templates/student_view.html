@@ -161,12 +161,12 @@
                                 {{ performance.module.assessment_1_title }} ({{ performance.module.assessment_1_value }} %)
                             </td>
                             <td>
-                                {% if performance.q_assessment_1 %}
-                                    {{ performance.q_assessment_1 }} (QLD Resit, resit: {{ performance.r_assessment_1 }}, first: {{ performance.assessment_1 }})
-                                {% elif performance.r_assessment_1 %}
-                                    {{ performance.r_assessment_1 }} (Resit, first: {{ performance.assessment_1 }})
+                                {% if performance.q_assessment_1 != None %}
+                                    {{ performance.q_assessment_1|default_if_none:"" }} (QLD Resit, resit: {{ performance.r_assessment_1|default_if_none:"" }}, first attempt: {{ performance.assessment_1|default_if_none:"" }})
+                                {% elif performance.r_assessment_1 != None %}
+                                    {{ performance.r_assessment_1|default_if_none:"" }} (Resit, first attempt: {{ performance.assessment_1|default_if_none:"" }})
                                 {% else %}
-                                    {{ performance.assessment_1 }}
+                                    {{ performance.assessment_1|default_if_none:"" }}
                                 {% endif %}
                             </td>
                         </tr>
@@ -177,12 +177,12 @@
                                 {{ performance.module.assessment_2_title }} ({{ performance.module.assessment_2_value }} %)
                             </td>
                             <td>
-                                {% if performance.q_assessment_2 %}
-                                    {{ performance.q_assessment_2 }} (QLD Resit, resit: {{ performance.r_assessment_2 }}, first: {{ performance.assessment_2 }})
-                                {% elif performance.r_assessment_2 %}
-                                    {{ performance.r_assessment_2 }} (Resit, first: {{ performance.assessment_2 }})
+                                {% if performance.q_assessment_2 != None %}
+                                    {{ performance.q_assessment_2|default_if_none:"" }} (QLD Resit, resit: {{ performance.r_assessment_2|default_if_none:"" }}, first attempt: {{ performance.assessment_2|default_if_none:"" }})
+                                {% elif performance.r_assessment_2 != None %}
+                                    {{ performance.r_assessment_2|default_if_none:"" }} (Resit, first attempt: {{ performance.assessment_2|default_if_none:"" }})
                                 {% else %}
-                                    {{ performance.assessment_2 }}
+                                    {{ performance.assessment_2|default_if_none:"" }}
                                 {% endif %}
                             </td>
                         </tr>
@@ -193,12 +193,12 @@
                                 {{ performance.module.assessment_3_title }} ({{ performance.module.assessment_3_value }} %)
                             </td>
                             <td>
-                                {% if performance.q_assessment_3 %}
-                                    {{ performance.q_assessment_3 }} (QLD Resit, resit: {{ performance.r_assessment_3 }}, first: {{ performance.assessment_3 }})
-                                {% elif performance.r_assessment_3 %}
-                                    {{ performance.r_assessment_3 }} (Resit, first: {{ performance.assessment_3 }})
+                                {% if performance.q_assessment_3 != None %}
+                                    {{ performance.q_assessment_3|default_if_none:"" }} (QLD Resit, resit: {{ performance.r_assessment_3|default_if_none:"" }}, first attempt: {{ performance.assessment_3|default_if_none:"" }})
+                                {% elif performance.r_assessment_3 != None %}
+                                    {{ performance.r_assessment_3|default_if_none:"" }} (Resit, first: {{ performance.assessment_3|default_if_none:"" }})
                                 {% else %}
-                                    {{ performance.assessment_3 }}
+                                    {{ performance.assessment_3|default_if_none:"" }}
                                 {% endif %}
                             </td>
                         </tr>
@@ -209,12 +209,12 @@
                                 {{ performance.module.assessment_4_title }} ({{ performance.module.assessment_4_value }} %)
                             </td>
                             <td>
-                                {% if performance.q_assessment_4 %}
-                                    {{ performance.q_assessment_4 }} (QLD Resit, resit: {{ performance.r_assessment_4 }}, first: {{ performance.assessment_4 }})
-                                {% elif performance.r_assessment_4 %}
-                                    {{ performance.r_assessment_4 }} (Resit, first: {{ performance.assessment_4 }})
+                                {% if performance.q_assessment_4 != None %}
+                                    {{ performance.q_assessment_4|default_if_none:"" }} (QLD Resit, resit: {{ performance.r_assessment_4|default_if_none:"" }}, first attempt: {{ performance.assessment_4|default_if_none:"" }})
+                                {% elif performance.r_assessment_4 != None %}
+                                    {{ performance.r_assessment_4|default_if_none:"" }} (Resit, first: {{ performance.assessment_4|default_if_none:"" }})
                                 {% else %}
-                                    {{ performance.assessment_4 }}
+                                    {{ performance.assessment_4|default_if_none:"" }}
                                 {% endif %}
                             </td>
                         </tr>
@@ -225,12 +225,12 @@
                                 {{ performance.module.assessment_5_title }} ({{ performance.module.assessment_5_value }} %)
                             </td>
                             <td>
-                                {% if performance.q_assessment_5 %}
-                                    {{ performance.q_assessment_5 }} (QLD Resit, resit: {{ performance.r_assessment_5 }}, first: {{ performance.assessment_5 }})
-                                {% elif performance.r_assessment_5 %}
-                                    {{ performance.r_assessment_5 }} (Resit, first: {{ performance.assessment_5 }})
+                                {% if performance.q_assessment_5 != None %}
+                                    {{ performance.q_assessment_5|default_if_none:"" }} (QLD Resit, resit: {{ performance.r_assessment_5|default_if_none:"" }}, first attempt: {{ performance.assessment_5|default_if_none:"" }})
+                                {% elif performance.r_assessment_5 != None %}
+                                    {{ performance.r_assessment_5|default_if_none:"" }} (Resit, first attempt: {{ performance.assessment_5|default_if_none:"" }})
                                 {% else %}
-                                    {{ performance.assessment_5 }}
+                                    {{ performance.assessment_5|default_if_none:"" }}
                                 {% endif %}
                             </td>
                         </tr>
@@ -241,12 +241,12 @@
                                 {{ performance.module.assessment_6_title }} ({{ performance.module.assessment_6_value }} %)
                             </td>
                             <td>
-                                {% if performance.q_assessment_6 %}
-                                    {{ performance.q_assessment_6 }} (QLD Resit, resit: {{ performance.r_assessment_6 }}, first: {{ performance.assessment_6 }})
-                                {% elif performance.r_assessment_6 %}
-                                    {{ performance.r_assessment_6 }} (Resit, first: {{ performance.assessment_6 }})
+                                {% if performance.q_assessment_6 != None %}
+                                    {{ performance.q_assessment_6|default_if_none:"" }} (QLD Resit, resit: {{ performance.r_assessment_6|default_if_none:"" }}, first attempt: {{ performance.assessment_6|default_if_none:"" }})
+                                {% elif performance.r_assessment_6 != None%}
+                                    {{ performance.r_assessment_6|default_if_none:"" }} (Resit, first attempt: {{ performance.assessment_6|default_if_none:"" }})
                                 {% else %}
-                                    {{ performance.assessment_6 }}
+                                    {{ performance.assessment_6|default_if_none:"" }}
                                 {% endif %}
                             </td>
                         </tr>
@@ -257,12 +257,12 @@
                                 Exam ({{ performance.module.exam_value }} %)
                             </td>
                             <td>
-                                {% if performance.q_exam %}
-                                    {{ performance.q_exam }} (QLD Resit, resit: {{ performance.r_exam }}, first: {{ performance.exam }})
-                                {% elif performance.r_exam %}
-                                    {{ performance.r_exam }} (Resit, first: {{ performance.exam }})
+                                {% if performance.q_exam != None %}
+                                    {{ performance.q_exam|default_if_none:"" }} (QLD Resit, resit: {{ performance.r_exam|default_if_none:"" }}, first attempt: {{ performance.exam|default_if_none:"" }})
+                                {% elif performance.r_exam != None %}
+                                    {{ performance.r_exam|default_if_none:"" }} (Resit, first: {{ performance.exam|default_if_none:"" }})
                                 {% else %}
-                                    {{ performance.exam }}
+                                    {{ performance.exam|default_if_none:"" }}
                                 {% endif %}
                             </td>
                         </tr>

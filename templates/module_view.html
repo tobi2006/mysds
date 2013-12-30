@@ -457,7 +457,7 @@
                 {% if feedback.1 %}
                     <a href = "/essay_feedback/{{ module.code }}/{{ module.year }}/1/{{ row.performance.student.student_id }}"><span class="glyphicon glyphicon-pencil"></span></a> &nbsp;
                 {% endif %}
-                {{ row.performance.asssessment_1 }}
+                {{ row.performance.assessment_1|default_if_none:"" }}
                 {% if row.1 %}
                     &nbsp; <a href = "/export_feedback_sheet/{{ module.code }}/{{ module.year }}/1/{{ row.performance.student.student_id }}"><span class="glyphicon glyphicon-file"></span></a>
                 {% endif %}
@@ -468,7 +468,7 @@
                 {% if feedback.2 %}
                     <a href = "/essay_feedback/{{ module.code }}/{{ module.year }}/2/{{ row.performance.student.student_id }}"><span class="glyphicon glyphicon-pencil"></span></a> &nbsp;
                 {% endif %}
-                {{ row.performance.asssessment_2|default_if_none:"" }}
+                {{ row.performance.assessment_2|default_if_none:"" }}
                 {% if row.2 %}
                     &nbsp; <a href = "/export_feedback_sheet/{{ module.code }}/{{ module.year }}/2/{{ row.performance.student.student_id }}"><span class="glyphicon glyphicon-file"></span></a>
                 {% endif %}
@@ -479,7 +479,7 @@
                 {% if feedback.3 %}
                     <a href = "/essay_feedback/{{ module.code }}/{{ module.year }}/3/{{ row.performance.student.student_id }}"><span class="glyphicon glyphicon-pencil"></span></a> &nbsp;
                 {% endif %}
-                {{ row.performance.asssessment_3|default_if_none:"" }}
+                {{ row.performance.assessment_3|default_if_none:"" }}
                 {% if row.3 %}
                     &nbsp; <a href = "/export_feedback_sheet/{{ module.code }}/{{ module.year }}/3/{{ row.performance.student.student_id }}"><span class="glyphicon glyphicon-file"></span></a>
                 {% endif %}
@@ -490,7 +490,7 @@
                 {% if feedback.4 %}
                     <a href = "/essay_feedback/{{ module.code }}/{{ module.year }}/4/{{ row.performance.student.student_id }}"><span class="glyphicon glyphicon-pencil"></span></a> &nbsp;
                 {% endif %}
-                {{ row.performance.asssessment_4|default_if_none:"" }}
+                {{ row.performance.assessment_4|default_if_none:"" }}
                 {% if row.4 %}
                     &nbsp; <a href = "/export_feedback_sheet/{{ module.code }}/{{ module.year }}/4/{{ row.performance.student.student_id }}"><span class="glyphicon glyphicon-file"></span></a>
                 {% endif %}
@@ -501,7 +501,7 @@
                 {% if feedback.5 %}
                     <a href = "/essay_feedback/{{ module.code }}/{{ module.year }}/5/{{ row.performance.student.student_id }}"><span class="glyphicon glyphicon-pencil"></span></a> &nbsp;
                 {% endif %}
-                {{ row.performance.asssessment_5|default_if_none:"" }}
+                {{ row.performance.assessment_5|default_if_none:"" }}
                 {% if row.5 %}
                     &nbsp; <a href = "/export_feedback_sheet/{{ module.code }}/{{ module.year }}/5/{{ row.performance.student.student_id }}"><span class="glyphicon glyphicon-file"></span></a>
                 {% endif %}
@@ -512,7 +512,7 @@
                 {% if feedback.6 %}
                     <a href = "/essay_feedback/{{ module.code }}/{{ module.year }}/6/{{ row.performance.student.student_id }}"><span class="glyphicon glyphicon-pencil"></span></a> &nbsp;
                 {% endif %}
-                {{ row.performance.asssessment_6|default_if_none:"" }}
+                {{ row.performance.assessment_6|default_if_none:"" }}
                 {% if row.6 %}
                     &nbsp; <a href = "/export_feedback_sheet/{{ module.code }}/{{ module.year }}/6/{{ row.performance.student.student_id }}"><span class="glyphicon glyphicon-file"></span></a>
                 {% endif %}
