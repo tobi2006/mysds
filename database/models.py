@@ -63,11 +63,12 @@ class Module(models.Model):
             (20, '20'),
             (40, '40')
         )
-    ASSESSMENT_TYPES = (
+    ASSESSMENT_TYPES = ( # This is probably not necessary, but I'm too scared to take it out...
             ('essay', 'Essay'),
             ('presentation', 'Presentation'),
             ('group_presentation', 'Group Presentation'),
-            ('legal_problem', 'Legal Problem')
+            ('legal_problem', 'Legal Problem'),
+            ('essay_legal_problem', 'Essay / Legal Problem')
         )
     title = models.CharField(max_length = 100)
     code = models.CharField(max_length = 20)

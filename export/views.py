@@ -76,7 +76,9 @@ def get_one_feedback_sheet(student, module, assessment):
     essay = FeedbackCategories.objects.get(assessment_type = 'Essay')
     legal_problem = FeedbackCategories.objects.get(assessment_type = 'Legal Problem')
     oral_presentation = FeedbackCategories.objects.get(assessment_type = 'Oral Presentation')
+    essay_legal_problem = FeedbackCategories.objects.get(assessment_type = 'Essay / Legal Problem')
     essay_or_legal_problem = False
+    essay_and_legal_problem = False
     if assessment_type == essay:
         title = Paragraph('<para alignment="center">Law Undergraduate Assessment Sheet: Essay</para>', styles['Heading2'])
         essay_or_legal_problem = True
@@ -86,6 +88,10 @@ def get_one_feedback_sheet(student, module, assessment):
     if assessment_type == oral_presentation:
         title = Paragraph('<para alignment="center">Law Undergraduate Assessment Sheet: Oral Presentation</para>', styles['Heading2'])
         presentation = True
+    if assessment_type == essay_legal_problem:
+        title = Paragraph('<para alignment="center">Law Undergraduate Assessment Sheet: Essay / Legal Problem</para>', styles['Heading2'])
+        essay_or_legal_problem = True
+        essay_and_legal_problem = True
     elements.append(title)
     elements.append(Spacer(1,5))
     last_name_string = '<b>' + student.last_name + '</b>'
@@ -107,26 +113,61 @@ def get_one_feedback_sheet(student, module, assessment):
     arg = Paragraph(assessment_type.category_3, styles['Normal'])
     if essay_or_legal_problem:
         o_a_p = Paragraph(assessment_type.category_4, styles['Normal'])
-    marked_by_string = '<b>' + marksheet.marker.first_name + ' ' + marksheet.marker.last_name + '</b>'
+    if essay_and_legal_problem:
+        category_5 = Paragraph(assessment_type.category_5, styles['Normal'])
+        category_6 = Paragraph(assessment_type.category_6, styles['Normal'])
+        category_7 = Paragraph(assessment_type.category_7, styles['Normal'])
+        category_8 = Paragraph(assessment_type.category_8, styles['Normal'])
+
+    if marksheet.second_first_marker:
+        markers = [ marksheet.marker, marksheet.second_first_marker] # To make sure they don't appear in different orders
+        markers.sort()
+        marked_by_string = '<b>' + markers[0].first_name + ' ' + markers[0].last_name + ' / ' + markers[1].first_name + ' ' + markers[1].last_name + '</b>'
+    else:
+        marked_by_string = '<b>' + marksheet.marker.first_name + ' ' + marksheet.marker.last_name + '</b>'
     marking_date_string = '<b>' + str(marksheet.marking_date.day) + "/" + str(marksheet.marking_date.month) + "/" + str(marksheet.marking_date.year) + '</b>'
     marked_by = [[Paragraph('Marked by', styles['Normal']), Paragraph(marked_by_string, styles['Normal'])], 
                 [Paragraph('Date', styles['Normal']), Paragraph(marking_date_string, styles['Normal'])]]
     marked_table = Table(marked_by)
-    mark = [[Paragraph('Mark', styles['Normal']), Paragraph(mark, styles['Heading1'])],
-            ['', '']]
+    if not essay_and_legal_problem:
+        mark = [[Paragraph('Mark', styles['Normal']), Paragraph(mark, styles['Heading1'])],
+                ['', '']]
+    else:
+        mark = [[Paragraph('Final Mark for (a) and (b)', styles['Normal']), Paragraph(mark, styles['Heading1'])],
+                ['', '']]
     mark_table = Table(mark)
     mark_table.setStyle(TableStyle([('SPAN', (1,0), (1,1))]))
 
     if essay_or_legal_problem:
         data = [[family_name, '', first_name, ''],
                 [module_title, '', module_code, submission_date, ''],
-                [assessment_title, '', word_count, '', ''],
-                [criteria, r_a_k, u_a_a, arg, o_a_p]]
+                [assessment_title, '', word_count, '', '']]
+        if not essay_and_legal_problem:
+            data.append([criteria, r_a_k, u_a_a, arg, o_a_p])
     elif presentation:
         data = [[family_name, '', first_name, ''],
                 [module_title, '', module_code, submission_date],
                 [assessment_title, '', '', ''],
                 [criteria, r_a_k, u_a_a, arg]]
+    if essay_and_legal_problem:
+        t = Table(data) 
+        t.setStyle(TableStyle([('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
+                                ('SPAN', (0,0), (1,0)),
+                                ('SPAN', (2,0), (-1,0)),
+                                ('SPAN', (0,1), (1,1)),
+                                ('SPAN', (3,1), (-1,1)),
+                                ('SPAN', (0,2), (1,2)),
+                                ('SPAN', (2,2), (-1,2)),
+                                ('BOX', (0,0), (-1,-1), 0.25, colors.black)]))
+        elements.append(t)
+        elements.append(Spacer(1,5))
+
+        subtitle = Paragraph('Feedback for Part (a): Essay', styles['Heading3'])
+        elements.append(subtitle)
+        elements.append(Spacer(1,5))
+
+        data=[[criteria, r_a_k, u_a_a, arg, o_a_p]]
+
     # Fill marking grid
     row = ['80 +']
     if marksheet.category_mark_1 == 80:
@@ -244,17 +285,24 @@ def get_one_feedback_sheet(student, module, assessment):
     data.append(row)
     t = Table(data) 
     if essay_or_legal_problem:
-        t.setStyle(TableStyle([('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
-                                ('SPAN', (0,0), (1,0)),
-                                ('SPAN', (2,0), (-1,0)),
-                                ('SPAN', (0,1), (1,1)),
-                                ('SPAN', (3,1), (-1,1)),
-                                ('SPAN', (0,2), (1,2)),
-                                ('SPAN', (2,2), (-1,2)),
-                                ('BACKGROUND', (0,3), (-1,3), colors.lightgrey),
-                                ('BACKGROUND', (0,4), (0,9), colors.lightgrey),
-                                ('ALIGN', (1,4), (-1,-1), 'CENTER'),
-                                ('BOX', (0,0), (-1,-1), 0.25, colors.black)]))
+        if not essay_and_legal_problem:
+            t.setStyle(TableStyle([('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
+                                    ('SPAN', (0,0), (1,0)),
+                                    ('SPAN', (2,0), (-1,0)),
+                                    ('SPAN', (0,1), (1,1)),
+                                    ('SPAN', (3,1), (-1,1)),
+                                    ('SPAN', (0,2), (1,2)),
+                                    ('SPAN', (2,2), (-1,2)),
+                                    ('BACKGROUND', (0,3), (-1,3), colors.lightgrey),
+                                    ('BACKGROUND', (0,4), (0,9), colors.lightgrey),
+                                    ('ALIGN', (1,4), (-1,-1), 'CENTER'),
+                                    ('BOX', (0,0), (-1,-1), 0.25, colors.black)]))
+        else:
+            t.setStyle(TableStyle([('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
+                                    ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
+                                    ('BACKGROUND', (0,1), (0,-1), colors.lightgrey),
+                                    ('ALIGN', (1,1), (-1,-1), 'CENTER'),
+                                    ('BOX', (0,0), (-1,-1), 0.25, colors.black)]))
     elif presentation:
         t.setStyle(TableStyle([('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
                                 ('SPAN', (0,0), (1,0)),
@@ -277,6 +325,150 @@ def get_one_feedback_sheet(student, module, assessment):
             comments.append(Spacer(1,4))
     for comment in comments:
         elements.append(comment)
+
+    if essay_and_legal_problem:
+        part_1_mark_data = [[Paragraph('Mark for part(a)', styles['Heading4']), Paragraph(str(marksheet.part_1_mark), styles['Heading4'])]]
+        part_1_mark_table = Table(part_1_mark_data)
+        elements.append(part_1_mark_table)
+        elements.append(PageBreak())
+        heading_2 = Paragraph('Feedback for Part (b): Legal Problem', styles['Heading3'])
+        elements.append(heading_2)
+        elements.append(Spacer(1,4))
+
+
+        data_2 = [[criteria, category_5, category_6, category_7, category_8]]
+
+        # Fill marking grid for the second part
+        row = ['80 +']
+        if marksheet.category_mark_5 == 80:
+            row.append('X')
+        else:
+            row.append(' ')
+        if marksheet.category_mark_6 == 80:
+            row.append('X')
+        else:
+            row.append(' ')
+        if marksheet.category_mark_7 == 80:
+            row.append('X')
+        else:
+            row.append(' ')
+        if marksheet.category_mark_8 == 80:
+            row.append('X')
+        else:
+            row.append(' ')
+        data_2.append(row)
+        row = ['70 - 79']
+        if marksheet.category_mark_5 == 79:
+            row.append('X')
+        else:
+            row.append(' ')
+        if marksheet.category_mark_6 == 79:
+            row.append('X')
+        else:
+            row.append(' ')
+        if marksheet.category_mark_7 == 79:
+            row.append('X')
+        else:
+            row.append(' ')
+        if marksheet.category_mark_8 == 79:
+            row.append('X')
+        else:
+            row.append(' ')
+        data_2.append(row)
+        row = ['60 - 69']
+        if marksheet.category_mark_5 == 69:
+            row.append('X')
+        else:
+            row.append(' ')
+        if marksheet.category_mark_6 == 69:
+            row.append('X')
+        else:
+            row.append(' ')
+        if marksheet.category_mark_7 == 69:
+            row.append('X')
+        else:
+            row.append(' ')
+        if marksheet.category_mark_8 == 69:
+            row.append('X')
+        else:
+            row.append(' ')
+        data_2.append(row)
+        row = ['50 - 59']
+        if marksheet.category_mark_5 == 59:
+            row.append('X')
+        else:
+            row.append(' ')
+        if marksheet.category_mark_6 == 59:
+            row.append('X')
+        else:
+            row.append(' ')
+        if marksheet.category_mark_7 == 59:
+            row.append('X')
+        else:
+            row.append(' ')
+        if marksheet.category_mark_8 == 59:
+            row.append('X')
+        else:
+            row.append(' ')
+        data_2.append(row)
+        row = ['40 - 49']
+        if marksheet.category_mark_5 == 49:
+            row.append('X')
+        else:
+            row.append(' ')
+        if marksheet.category_mark_6 == 49:
+            row.append('X')
+        else:
+            row.append(' ')
+        if marksheet.category_mark_7 == 49:
+            row.append('X')
+        else:
+            row.append(' ')
+        if marksheet.category_mark_8 == 49:
+            row.append('X')
+        else:
+            row.append(' ')
+        data_2.append(row)
+        row = ['Under 40']
+        if marksheet.category_mark_5 == 39:
+            row.append('X')
+        else:
+            row.append(' ')
+        if marksheet.category_mark_6 == 39:
+            row.append('X')
+        else:
+            row.append(' ')
+        if marksheet.category_mark_7 == 39:
+            row.append('X')
+        else:
+            row.append(' ')
+        if marksheet.category_mark_8 == 39:
+            row.append('X')
+        else:
+            row.append(' ')
+        data_2.append(row)
+        t_2 = Table(data_2) 
+        t_2.setStyle(TableStyle([('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
+                                ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
+                                ('BACKGROUND', (0,1), (0,-1), colors.lightgrey),
+                                ('ALIGN', (1,4), (-1,-1), 'CENTER'),
+                                ('BOX', (0,0), (-1,-1), 0.25, colors.black)]))
+        elements.append(t_2)
+        elements.append(Spacer(1,5))
+        comments_2 = [Paragraph('<b>General Comments</b>', styles['Normal']), Spacer(1,4)]
+        feedbacklist_2 = marksheet.comments_2.split('\n')
+        for line in feedbacklist_2:
+            if line != "":
+                paragraph = Paragraph(line, styles['Normal'])
+                comments_2.append(paragraph)
+                comments_2.append(Spacer(1,4))
+        for comment in comments_2:
+            elements.append(comment)
+        part_2_mark_data = [[Paragraph('Mark for part(b)', styles['Heading4']), Paragraph(str(marksheet.part_2_mark), styles['Heading4'])]]
+        part_2_mark_table = Table(part_2_mark_data)
+        elements.append(part_2_mark_table)
+        elements.append(Spacer(1,10))
+
     last_data = [[marked_table, '', '', mark_table, '']]
     last_table = Table(last_data)
     last_table.setStyle(TableStyle([('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),

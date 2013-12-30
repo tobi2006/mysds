@@ -45,6 +45,10 @@ def edit_essay_feedback(request, module_id, year, assessment, student_id):
         assessment_title = module.assessment_6_title
         essay_mark = performance.assessment_5
         feedback_type = module.assessment_5_type
+    essay_legal_problem = FeedbackCategories.objects.get(assessment_type = 'Essay / Legal Problem')
+    two_parts = False
+    if feedback_type == essay_legal_problem:
+        two_parts = True
     try:
         feedback = Marksheet.objects.get(module=module, student=student, assessment=assessment_int)
         edit = True
@@ -61,37 +65,42 @@ def edit_essay_feedback(request, module_id, year, assessment, student_id):
         form = forms.EssayForm(instance=feedback, data=request.POST)
         if form.is_valid():
             form.save()
-            if request.POST['mark']:
+            entry_error = False
+            mark = None
+            if two_parts:
+                if form.cleaned_data['part_1_mark'] and form.cleaned_data['part_2_mark']:
+                    part_1 = int(form.cleaned_data['part_1_mark'])
+                    part_2 = int(form.cleaned_data['part_2_mark'])
+                    tmp = part_1 + part_2
+                    mark = tmp / 2
+            elif request.POST['mark']:
                 tmp = request.POST['mark']
                 try:
                     mark = int(tmp)
-                    if mark in range(0,100):
-                        if assessment == '1':
-                            performance.assessment_1 = mark
-                        elif assessment == '2':
-                            performance.assessment_2 = mark
-                        elif assessment == '3':
-                            performance.assessment_3 = mark
-                        elif assessment == '4':
-                            performance.assessment_4 = mark
-                        elif assessment == '5':
-                            performance.assessment_5 = mark
-                        elif assessment == '6':
-                            performance.assessment_6 = mark
-                        performance.save_with_avg()
                 except ValueError:
-                    pass
+                    entry_error = True
+            if not entry_error:
+                if mark in range(0,100):
+                    if assessment == '1':
+                        performance.assessment_1 = mark
+                    elif assessment == '2':
+                        performance.assessment_2 = mark
+                    elif assessment == '3':
+                        performance.assessment_3 = mark
+                    elif assessment == '4':
+                        performance.assessment_4 = mark
+                    elif assessment == '5':
+                        performance.assessment_5 = mark
+                    elif assessment == '6':
+                        performance.assessment_6 = mark
+                    performance.save_with_avg()
             
             return HttpResponseRedirect(module.get_absolute_url())
     else:
         form = forms.EssayForm(instance=feedback)
     return render_to_response('essay_feedback_form.html',
             {'form': form, 'module': module, 'student': student, 'essay_mark': essay_mark,
-                'assessment': assessment_title, 'categories': feedback_type, 'edit': edit},
+                'two_parts': two_parts, 'assessment': assessment_title, 
+                'categories': feedback_type, 'edit': edit},
             context_instance = RequestContext(request)
             )
-    
-@login_required
-@user_passes_test(is_teacher)
-def add_essay_feedback(request):
-    return HttpResponseRedirect('/na')

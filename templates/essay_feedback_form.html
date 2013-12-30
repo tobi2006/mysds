@@ -26,7 +26,7 @@
     {% if edit %}
     <tr>
         <td>
-            <label for="first_marker">First Marker</label>
+            <label for="marker">First Marker</label>
         </td>
         <td>
             {{ form.marker }}
@@ -37,6 +37,14 @@
     {% endif %}
     <tr>
         <td>
+            <label for="second_first_marker">Second First Marker (if marked by two teachers, NOT second marker!)</label>
+        </td>
+        <td>
+            {{ form.second_first_marker }}
+        </td>
+    </tr>
+    <tr>
+        <td>
             <label for="submission_date">Submission Date</label>
         </td>
         <td>
@@ -45,12 +53,18 @@
     </tr>
     <tr>
         <td>
-            <label for="submission_date">Marking Date</label>
+            <label for="marking_date">Marking Date</label>
         </td>
         <td>
             {{ form.marking_date }}
         </td>
     </tr>
+    {% if two_parts %}
+    </table>
+    <br><hr><br>
+    <h3>Part 1</h3>
+    <table cellpadding=10>
+    {% endif %}
     <tr>
         <td>
             <label for="category_mark_1">{{ categories.category_1 }}</label>
@@ -97,20 +111,125 @@
         </td>
     </tr>
     {% endif %}
+    {% if two_parts %}
+        </table>
+        <h4>Comments</h4>
+
+        {{ form.comments }}
+
+        <br>
+        <div class="form-group">
+            <div class="col-lg-3">
+                <label for "part_1_mark">Mark for Part 1 (out of 100)</label>
+            </div>
+            <div class="col-lg-1">
+                {{ form.part_1_mark }}
+            </div>
+        </div>
+
+
+        <br><hr><br>
+        <h3>Part 2</h3>
+        <table cellpadding=10>
+    {% endif %}
+{% if categories.category_5 %}
+    <tr>
+        <td>
+            <label for="category_mark_5">{{ categories.category_5 }}</label>
+        </td>
+        <td>
+            {{ form.category_mark_5 }}
+        </td>
+        <td>
+            <span class="glyphicon glyphicon-question-sign" id="category_5"></span>
+        </td>
+    </tr>
+    {% endif %}
+    {% if categories.category_6 %}
+    <tr>
+        <td>
+            <label for="category_mark_6">{{ categories.category_6 }}</label>
+        </td>
+        <td>
+            {{ form.category_mark_6 }}
+        </td>
+        <td>
+            <span class="glyphicon glyphicon-question-sign" id="category_6"></span>
+        </td>
+    </tr>
+    {% endif %}
+    {% if categories.category_7 %}
+    <tr>
+        <td>
+            <label for="category_mark_7">{{ categories.category_7 }}</label>
+        </td>
+        <td>
+            {{ form.category_mark_7 }}
+        </td>
+        <td>
+            <span class="glyphicon glyphicon-question-sign" id="category_7"></span>
+        </td>
+    </tr>
+    {% endif %}
+    {% if categories.category_8 %}
+    <tr>
+        <td>
+            <label for="category_mark_8">{{ categories.category_8 }}</label>
+        </td>
+        <td>
+            {{ form.category_mark_8 }}
+        </td>
+        <td>
+            <span class="glyphicon glyphicon-question-sign" id="category_8"></span>
+        </td>
+    </tr>
+    {% endif %}
 </table>
 
-<h4>General Comments</h4>
+    {% if two_parts %}
 
-{{ form.comments }}
-<br>
-<div class="form-group">
-    <div class="col-lg-2">
-        <label for "mark">Mark</label>
+        <h4>Comments</h4>
+
+        {{ form.comments_2 }}
+
+        <br>
+        <div class="form-group">
+            <div class="col-lg-3">
+                <label for "part_2_mark">Mark for Part 2 (out of 100)</label>
+            </div>
+            <div class="col-lg-1">
+                {{ form.part_2_mark }}
+            </div>
+        </div>
+        <br><br><hr><br>
+
+    <div class="form-group">
+        <div class="col-lg-3">
+            <label for "overall">Overall Mark (average of 1 and 2)</label>
+        </div>
+        <div class="col-lg-1">
+            <input class="form-control" id="overall" type="text" value="{% if essay_mark %}{{ essay_mark }}{% endif %}" disabled>
+        </div>
     </div>
-    <div class="col-lg-1">
-        <input class="form-control" id="mark" name="mark" type="text" value="{% if essay_mark %}{{ essay_mark }}{% endif %}" />
-    </div>
-</div>
+
+
+    {% else %}
+
+        <h4>General Comments</h4>
+
+        {{ form.comments }}
+
+        <br>
+        <div class="form-group">
+            <div class="col-lg-2">
+                <label for "mark">Mark</label>
+            </div>
+            <div class="col-lg-1">
+                <input class="form-control" id="mark" name="mark" type="text" value="{% if essay_mark %}{{ essay_mark }}{% endif %}" />
+            </div>
+        </div>
+    {% endif %}
+
 <br><br>
     <input type = "submit" value="Save" class="btn btn-default">
 </form>
@@ -130,6 +249,21 @@
         $( "#id_marking_date" ).datepicker();
     });
 
+    {% if two_parts %}
+        $(document).ready(function(){
+            $( "#id_part_1_mark" ).change(function(){
+                var sum = parseInt($( "#id_part_1_mark" ).val()) + parseInt($( "#id_part_2_mark" ).val());
+                var avg = Math.round(sum / 2);
+                $( "#overall" ).val(avg);
+            });
+            $( "#id_part_2_mark" ).change(function(){
+                var sum = parseInt($( "#id_part_1_mark" ).val()) + parseInt($( "#id_part_2_mark" ).val());
+                var avg = Math.round(sum / 2);
+                $( "#overall" ).val(avg);
+            });
+        });
+    {% endif %}
+
     $(document).ready(function(){
     $("#category_1").qtip({
         content: {
@@ -146,11 +280,41 @@
             text: '{{ categories.category_3_helptext | linebreaksbr }}'
             }
         });
+    {% if categories.category_4 %}
     $("#category_4").qtip({
         content: {
             text: '{{ categories.category_4_helptext | linebreaksbr }}'
             }
         });
+    {% endif %}
+    {% if categories.category_5 %}
+    $("#category_5").qtip({
+        content: {
+            text: '{{ categories.category_5_helptext | linebreaksbr }}'
+            }
+        });
+    {% endif %}
+    {% if categories.category_6 %}
+    $("#category_6").qtip({
+        content: {
+            text: '{{ categories.category_6_helptext | linebreaksbr }}'
+            }
+        });
+    {% endif %}
+    {% if categories.category_7 %}
+    $("#category_7").qtip({
+        content: {
+            text: '{{ categories.category_7_helptext | linebreaksbr }}'
+            }
+        });
+    {% endif %}
+    {% if categories.category_8 %}
+    $("#category_8").qtip({
+        content: {
+            text: '{{ categories.category_8_helptext | linebreaksbr }}'
+            }
+        });
+    {% endif %}
     });
 
 </script>

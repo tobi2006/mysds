@@ -83,7 +83,7 @@ urlpatterns += patterns('anonymous_marking.views',
 
 urlpatterns += patterns('feedback.views',
     url(r'^essay_feedback/(\w+)/(\d{4})/(\d{1})/(\w+)$', 'edit_essay_feedback', name = 'edit_essay_feedback'),
-    url(r'^essay_feedback/$', 'add_essay_feedback', name = 'add_essay_feedback')
+    #    url(r'^essay_feedback/$', 'add_essay_feedback', name = 'add_essay_feedback')
 )
 
 urlpatterns += patterns('scheduler.views',
