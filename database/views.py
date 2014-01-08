@@ -144,8 +144,7 @@ def module_view(request, module_id, year):
             try:
                 marksheet = Marksheet.objects.get(student=student, module=module, assessment=assessment)
                 if marksheet.comments:
-                    if marksheet.submission_date:
-                        row[assessment] = True
+                    row[assessment] = True
             except Marksheet.DoesNotExist:
                 pass
         rows.append(row)
@@ -1625,8 +1624,7 @@ def student_marks(request):
             try:
                 marksheet = Marksheet.objects.get(student=student, module=module, assessment=1)
                 if marksheet.comments:
-                    if marksheet.submission_date:
-                        output['assessment_1_marksheet'] = True
+                    output['assessment_1_marksheet'] = True
             except Marksheet.DoesNotExist:
                 pass
         if module.assessment_2_available:
@@ -1634,8 +1632,7 @@ def student_marks(request):
             try:
                 marksheet = Marksheet.objects.get(student=student, module=module, assessment=2)
                 if marksheet.comments:
-                    if marksheet.submission_date:
-                        output['assessment_2_marksheet'] = True
+                    output['assessment_2_marksheet'] = True
             except Marksheet.DoesNotExist:
                 pass
         if module.assessment_3_available:
@@ -1643,8 +1640,7 @@ def student_marks(request):
             try:
                 marksheet = Marksheet.objects.get(student=student, module=module, assessment=3)
                 if marksheet.comments:
-                    if marksheet.submission_date:
-                        output['assessment_3_marksheet'] = True
+                    output['assessment_3_marksheet'] = True
             except Marksheet.DoesNotExist:
                 pass
         if module.assessment_4_available:
@@ -1652,8 +1648,7 @@ def student_marks(request):
             try:
                 marksheet = Marksheet.objects.get(student=student, module=module, assessment=4)
                 if marksheet.comments:
-                    if marksheet.submission_date:
-                        output['assessment_4_marksheet'] = True
+                    output['assessment_4_marksheet'] = True
             except Marksheet.DoesNotExist:
                 pass
         if module.assessment_5_available:
@@ -1661,8 +1656,7 @@ def student_marks(request):
             try:
                 marksheet = Marksheet.objects.get(student=student, module=module, assessment=5)
                 if marksheet.comments:
-                    if marksheet.submission_date:
-                        output['assessment_5_marksheet'] = True
+                    output['assessment_5_marksheet'] = True
             except Marksheet.DoesNotExist:
                 pass
         if module.assessment_6_available:
@@ -1670,8 +1664,7 @@ def student_marks(request):
             try:
                 marksheet = Marksheet.objects.get(student=student, module=module, assessment=6)
                 if marksheet.comments:
-                    if marksheet.submission_date:
-                        output['assessment_6_marksheet'] = True
+                    output['assessment_6_marksheet'] = True
             except Marksheet.DoesNotExist:
                 pass
         if sorted_performances.get(year):

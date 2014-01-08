@@ -71,8 +71,17 @@ def edit_essay_feedback(request, module_id, year, assessment, student_id):
                 if form.cleaned_data['part_1_mark'] and form.cleaned_data['part_2_mark']:
                     part_1 = int(form.cleaned_data['part_1_mark'])
                     part_2 = int(form.cleaned_data['part_2_mark'])
-                    tmp = part_1 + part_2
-                    mark = tmp / 2
+                    tmp = float(part_1 + part_2)
+                    floatmark = tmp / 2
+                    mark = round(floatmark)
+                elif form.cleaned_data['part_1_mark']:
+                    tmp = float(form.cleaned_data['part_1_mark'])
+                    floatmark = tmp / 2
+                    mark = round(floatmark)
+                elif form.cleaned_data['part_2_mark']:
+                    tmp = float(form.cleaned_data['part_2_mark'])
+                    floatmark = tmp / 2
+                    mark = round(floatmark)
             elif request.POST['mark']:
                 tmp = request.POST['mark']
                 try:

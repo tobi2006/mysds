@@ -102,7 +102,10 @@ def get_one_feedback_sheet(student, module, assessment):
     module_title = [Paragraph('Module Title', styles['Normal']), Spacer(1,3), Paragraph(module_title_string, styles['Normal'])]
     module_code_string = '<b>' + module.code + '</b>'
     module_code = [Paragraph('Module Code', styles['Normal']), Spacer(1,3), Paragraph(module_code_string, styles['Normal'])]
-    submission_date_string = '<b>' + str(marksheet.submission_date.day) + "/" + str(marksheet.submission_date.month) + "/" + str(marksheet.submission_date.year) + '</b>'
+    if marksheet.submission_date == None:
+        submission_date_string = '   '
+    else:
+        submission_date_string = '<b>' + str(marksheet.submission_date.day) + "/" + str(marksheet.submission_date.month) + "/" + str(marksheet.submission_date.year) + '</b>'
     submission_date = [Paragraph('Submission Date', styles['Normal']), Spacer(1,3), Paragraph(submission_date_string, styles['Normal'])]
     assessment_title = [Paragraph('Assessment Title', styles['Normal']), Spacer(1,3), Paragraph(assessment_title_string, styles['Normal'])]
     if essay_or_legal_problem:

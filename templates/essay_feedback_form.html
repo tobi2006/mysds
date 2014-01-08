@@ -251,15 +251,43 @@
 
     {% if two_parts %}
         $(document).ready(function(){
-            $( "#id_part_1_mark" ).change(function(){
-                var sum = parseInt($( "#id_part_1_mark" ).val()) + parseInt($( "#id_part_2_mark" ).val());
+            function get_average(){
+                if ($("#id_part_1_mark").val() == 0)
+                {
+                    if ($("#id_part_2_mark").val() == 0)
+                    {
+                        var sum = 0;
+                    }
+                    else
+                    {
+                        var sum = parseInt($("#id_part_2_mark").val());
+                    }
+                }
+                else if ($("#id_part_2_mark").val() == 0)
+                {
+                    if ($("#id_part_1_mark").val() == 0)
+                    {
+                        var sum = 0;
+                    }
+                    else
+                    {
+                        var sum = parseInt($("#id_part_1_mark").val());
+                    }
+                }
+                else
+                {
+                    var sum = parseInt($( "#id_part_1_mark" ).val()) + parseInt($( "#id_part_2_mark" ).val());
+                };
                 var avg = Math.round(sum / 2);
                 $( "#overall" ).val(avg);
+            };
+
+
+            $("#id_part_1_mark").change(function(){
+                get_average();
             });
-            $( "#id_part_2_mark" ).change(function(){
-                var sum = parseInt($( "#id_part_1_mark" ).val()) + parseInt($( "#id_part_2_mark" ).val());
-                var avg = Math.round(sum / 2);
-                $( "#overall" ).val(avg);
+            $("#id_part_2_mark").change(function(){
+                get_average();
             });
         });
     {% endif %}
