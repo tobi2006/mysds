@@ -37,7 +37,7 @@
     {% endif %}
     <tr>
         <td>
-            <label for="second_first_marker">Second First Marker (if marked by two teachers, NOT second marker!)</label>
+            <label for="second_first_marker">Second First Marker (if marked by two teachers, NOT second marker!) Leave blank if only marked by yourself.</label>
         </td>
         <td>
             {{ form.second_first_marker }}
@@ -220,14 +220,45 @@
         {{ form.comments }}
 
         <br>
-        <div class="form-group">
-            <div class="col-lg-2">
-                <label for "mark">Mark</label>
+        {% if online_court %}
+            <div class="form-group">
+                <div class="col-lg-3">
+                    <label for "part_1_mark">Mark for the Court Report (out of 100)</label>
+                </div>
+                <div class="col-lg-1">
+                    {{ form.part_1_mark }}
+                </div>
             </div>
-            <div class="col-lg-1">
-                <input class="form-control" id="mark" name="mark" type="text" value="{% if essay_mark %}{{ essay_mark }}{% endif %}" />
+
+            <div class="form-group">
+                <div class="col-lg-3">
+                    <label for "part_2_mark">Mark for the Online Test (out of 100)</label>
+                </div>
+                <div class="col-lg-1">
+                    {{ form.part_2_mark }}
+                </div>
             </div>
-        </div>
+            <br><br><hr><br>
+
+            <div class="form-group">
+                <div class="col-lg-3">
+                    <label for "overall">Overall Mark (average of 1 and 2)</label>
+                </div>
+                <div class="col-lg-1">
+                    <input class="form-control" id="overall" type="text" value="{% if essay_mark %}{{ essay_mark }}{% endif %}" disabled>
+                </div>
+            </div>
+
+        {% else %}
+            <div class="form-group">
+                <div class="col-lg-2">
+                    <label for "mark">Mark</label>
+                </div>
+                <div class="col-lg-1">
+                    <input class="form-control" id="mark" name="mark" type="text" value="{% if essay_mark %}{{ essay_mark }}{% endif %}" />
+                </div>
+            </div>
+        {% endif %}
     {% endif %}
 
 <br><br>
@@ -249,38 +280,37 @@
         $( "#id_marking_date" ).datepicker();
     });
 
-    {% if two_parts %}
-        $(document).ready(function(){
-            function get_average(){
-                if ($("#id_part_1_mark").val() == 0)
+    $(document).ready(function(){
+        function get_average(){
+            if ($("#id_part_1_mark").val() == 0)
+            {
+                if ($("#id_part_2_mark").val() == 0)
                 {
-                    if ($("#id_part_2_mark").val() == 0)
-                    {
-                        var sum = 0;
-                    }
-                    else
-                    {
-                        var sum = parseInt($("#id_part_2_mark").val());
-                    }
-                }
-                else if ($("#id_part_2_mark").val() == 0)
-                {
-                    if ($("#id_part_1_mark").val() == 0)
-                    {
-                        var sum = 0;
-                    }
-                    else
-                    {
-                        var sum = parseInt($("#id_part_1_mark").val());
-                    }
+                    var sum = 0;
                 }
                 else
                 {
-                    var sum = parseInt($( "#id_part_1_mark" ).val()) + parseInt($( "#id_part_2_mark" ).val());
-                };
-                var avg = Math.round(sum / 2);
-                $( "#overall" ).val(avg);
+                    var sum = parseInt($("#id_part_2_mark").val());
+                }
+            }
+            else if ($("#id_part_2_mark").val() == 0)
+            {
+                if ($("#id_part_1_mark").val() == 0)
+                {
+                    var sum = 0;
+                }
+                else
+                {
+                    var sum = parseInt($("#id_part_1_mark").val());
+                }
+            }
+            else
+            {
+                var sum = parseInt($( "#id_part_1_mark" ).val()) + parseInt($( "#id_part_2_mark" ).val());
             };
+            var avg = Math.round(sum / 2);
+            $( "#overall" ).val(avg);
+        };
 
 
             $("#id_part_1_mark").change(function(){
@@ -290,7 +320,6 @@
                 get_average();
             });
         });
-    {% endif %}
 
     $(document).ready(function(){
     $("#category_1").qtip({

@@ -77,21 +77,27 @@ def get_one_feedback_sheet(student, module, assessment):
     legal_problem = FeedbackCategories.objects.get(assessment_type = 'Legal Problem')
     oral_presentation = FeedbackCategories.objects.get(assessment_type = 'Oral Presentation')
     essay_legal_problem = FeedbackCategories.objects.get(assessment_type = 'Essay / Legal Problem')
+    online_test_court_report = FeedbackCategories.objects.get(assessment_type = 'Online Test / Court Report')
     essay_or_legal_problem = False
     essay_and_legal_problem = False
+    online_court = False
     if assessment_type == essay:
         title = Paragraph('<para alignment="center">Law Undergraduate Assessment Sheet: Essay</para>', styles['Heading2'])
         essay_or_legal_problem = True
-    if assessment_type == legal_problem:
+    elif assessment_type == legal_problem:
         title = Paragraph('<para alignment="center">Law Undergraduate Assessment Sheet: Legal Problem</para>', styles['Heading2'])
         essay_or_legal_problem = True
-    if assessment_type == oral_presentation:
+    elif assessment_type == oral_presentation:
         title = Paragraph('<para alignment="center">Law Undergraduate Assessment Sheet: Oral Presentation</para>', styles['Heading2'])
         presentation = True
-    if assessment_type == essay_legal_problem:
+    elif assessment_type == essay_legal_problem:
         title = Paragraph('<para alignment="center">Law Undergraduate Assessment Sheet: Essay / Legal Problem</para>', styles['Heading2'])
         essay_or_legal_problem = True
         essay_and_legal_problem = True
+    elif assessment_type == online_test_court_report:
+        title = Paragraph('<para alignment="center">Law Undergraduate Assessment Sheet: Assessment 1</para>', styles['Heading2'])
+        essay_or_legal_problem = True
+        online_court = True
     elements.append(title)
     elements.append(Spacer(1,5))
     last_name_string = '<b>' + student.last_name + '</b>'
@@ -129,14 +135,18 @@ def get_one_feedback_sheet(student, module, assessment):
     else:
         marked_by_string = '<b>' + marksheet.marker.first_name + ' ' + marksheet.marker.last_name + '</b>'
     marking_date_string = '<b>' + str(marksheet.marking_date.day) + "/" + str(marksheet.marking_date.month) + "/" + str(marksheet.marking_date.year) + '</b>'
+
     marked_by = [[Paragraph('Marked by', styles['Normal']), Paragraph(marked_by_string, styles['Normal'])], 
                 [Paragraph('Date', styles['Normal']), Paragraph(marking_date_string, styles['Normal'])]]
     marked_table = Table(marked_by)
-    if not essay_and_legal_problem:
-        mark = [[Paragraph('Mark', styles['Normal']), Paragraph(mark, styles['Heading1'])],
+    if essay_and_legal_problem:
+        mark = [[Paragraph('Final Mark for (a) and (b)', styles['Normal']), Paragraph(mark, styles['Heading1'])],
+                ['', '']]
+    elif online_court:
+        mark = [[Paragraph('Combined Mark', styles['Normal']), Paragraph(mark, styles['Heading1'])],
                 ['', '']]
     else:
-        mark = [[Paragraph('Final Mark for (a) and (b)', styles['Normal']), Paragraph(mark, styles['Heading1'])],
+        mark = [[Paragraph('Mark', styles['Normal']), Paragraph(mark, styles['Heading1'])],
                 ['', '']]
     mark_table = Table(mark)
     mark_table.setStyle(TableStyle([('SPAN', (1,0), (1,1))]))
@@ -471,13 +481,29 @@ def get_one_feedback_sheet(student, module, assessment):
         part_2_mark_table = Table(part_2_mark_data)
         elements.append(part_2_mark_table)
         elements.append(Spacer(1,10))
-
-    last_data = [[marked_table, '', '', mark_table, '']]
-    last_table = Table(last_data)
-    last_table.setStyle(TableStyle([('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
-                            ('BOX', (0,0), (-1,-1), 0.25, colors.black),
-                            ('SPAN', (0,0), (2,0)),
-                            ('SPAN', (3,-1), (-1,-1))]))
+    if online_court:
+        court = 'Mark for Court Report: ' + str(marksheet.part_1_mark)
+        online = 'Mark for On Line Test: ' + str(marksheet.part_2_mark)
+        last_data = [['', '', Paragraph(court, styles['Normal'])],
+                    ['', '', Paragraph(online, styles['Normal'])],
+                    #[Paragraph('Mark for Online Test', styles['Heading4']), Paragraph(str(marksheet.part_2_mark), styles['Heading4'])],
+                    #[Paragraph('Mark for Court Report', styles['Heading4']), Paragraph(str(marksheet.part_1_mark), styles['Heading4'])],
+                        [marked_table, '', '', mark_table]]
+        last_table = Table(last_data)
+        last_table.setStyle(TableStyle([('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
+                                ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                                ('SPAN', (0,0), (1,1)),
+                                ('SPAN', (2,0), (3,0)),
+                                ('SPAN', (2,1), (3,1)),
+                                ('SPAN', (0,-1), (2,-1))
+                                ]))
+    else:
+        last_data = [[marked_table, '', '', mark_table, '']]
+        last_table = Table(last_data)
+        last_table.setStyle(TableStyle([('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
+                                ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                                ('SPAN', (0,0), (2,0)),
+                                ('SPAN', (3,-1), (-1,-1))]))
     elements.append(last_table)
     return elements
 
