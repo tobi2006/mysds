@@ -86,6 +86,8 @@ def edit_essay_feedback(request, module_id, year, assessment, student_id):
                     tmp = float(form.cleaned_data['part_2_mark'])
                     floatmark = tmp / 2
                     mark = round(floatmark)
+                else:
+                    mark = 0
             elif request.POST['mark']:
                 tmp = request.POST['mark']
                 try:
