@@ -87,14 +87,16 @@ def invite_students(request):
             message = """
 Dear %s,
 
-You now have access to MySDS, the Student Database for Law at Canterbury Christ Church, with the following details:
+You now have access to MySDS, the Student Database for Law at Canterbury Christ Church University.
+
+The database is available at https://cccu.tobiaskliem.de, and you can access it with the following details:
 
 Username: %s
 Password: %s
 
 When you log in, you can change your password if you click on 'My Account'.
 
-On the database, you will be able to see your marks, download your marksheets and book meetings with teachers.
+On the database, you will be able to see your marks, download your marksheets and book meetings with teachers. The first marksheets should be up soon, and your teachers will let you know about this.
 
 More functions are in planning.
 
@@ -104,7 +106,7 @@ Enjoy the experience,
 
 Your friendly MySDS admin.
 """%(first_name, user.username, password) 
-            send_mail('MySDS - New login information', message, 'cccu@tobiaskliem.de', [user.email,])
+            send_mail('The Law Database at Canterbury Christ Church', message, 'cccu@tobiaskliem.de', [user.email,])
             #print message #Just for local testing (no SMTP server on the testing machine)
         return HttpResponseRedirect('/')
     else:
