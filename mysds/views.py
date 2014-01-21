@@ -30,29 +30,32 @@ def default_page(request):
 def reset_password(request):
     if 'email' in request.GET and request.GET['email']:
         email = request.GET['email']
-        user = User.objects.get(email = email)
-        new_password = User.objects.make_random_password()
-        user.set_password(new_password)
-        user.save()
-        first_name = user.first_name.split(" ")[0] # only first forename
-        message = """
-        Dear %s,
-        
-You have requested your details from MySDS, the CCCU database. Here they are:
+        try:
+            user = User.objects.get(email = email)
+            new_password = User.objects.make_random_password()
+            user.set_password(new_password)
+            user.save()
+            first_name = user.first_name.split(" ")[0] # only first forename
+            message = """
+            Dear %s,
+            
+    You have requested your details from MySDS, the CCCU database. Here they are:
 
-Username: %s
-Password: %s
+    Username: %s
+    Password: %s
 
-Please be aware that the form is case sensitive, so make sure you use upper- and lowercase correctly.
+    Please be aware that the form is case sensitive, so make sure you use upper- and lowercase correctly.
 
-After successfully logging in with the above details, please click on "My Account" and change your password to one that is both easy to remember and difficult to guess. Make sure you do not use the same password for many different websites. A good way to ensure password safety and convenience is to use a password manager like KeepassX, Last Pass or One Password. All of them are available for almost all browsers and platforms.
+    After successfully logging in with the above details, please click on "My Account" and change your password to one that is both easy to remember and difficult to guess. Make sure you do not use the same password for many different websites. A good way to ensure password safety and convenience is to use a password manager like KeepassX, Last Pass or One Password. All of them are available for almost all browsers and platforms.
 
-Best wishes,
+    Best wishes,
 
-Your friendly MySDS Admin
-        """%(first_name, user.username, new_password)
+    Your friendly MySDS Admin
+            """%(first_name, user.username, new_password)
 
-        send_mail('MySDS - New login information', message, 'cccu@tobiaskliem.de', [user.email,])
+            send_mail('MySDS - New login information', message, 'cccu@tobiaskliem.de', [user.email,])
+        except User.DoesNotExist:
+            return HttpResponseRedirect('/wrong_email')
 #        print message #Just for local testing (no SMTP server on this machine)
 
     return HttpResponseRedirect('/')
@@ -121,6 +124,17 @@ Your friendly MySDS admin.
                 {'students': students, 'year': year},
                 context_instance = RequestContext(request))
 
+def wrong_email(request):
+    printstring = '''<p>You did not provide a valid email address.</p>
+                    <p>
+                        Please make sure you use your CCCU email address - eg b.bunny123@canterbury.ac.uk.
+                    </p>
+
+                    <a href="/" class="btn btn-primary">Please try again</a>'
+                '''
+    title = "CCCU Law DB - Wrong email"
+
+    return render_to_response('wrong_email.html', {'printstring': printstring, 'title': title}, context_instance = RequestContext(request))
 
 
 

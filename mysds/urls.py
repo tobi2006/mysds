@@ -23,6 +23,7 @@ urlpatterns += patterns('mysds.views',
     url(r'^remove_student_from_module/(\w+)/(\d{4})/$', 'na', name = 'generic_remove_student_from_module'),
     url(r'^reset_password/$', 'reset_password', name = 'reset_password'),
     url(r'^invite_students/$', 'invite_students', name = 'invite_students'),
+    url(r'^wrong_email/$', 'wrong_email', name = 'wrong_email'),
     #Dummies
     url(r'^all_attendances/$', 'na', name = 'all_attendances_year'), #Dummy to enable url method
     url(r'^all_tutees/$', 'na', name = 'all_tutees_year'), #Dummy to enable url method
