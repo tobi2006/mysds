@@ -5,7 +5,12 @@
 
 {% block content %}
 
-<h1>Student Overview</h1>
+<h1>Attendance Overview</h1>
+
+<div class="btn-group">
+    <button type="button" class="btn btn-default" id="toggle_autumn">Hide Autumn Term</button>
+    <button type="button" class="btn btn-default" id="toggle_spring">Hide Spring Term</button>
+</div>
 
 <br><br>
 
@@ -24,7 +29,10 @@
                 Module
             </th>
             {% for i in 25|get_range %}
-            <th{% if i < 12 %} class="autumn"{% elif i < 15 %} class="break"{% else %} class="summer"{% endif %}>
+            {% comment %}
+            <th{% if i < 12 %} class="autumn"{% elif i < 15 %} class="break"{% else %} class="spring"{% endif %}>
+            {% endcomment %}
+            <th>
                 {{ i|add:5 }}
             </th>
             {% endfor %}
@@ -33,16 +41,26 @@
     <tbody>
         {% for row in all_rows %}
         <tr>
-            {% for entry in row %}
             <td>
-                {% if entry == 'NT' %}
-                &nbsp;
-                {% elif entry == '0' %}
-                <span class="glyphicon glyphicon-minus"></span>
-                {% elif entry == '1' %}
-                <span class="glyphicon glyphicon-ok"></span>
+                {{ row.email|safe }}
+            </td>
+            <td>
+                {{ row.student|safe }}
+            </td>
+            <td>
+                {{ row.module|safe }}
+            </td>
+            {% for i in 25|get_range %}
+            {% comment %}
+            <td{% if i < 12 %} class="autumn"{% elif i < 15 %} class="break"{% else %} class="spring"{% endif %}>
+            {% endcomment %}
+            <td>
+                {% if row|get_item:i == "0" %}
+                    <span class="glyphicon glyphicon-minus"></span>
+                {% elif row|get_item:i == '1' %}
+                    <span class="glyphicon glyphicon-ok"></span>
                 {% else %}
-                {{ entry|safe }}
+                    &nbsp;
                 {% endif %}
             </td>
             {% endfor %}
@@ -50,6 +68,45 @@
         {% endfor %}
     </tbody>
 </table>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script type="text/javascript">
+
+    $(document).ready(function(){
+
+        $(".break").hide();
+
+        {% comment %}
+        $("#toggle_autumn").click(function(){
+            $(".autumn").toggle();
+            if ($(this).text() == "Hide Autumn Term")
+            {
+                $(this).text("Show Autumn Term");
+            }
+            else
+            {
+                $(this).text("Hide Autumn Term");
+            };
+        });
+        $("#toggle_spring").click(function(){
+            $(".spring").toggle();
+            if ($(this).text() == "Hide Spring Term")
+            {
+                $(this).text("Show Spring Term");
+            }
+            else
+            {
+                $(this).text("Hide Spring Term");
+            };
+        });
+        {% endcomment %}
+
+
+    });
+</script>
 
 {% endblock %}
 

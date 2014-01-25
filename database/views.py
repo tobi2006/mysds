@@ -735,14 +735,17 @@ def all_attendances(request, year):
         modules = student.modules.all()
         for module in modules:
             if module.year == current_year:
+                row = {}
                 email_string = '<a href="mailto:' + student.email 
                 email_string += '?Subject=Attendance for ' + module.title + '">'
                 email_string += '<span class="glyphicon glyphicon-envelope"></span></a>'
+                row['email'] = email_string
                 url = student.get_absolute_url()
                 student_string = '<a href="' + url + '">' + student.last_name + ', '+ student.first_name + '</a>'
+                row['student'] = student_string
                 url = module.get_absolute_url()
                 module_string = '<a href="' + url + '">' + module.title + ' ('+ module.code + ')</a>'
-                row = [email_string, student_string, module_string]
+                row['module'] = module_string
                 performance = Performance.objects.get(student = student, module = module)
                 attendance_list = performance.attendance
                 attendance = []
@@ -756,14 +759,14 @@ def all_attendances(request, year):
                 first = int(module.first_session)
                 counter = 0
                 for week in range(5,30):
-                    attendance = 'NT' # No teaching
+                    attendance = None # No teaching
                     if week >= first:
                         week_no = counter + 1
                         if week_no <= module.sessions_recorded:
                             if week not in no_teaching:
                                 attendance = attendance_list[counter]
                                 counter += 1
-                    row.append(attendance)
+                    row[counter-1] = attendance
                 all_rows.append(row)
 
     return render_to_response('all_attendances.html',
