@@ -24,7 +24,7 @@
                 Module
             </th>
             {% for i in 25|get_range %}
-            <th>
+            <th{% if i < 12 %} class="autumn"{% elif i < 15 %} class="break"{% else %} class="summer"{% endif %}>
                 {{ i|add:5 }}
             </th>
             {% endfor %}

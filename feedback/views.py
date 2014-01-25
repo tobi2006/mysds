@@ -47,12 +47,21 @@ def edit_essay_feedback(request, module_id, year, assessment, student_id):
     need_average = False
     two_parts = False
     online_court = False
+    average_split = False 
     if feedback_type == essay_legal_problem:
         need_average = True
         two_parts = True
+        average_split = [1,1] # give the split: part 1 is worth 1, part 2 is worth 1 (50/50 split)
     elif feedback_type == online_test_court_report:
         need_average = True
         online_court = True
+        average_split = [15,10]
+        # I was asked to set this up in a way to make sure that part a is worth 10 % of the module mark
+        # and part 2 15 %. Hence the strange numbers...
+    if need_average:
+        denominator = average_split[0] + average_split[1]
+    else:
+        denominator = 1
     try:
         feedback = Marksheet.objects.get(module=module, student=student, assessment=assessment_int)
         edit = True
@@ -75,16 +84,20 @@ def edit_essay_feedback(request, module_id, year, assessment, student_id):
                 if form.cleaned_data['part_1_mark'] and form.cleaned_data['part_2_mark']:
                     part_1 = int(form.cleaned_data['part_1_mark'])
                     part_2 = int(form.cleaned_data['part_2_mark'])
+                    part_1 = part_1 * average_split[0]
+                    part_2 = part_2 * average_split[1]
                     tmp = float(part_1 + part_2)
-                    floatmark = tmp / 2
+                    floatmark = tmp / denominator
                     mark = round(floatmark)
                 elif form.cleaned_data['part_1_mark']:
                     tmp = float(form.cleaned_data['part_1_mark'])
-                    floatmark = tmp / 2
+                    tmp = tmp * average_split[0]
+                    floatmark = tmp / denominator
                     mark = round(floatmark)
                 elif form.cleaned_data['part_2_mark']:
                     tmp = float(form.cleaned_data['part_2_mark'])
-                    floatmark = tmp / 2
+                    tmp = tmp * average_split[1]
+                    floatmark = tmp / denominator
                     mark = round(floatmark)
                 else:
                     mark = 0
@@ -116,6 +129,7 @@ def edit_essay_feedback(request, module_id, year, assessment, student_id):
     return render_to_response('essay_feedback_form.html',
             {'form': form, 'module': module, 'student': student, 'essay_mark': essay_mark,
                 'two_parts': two_parts, 'assessment': assessment_title, 'online_court': online_court,
-                'categories': feedback_type, 'edit': edit},
+                'categories': feedback_type, 'edit': edit, 'average_split': average_split,
+                'denominator': denominator},
             context_instance = RequestContext(request)
             )
