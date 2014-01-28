@@ -129,9 +129,11 @@ def get_one_feedback_sheet(student, module, assessment):
         category_8 = Paragraph(assessment_type.category_8, styles['Normal'])
 
     if marksheet.second_first_marker:
-        markers = [ marksheet.marker, marksheet.second_first_marker] # To make sure they don't appear in different orders
+        marker1 = marksheet.marker.first_name + " " + marksheet.marker.last_name
+        marker2 = marksheet.second_first_marker.first_name + " " + marksheet.second_first_marker.last_name
+        markers = [marker1, marker2] # To make sure they don't appear in different orders
         markers.sort()
-        marked_by_string = '<b>' + markers[0].first_name + ' ' + markers[0].last_name + ' / ' + markers[1].first_name + ' ' + markers[1].last_name + '</b>'
+        marked_by_string = '<b>' + markers[0] + ' / ' + markers[1] + '</b>'
     else:
         marked_by_string = '<b>' + marksheet.marker.first_name + ' ' + marksheet.marker.last_name + '</b>'
     marking_date_string = '<b>' + str(marksheet.marking_date.day) + "/" + str(marksheet.marking_date.month) + "/" + str(marksheet.marking_date.year) + '</b>'
