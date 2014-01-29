@@ -543,7 +543,7 @@ def export_feedback_sheet(request, code, year, assessment_str, student_id):
             students = [] # Only the students where feedback has been entered
             for student in all_students:
                 try:
-                    performance = Marksheet.objects.get(student = student, module = module)
+                    performance = Marksheet.objects.filter(student = student, module = module)
                     students.append(student)
                 except Marksheet.DoesNotExist:
                     pass
