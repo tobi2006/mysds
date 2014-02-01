@@ -1114,9 +1114,11 @@ def attendance(request, module_id, year, group):
             counter = 0
             for session in performance.attendance:
                 if session == "1":
-                    attendance[counter] = True
+                    attendance[counter] = 'p'
+                elif session == 'p':
+                    attendance[counter] = 'e'
                 else:
-                    attendance[counter] = False
+                    attendance[counter] = 'a'
                 counter += 1
             attendances[student] = attendance
 
