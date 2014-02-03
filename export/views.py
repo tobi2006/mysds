@@ -634,6 +634,8 @@ def export_attendance_sheet(request, code, year):
             for week in performance.attendance:
                 if week == '1':
                     row.append(u'\u2713')
+                elif week == 'e':
+                    row.append('e')
                 else:
                     row.append(' ')
             data.append(row)
@@ -815,5 +817,3 @@ def export_marks(request, code, year):
     elements.append(PageBreak())
     doc.build(elements)
     return response
-
-
