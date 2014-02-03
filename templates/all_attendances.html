@@ -5,8 +5,36 @@
 
 {% block content %}
 
-<h1>Student Overview</h1>
+<h1>Attendance Overview</h1>
 
+<br><br>
+
+<table>
+    <tr>
+        <td>
+            <span class="glyphicon glyphicon-ok"></span>
+        </td>
+        <td>
+            Present
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <span class="glyphicon glyphicon-ok-circle"></span>
+        </td>
+        <td>
+            Absent, but excused
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <span class="glyphicon glyphicon-minus"></span>
+        </td>
+        <td>
+            Absent
+        </td>
+    </tr>
+</table>
 <br><br>
 
 <table id="sortable_table" class="table table-hover table-sortable table-condensed">
