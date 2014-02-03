@@ -202,8 +202,9 @@ def edit_module(request, module_id, year):
                                 if assessments_set < 1:
                                     module.assessment_1_title = ""
                                     module.assessment_1_value = None
+                module.sessions_recorded = request.session['sessions_recorded']
                 module.save()
-                if request.session['old_assessment_number'] != module.get_number_of_sessions():
+                if request.session['old_number_of_sessions'] != module.get_number_of_sessions():
                     performances = Performance.objects.filter(module=module)
                     for performance in performances:
                         attendance = performance.attendance
@@ -217,7 +218,8 @@ def edit_module(request, module_id, year):
             return HttpResponseRedirect(module.get_absolute_url())
     else:
         form = ModuleForm(instance=module)
-        request.session['old_assessment_number'] = module.get_number_of_sessions()
+        request.session['old_number_of_sessions'] = module.get_number_of_sessions()
+        request.session['sessions_recorded'] = module.sessions_recorded
 
     return render_to_response(
         'module_form.html', 
@@ -1082,12 +1084,23 @@ def attendance(request, module_id, year, group):
         last_session = 0
         for student in students_in_group:
             performance = Performance.objects.get(student = student, module = module)
-            weeks_present = request.POST.getlist(student.student_id)
+#            present = student.student_id + '_present'
+#            excused = student.student_id + '_excused'
+#            weeks_present = request.POST.getlist(present)
+#            print weeks_present
+#            weeks_excused = request.POST.getlist(excused)
             counter = 0
             attendance = ""
             while counter < module.get_number_of_sessions():
-                if str(counter) in weeks_present:
+                key = student.student_id + '_' + str(counter)
+                session_attendance = request.POST[key]
+                if session_attendance == 'p':
                     attendance = attendance + "1"
+                    week_number = counter + 1
+                    if week_number > last_session:
+                        last_session = week_number
+                elif session_attendance == 'e':
+                    attendance = attendance + "e"
                     week_number = counter + 1
                     if week_number > last_session:
                         last_session = week_number
@@ -1115,7 +1128,7 @@ def attendance(request, module_id, year, group):
             for session in performance.attendance:
                 if session == "1":
                     attendance[counter] = 'p'
-                elif session == 'p':
+                elif session == 'e':
                     attendance[counter] = 'e'
                 else:
                     attendance[counter] = 'a'

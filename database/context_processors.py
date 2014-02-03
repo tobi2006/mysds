@@ -1,8 +1,8 @@
+import datetime
 from database.models import Module, MetaData, Student
 from database.views import is_admin
 from django.contrib.auth.models import Group
 from django.template import Context, RequestContext
-
 from database.views import is_teacher, is_student, is_admin
 
 def menubar(request):

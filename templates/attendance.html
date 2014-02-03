@@ -51,27 +51,27 @@ P = Present<br>
                           <input type="radio" name="{{ student.student_id }}_{{ session }}" value="e">E
                       </label>
                       <label class="btn btn-default btn-xs active">
-                          <input type="radio" name="{{ student.student_id }}_{{ session }}" id="p" checked>P
+                          <input type="radio" name="{{ student.student_id }}_{{ session }}" value="p" checked>P
                       </label>
                 {% elif attendance|get_directory_item:session == 'e' %}
                       <label class="btn btn-default btn-xs">
-                          <input type="radio" name="{{ student.student_id }}_{{ session }}" id="a">A
+                          <input type="radio" name="{{ student.student_id }}_{{ session }}" value="a">A
                       </label>
                       <label class="btn btn-default btn-xs active">
-                          <input type="radio" name="{{ student.student_id }}_{{ session }}" id="e" checked>E
+                          <input type="radio" name="{{ student.student_id }}_{{ session }}" value="e" checked>E
                       </label>
                       <label class="btn btn-default btn-xs">
-                          <input type="radio" name="{{ student.student_id }}_{{ session }}" id="p">P
+                          <input type="radio" name="{{ student.student_id }}_{{ session }}" value="p">P
                       </label>
                 {% else %}
                       <label class="btn btn-default btn-xs active">
-                          <input type="radio" name="{{ student.student_id }}_{{ session }}" id="a" checked>A
+                          <input type="radio" name="{{ student.student_id }}_{{ session }}" value="a" checked>A
                       </label>
                       <label class="btn btn-default btn-xs">
-                          <input type="radio" name="{{ student.student_id }}_{{ session }}" id="e">E
+                          <input type="radio" name="{{ student.student_id }}_{{ session }}" value="e">E
                       </label>
                       <label class="btn btn-default btn-xs">
-                          <input type="radio" name="{{ student.student_id }}_{{ session }}" id="p">P
+                          <input type="radio" name="{{ student.student_id }}_{{ session }}" value="p">P
                       </label>
                 {% endif %}
                 </div>

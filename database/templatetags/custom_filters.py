@@ -12,7 +12,8 @@ def get_directory_item(dictionary, key):
 def count_attendance(attendancestring):
     sum = 0
     for week in attendancestring:
-        sum = sum + int(week)
+        if week != '0':
+            sum += 1
     return sum
 
 @register.filter
