@@ -1084,27 +1084,25 @@ def attendance(request, module_id, year, group):
         last_session = 0
         for student in students_in_group:
             performance = Performance.objects.get(student = student, module = module)
-#            present = student.student_id + '_present'
-#            excused = student.student_id + '_excused'
-#            weeks_present = request.POST.getlist(present)
-#            print weeks_present
-#            weeks_excused = request.POST.getlist(excused)
             counter = 0
             attendance = ""
             while counter < module.get_number_of_sessions():
                 key = student.student_id + '_' + str(counter)
-                session_attendance = request.POST[key]
-                if session_attendance == 'p':
-                    attendance = attendance + "1"
-                    week_number = counter + 1
-                    if week_number > last_session:
-                        last_session = week_number
-                elif session_attendance == 'e':
-                    attendance = attendance + "e"
-                    week_number = counter + 1
-                    if week_number > last_session:
-                        last_session = week_number
-                else:
+                try:
+                    session_attendance = request.POST[key]
+                    if session_attendance == 'p':
+                        attendance = attendance + "1"
+                        week_number = counter + 1
+                        if week_number > last_session:
+                            last_session = week_number
+                    elif session_attendance == 'e':
+                        attendance = attendance + "e"
+                        week_number = counter + 1
+                        if week_number > last_session:
+                            last_session = week_number
+                    else:
+                        attendance = attendance + "0"
+                except MultiValueDictKeyError:
                     attendance = attendance + "0"
                 counter += 1
             performance.attendance  = attendance
