@@ -9,6 +9,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import Template, Context, RequestContext
 from django.utils import simplejson
+from django.utils.datastructures import MultiValueDictKeyError
 
 from database import functions
 from database.forms import *
