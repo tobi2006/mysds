@@ -520,31 +520,31 @@ class Performance(models.Model):
     def average_makes_sense(self): #Only return true if there are marks in all categories, otherwise average is useless
         result = True
         if self.module.assessment_1_value:
-            if not self.assessment_1:
+            if self.assessment_1 == None:
                 result = False
         if result == True:
             if self.module.assessment_2_value:
-                if not self.assessment_2:
+                if self.assessment_2 == None:
                     result = False
         if result == True:
             if self.module.assessment_3_value:
-                if not self.assessment_3:
+                if self.assessment_3 == None:
                     result = False
         if result == True:
             if self.module.assessment_4_value:
-                if not self.assessment_4:
+                if self.assessment_4 == None:
                     result = False
         if result == True:
             if self.module.assessment_5_value:
-                if not self.assessment_5:
+                if self.assessment_5 == None:
                     result = False
         if result == True:
             if self.module.assessment_6_value:
-                if not self.assessment_6:
+                if self.assessment_6 == None:
                     result = False
         if result == True:
             if self.module.exam_value:
-                if not self.exam:
+                if self.exam ==None:
                     result = False
         return result
 
