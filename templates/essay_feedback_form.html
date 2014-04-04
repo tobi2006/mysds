@@ -272,16 +272,11 @@
 
 <script type="text/javascript">
 
-    $(document).ready(function(){
-        $( "#id_submission_date" ).datepicker();
-    });
-
-    $(document).ready(function(){
-        $( "#id_marking_date" ).datepicker();
-    });
+$(document).ready(function(){
+    $( "#id_submission_date" ).datepicker();
+    $( "#id_marking_date" ).datepicker();
 
     {% if average_split %}
-    $(document).ready(function(){
         function get_average(){
             if ($("#id_part_1_mark").val() == 0)
             {
@@ -320,16 +315,14 @@
         };
 
 
-            $("#id_part_1_mark").change(function(){
-                get_average();
-            });
-            $("#id_part_2_mark").change(function(){
-                get_average();
-            });
+        $("#id_part_1_mark").change(function(){
+            get_average();
+        });
+        $("#id_part_2_mark").change(function(){
+            get_average();
         });
     {% endif %}
 
-    $(document).ready(function(){
     $("#category_1").qtip({
         content: {
             text: '{{ categories.category_1_helptext | linebreaksbr }}'
@@ -380,7 +373,10 @@
             }
         });
     {% endif %}
-    });
+
+    //alert("Juhu");
+
+});
 
 </script>
 {% endblock %}
