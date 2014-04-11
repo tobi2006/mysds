@@ -51,7 +51,7 @@ MD_EXPLANATION = '''
                 You can include links with [description](url):
             </td>
             <td>
-                Student has a [website]{http://www.thisstudent.com}
+                Student has a [website](http://www.thisstudent.com)
             </td>
         </tr>
     </table>
