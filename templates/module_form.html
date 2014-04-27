@@ -15,7 +15,7 @@ ul
     {% else %}
         {% url "edit_module" object.pk as action_url %}
     {% endif %}
-    <form action="{{ action_url }}" method="post" accept-charset="utf-8" role="form">
+    <form action="{{ action_url }}" class="form-horizontal" method="post" accept-charset="utf-8" role="form">
     {% csrf_token %}
 {% endblock %}
 
@@ -191,72 +191,312 @@ ul
             </td>
         </tr>
     </table>
-    <table cellpadding="10" id="assessment_forms">
+
+    <table cellpadding="10" border="1" id="assessment_forms">
         <tr id="assessment_1">
-            <td><strong>Assessment 1<strong></td>
-            <td>{{ module_form.assessment_1_title }}</td>
-            <td>Value</td>
-            <td>{{ module_form.assessment_1_value }}</td>
-            <td>Type</td>
-            <td>{{ module_form.assessment_1_type }}</td>
-            <td>Max. Wordcount</td>
-            <td>{{ module_form.assessment_1_max_word_count }}</td>
+            <td>
+                <table cellpadding="10">
+                    <tr>
+                        <td class="col-xs-2">
+                            <font size="7">
+                                1
+                            </font>
+                        </td> 
+                        <td class="col-xs-10">
+                            {{ module_form.assessment_1_title }}
+                            <table cellpadding="10">
+                                <tr>
+                                    <td>
+                                        Value
+                                    </td>
+                                    <td>
+                                        {{ module_form.assessment_1_value }}
+                                    </td>
+                                    <td>
+                                        Max Wordcount
+                                    </td>
+                                    <td>
+                                        {{ module_form.assessment_1_max_word_count }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Submission Date
+                                    </td>
+                                    <td>
+                                        {{ module_form.assessment_1_submission_date }}
+                                    </td>
+                                    <td>
+                                        Marksheet
+                                    </td>
+                                    <td>
+                                        {{ module_form.assessment_1_type }}
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
         </tr>
         <tr id="assessment_2">
-            <td><strong>Assessment 2<strong></td>
-            <td>{{ module_form.assessment_2_title }}</td>
-            <td>Value</td>
-            <td>{{ module_form.assessment_2_value }}</td>
-            <td>Type</td>
-            <td>{{ module_form.assessment_2_type }}</td>
-            <td>Max. Wordcount</td>
-            <td>{{ module_form.assessment_2_max_word_count }}</td>
+            <td>
+                <table cellpadding="10">
+                    <tr>
+                        <td class="col-xs-2">
+                            <font size="7">
+                                2
+                            </font>
+                        </td> 
+                        <td class="col-xs-10">
+                            {{ module_form.assessment_2_title }}
+                            <table cellpadding="10">
+                                <tr>
+                                    <td>
+                                        Value
+                                    </td>
+                                    <td>
+                                        {{ module_form.assessment_2_value }}
+                                    </td>
+                                    <td>
+                                        Max Wordcount
+                                    </td>
+                                    <td>
+                                        {{ module_form.assessment_2_max_word_count }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Submission Date
+                                    </td>
+                                    <td>
+                                        {{ module_form.assessment_2_submission_date }}
+                                    </td>
+                                    <td>
+                                        Marksheet
+                                    </td>
+                                    <td>
+                                        {{ module_form.assessment_2_type }}
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
         </tr>
         <tr id="assessment_3">
-            <td><strong>Assessment 3<strong></td>
-            <td>{{ module_form.assessment_3_title }}</td>
-            <td>Value</td>
-            <td>{{ module_form.assessment_3_value }}</td>
-            <td>Type</td>
-            <td>{{ module_form.assessment_3_type }}</td>
-            <td>Max. Wordcount</td>
-            <td>{{ module_form.assessment_3_max_word_count }}</td>
+            <td>
+                <table cellpadding="10">
+                    <tr>
+                        <td class="col-xs-2">
+                            <font size="7">
+                                3
+                            </font>
+                        </td> 
+                        <td class="col-xs-10">
+                            {{ module_form.assessment_3_title }}
+                            <table cellpadding="10">
+                                <tr>
+                                    <td>
+                                        Value
+                                    </td>
+                                    <td>
+                                        {{ module_form.assessment_3_value }}
+                                    </td>
+                                    <td>
+                                        Max Wordcount
+                                    </td>
+                                    <td>
+                                        {{ module_form.assessment_3_max_word_count }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Submission Date
+                                    </td>
+                                    <td>
+                                        {{ module_form.assessment_3_submission_date }}
+                                    </td>
+                                    <td>
+                                        Marksheet
+                                    </td>
+                                    <td>
+                                        {{ module_form.assessment_3_type }}
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
         </tr>
         <tr id="assessment_4">
-            <td><strong>Assessment 4<strong></td>
-            <td>{{ module_form.assessment_4_title }}</td>
-            <td>Value</td>
-            <td>{{ module_form.assessment_4_value }}</td>
-            <td>Type</td>
-            <td>{{ module_form.assessment_4_type }}</td>
-            <td>Max. Wordcount</td>
-            <td>{{ module_form.assessment_4_max_word_count }}</td>
+            <td>
+                <table cellpadding="10">
+                    <tr>
+                        <td class="col-xs-2">
+                            <font size="7">
+                                4
+                            </font>
+                        </td> 
+                        <td class="col-xs-10">
+                            {{ module_form.assessment_4_title }}
+                            <table cellpadding="10">
+                                <tr>
+                                    <td>
+                                        Value
+                                    </td>
+                                    <td>
+                                        {{ module_form.assessment_4_value }}
+                                    </td>
+                                    <td>
+                                        Max Wordcount
+                                    </td>
+                                    <td>
+                                        {{ module_form.assessment_4_max_word_count }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Submission Date
+                                    </td>
+                                    <td>
+                                        {{ module_form.assessment_4_submission_date }}
+                                    </td>
+                                    <td>
+                                        Marksheet
+                                    </td>
+                                    <td>
+                                        {{ module_form.assessment_4_type }}
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
         </tr>
         <tr id="assessment_5">
-            <td><strong>Assessment 5<strong></td>
-            <td>{{ module_form.assessment_5_title }}</td>
-            <td>Value</td>
-            <td>{{ module_form.assessment_5_value }}</td>
-            <td>Type</td>
-            <td>{{ module_form.assessment_5_type }}</td>
-            <td>Max. Wordcount</td>
-            <td>{{ module_form.assessment_5_max_word_count }}</td>
+            <td>
+                <table cellpadding="10">
+                    <tr>
+                        <td class="col-xs-2">
+                            <font size="7">
+                                5
+                            </font>
+                        </td> 
+                        <td class="col-xs-10">
+                            {{ module_form.assessment_5_title }}
+                            <table cellpadding="10">
+                                <tr>
+                                    <td>
+                                        Value
+                                    </td>
+                                    <td>
+                                        {{ module_form.assessment_5_value }}
+                                    </td>
+                                    <td>
+                                        Max Wordcount
+                                    </td>
+                                    <td>
+                                        {{ module_form.assessment_5_max_word_count }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Submission Date
+                                    </td>
+                                    <td>
+                                        {{ module_form.assessment_5_submission_date }}
+                                    </td>
+                                    <td>
+                                        Marksheet
+                                    </td>
+                                    <td>
+                                        {{ module_form.assessment_5_type }}
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
         </tr>
         <tr id="assessment_6">
-            <td><strong>Assessment 6<strong></td>
-            <td>{{ module_form.assessment_6_title }}</td>
-            <td>Value</td>
-            <td>{{ module_form.assessment_6_value }}</td>
-            <td>Type</td>
-            <td>{{ module_form.assessment_6_type }}</td>
-            <td>Max. Wordcount</td>
-            <td>{{ module_form.assessment_6_max_word_count }}</td>
+            <td>
+                <table cellpadding="10">
+                    <tr>
+                        <td class="col-xs-2">
+                            <font size="7">
+                                6
+                            </font>
+                        </td> 
+                        <td class="col-xs-10">
+                            {{ module_form.assessment_6_title }}
+                            <table cellpadding="10">
+                                <tr>
+                                    <td>
+                                        Value
+                                    </td>
+                                    <td>
+                                        {{ module_form.assessment_6_value }}
+                                    </td>
+                                    <td>
+                                        Max Wordcount
+                                    </td>
+                                    <td>
+                                        {{ module_form.assessment_6_max_word_count }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Submission Date
+                                    </td>
+                                    <td>
+                                        {{ module_form.assessment_6_submission_date }}
+                                    </td>
+                                    <td>
+                                        Marksheet
+                                    </td>
+                                    <td>
+                                        {{ module_form.assessment_6_type }}
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr id="exam_area">
+            <td>
+                <table cellpadding="10">
+                    <tr>
+                        <td>
+                            <font size="6">
+                                Exam
+                            </font>
+                        </td>
+                        <td>
+                            <table cellpadding="10">
+                                <tr>
+                                    <td>
+                                        Value
+                                    </td>
+                                    <td>
+                                        {{ module_form.exam_value }}
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
         </tr>
     </table>
-    <div class="form-group" id="exam_area">
-        <label for="id_exam_value">Exam Value</label>
-        {{ module_form.exam_value }}
-    </div>
+                            
+    <br><br>
 
     <input type = "submit" value="Save" class="btn btn-default">
 </form>
@@ -268,6 +508,12 @@ ul
 <script type="text/javascript">
 
 $(document).ready(function(){
+    $("#id_assessment_1_submission_date").datepicker();
+    $("#id_assessment_2_submission_date").datepicker();
+    $("#id_assessment_3_submission_date").datepicker();
+    $("#id_assessment_4_submission_date").datepicker();
+    $("#id_assessment_5_submission_date").datepicker();
+    $("#id_assessment_6_submission_date").datepicker();
 
     {% if add %}
         $('#assessment_2').hide();
@@ -337,13 +583,6 @@ $(document).ready(function(){
                 $("#id_no_teaching_in").val('6,8,10,12,14,16,17,18,19,20,22,24,26,28');
             });
         });
-        {% comment %}
-        <button type="button" id="sf1" class="btn btn-default">Short/Fat, term 1</>
-        <button type="button" id="sf2" class="btn btn-default">Short/Fat, term 2</btn>
-        <button type="button" id="lto" class="btn btn-default">Long/Thin module, no odd weeks</btn>
-        <button type="button" id="lte" class="btn btn-default">Long/Thin module, no even weeks</btn>
-        {% endcomment %}
-
 
     $('#number_of_coursework').change(function(){
         var number = $(this).val();
@@ -403,7 +642,55 @@ $(document).ready(function(){
             $('#assessment_5').show();
             $('#assessment_6').show();
         };
+        calculate_exam();
     });
+
+    function show_hide_exam(checkbox){
+        if (checkbox.checked == true){
+            toenter = '<strong>Exam Value</strong>{{ module_form.exam_value }}';
+        }
+        else{
+            toenter = '';
+        }
+        document.getElementById("exam_area").innerHTML = toenter;
+    };
+
+    function calculate_exam(){
+        var sum = 0;
+        if ($('#assessment_1').is(":visible")){
+            value = parseInt($('#id_assessment_1_value').val());
+            sum = sum + value;
+        };
+        if ($('#assessment_2').is(":visible")){
+            value = parseInt($('#id_assessment_2_value').val());
+            sum = sum + value;
+        };
+        if ($('#assessment_3').is(":visible")){
+            value = parseInt($('#id_assessment_3_value').val());
+            sum = sum + value;
+        };
+        if ($('#assessment_4').is(":visible")){
+            value = parseInt($('#id_assessment_4_value').val());
+            sum = sum + value;
+        };
+        if ($('#assessment_5').is(":visible")){
+            value = parseInt($('#id_assessment_5_value').val());
+            sum = sum + value;
+        };
+        if ($('#assessment_6').is(":visible")){
+            value = parseInt($('#id_assessment_6_value').val());
+            sum = sum + value;
+        };
+        var exam = 100 - sum;
+        $('#id_exam_value').val(exam);
+    };
+
+    $('#id_assessment_1_value').change(function(){calculate_exam()});
+    $('#id_assessment_2_value').change(function(){calculate_exam()});
+    $('#id_assessment_3_value').change(function(){calculate_exam()});
+    $('#id_assessment_4_value').change(function(){calculate_exam()});
+    $('#id_assessment_5_value').change(function(){calculate_exam()});
+    $('#id_assessment_6_value').change(function(){calculate_exam()});
 });
 
 
@@ -417,47 +704,46 @@ function show_hide_exam(checkbox){
     document.getElementById("exam_area").innerHTML = toenter;
 };
 
-    {% comment %}j
+function calculate_exam(){
+    var sum = 0;
+    if ($('#assessment_1').is(":visible")){
+        value = parseInt($('#id_assessment_1_value').val());
+        sum = sum + value;
+    };
+    if ($('#assessment_2').is(":visible")){
+        value = parseInt($('#id_assessment_2_value').val());
+        sum = sum + value;
+    };
+    if ($('#assessment_3').is(":visible")){
+        value = parseInt($('#id_assessment_3_value').val());
+        sum = sum + value;
+    };
+    if ($('#assessment_4').is(":visible")){
+        value = parseInt($('#id_assessment_4_value').val());
+        sum = sum + value;
+    };
+    if ($('#assessment_5').is(":visible")){
+        value = parseInt($('#id_assessment_5_value').val());
+        sum = sum + value;
+    };
+    if ($('#assessment_6').is(":visible")){
+        value = parseInt($('#id_assessment_6_value').val());
+        sum = sum + value;
+    };
+    var exam = 100 - sum;
+    $('#id_exam_value').val(exam);
+};
 
-    $(document).ready(function(){
-            $('.form-control').change(function(){
-                var sum = 0;
-                var max_exam = 100;
-                if ($('#id_assessment_1_value').length){
-                    if ($('#id_assessment_1_value').val().length){
-                        sum = sum + parseInt($('#id_assessment_1_value').val());
-                        }
-                    };
-                if ($('#id_assessment_2_value').length){
-                    if ($('#id_assessment_2_value').val().length){
-                        sum = sum + parseInt($('#id_assessment_2_value').val());
-                        }
-                    };
-                if ($('#id_assessment_3_value').length){
-                    if ($('#id_assessment_3_value').val().length){
-                        sum = sum + parseInt($('#id_assessment_3_value').val());
-                        }
-                    };
-                if ($('#id_assessment_4_value').length){
-                    if ($('#id_assessment_4_value').val().length){
-                        sum = sum + parseInt($('#id_assessment_4_value').val());
-                        }
-                if ($('#id_assessment_5_value').length){
-                    if ($('#id_assessment_5_value').val().length){
-                        sum = sum + parseInt($('#id_assessment_5_value').val());
-                        }
-                    };
-                if ($('#id_assessment_6_value').length){
-                    if ($('#id_assessment_6_value').val().length){
-                        sum = sum + parseInt($('#id_assessment_6_value').val());
-                        }
-                    };
-                max_exam = max_exam - sum;
-                $('#id_exam_value').val(max_exam);
-            });
-        });
+$('#id_assessment_1_value').change(function(){calculate_exam()});
+$('#id_assessment_2_value').change(function(){calculate_exam()});
+$('#id_assessment_3_value').change(function(){calculate_exam()});
+$('#id_assessment_4_value').change(function(){calculate_exam()});
+$('#id_assessment_5_value').change(function(){calculate_exam()});
+$('#id_assessment_6_value').change(function(){calculate_exam()});
 
-        {% endcomment %}
+
+
+
     {% if add %}
 
 

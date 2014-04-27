@@ -186,6 +186,8 @@
     {% endif %}
 </table>
 
+<div id="late_submission_warning"></div>
+
     {% if two_parts %}
 
         <h4>Comments</h4>
@@ -273,8 +275,23 @@
 <script type="text/javascript">
 
 $(document).ready(function(){
-    $( "#id_submission_date" ).datepicker();
     $( "#id_marking_date" ).datepicker();
+    $("#id_submission_date").datepicker();
+
+{% comment %}
+
+    Failed attempt to have a warning for late submission - check for answer on Stack overflow...
+    Currently, there is no output from the OnSelect event at all.
+
+    var deadline = new Date("{{ deadline.isoformat }}");
+
+    $("#id_submission_date").datepicker({
+        onSelect: function(dateText) {
+            console.log(dateText);
+        }
+    });
+
+{% endcomment %}
 
     {% if average_split %}
         function get_average(){
@@ -373,8 +390,6 @@ $(document).ready(function(){
             }
         });
     {% endif %}
-
-    //alert("Juhu");
 
 });
 

@@ -10,10 +10,12 @@ from feedback.models import *
 from database.models import *
 from database.views import is_teacher, is_admin
 from feedback import forms 
+from mysds.unisettings import *
 
 @login_required
 @user_passes_test(is_teacher)
 def edit_essay_feedback(request, module_id, year, assessment, student_id):
+    penalty = LATE_SUBMISSION_PENALTY
     module = Module.objects.get(code=module_id, year=year)
     student = Student.objects.get(student_id=student_id)
     performance = Performance.objects.get(module = module, student = student)
@@ -22,26 +24,32 @@ def edit_essay_feedback(request, module_id, year, assessment, student_id):
         assessment_title = module.assessment_1_title
         essay_mark = performance.assessment_1
         feedback_type = module.assessment_1_type
+        deadline = module.assessment_1_submission_date
     elif assessment == '2':
         assessment_title = module.assessment_2_title
         essay_mark = performance.assessment_2
         feedback_type = module.assessment_2_type
+        deadline = module.assessment_2_submission_date
     elif assessment == '3':
         assessment_title = module.assessment_3_title
         essay_mark = performance.assessment_3
         feedback_type = module.assessment_3_type
+        deadline = module.assessment_3_submission_date
     elif assessment == '4':
         assessment_title = module.assessment_4_title
         essay_mark = performance.assessment_4
         feedback_type = module.assessment_4_type
+        deadline = module.assessment_4_submission_date
     elif assessment == '5':
         assessment_title = module.assessment_5_title
         essay_mark = performance.assessment_5
         feedback_type = module.assessment_5_type
+        deadline = module.assessment_5_submission_date
     elif assessment == '6':
         assessment_title = module.assessment_6_title
-        essay_mark = performance.assessment_5
-        feedback_type = module.assessment_5_type
+        essay_mark = performance.assessment_6
+        feedback_type = module.assessment_6_type
+        deadline = module.assessment_6_submission_date
     essay_legal_problem = FeedbackCategories.objects.get(assessment_type = 'Essay / Legal Problem')
     online_test_court_report = FeedbackCategories.objects.get(assessment_type = 'Online Test / Court Report')
     need_average = False
@@ -130,6 +138,6 @@ def edit_essay_feedback(request, module_id, year, assessment, student_id):
             {'form': form, 'module': module, 'student': student, 'essay_mark': essay_mark,
                 'two_parts': two_parts, 'assessment': assessment_title, 'online_court': online_court,
                 'categories': feedback_type, 'edit': edit, 'average_split': average_split,
-                'denominator': denominator},
+                'denominator': denominator, 'penalty': penalty, 'deadline': deadline},
             context_instance = RequestContext(request)
             )

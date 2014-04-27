@@ -320,6 +320,26 @@ def add_module(request):
         form = ModuleForm(data=request.POST)
         if form.is_valid():
             module = form.save()
+            assessments_set = int(request.POST['number_of_coursework']) # Make sure no hidden fields get into the module
+            if assessments_set < 6:
+                module.assessment_6_title = ""
+                module.assessment_6_value = None
+                if assessments_set < 5:
+                    module.assessment_5_title = ""
+                    module.assessment_5_value = None
+                    if assessments_set < 4:
+                        module.assessment_4_title = ""
+                        module.assessment_4_value = None
+                        if assessments_set < 3:
+                            module.assessment_3_title = ""
+                            module.assessment_3_value = None
+                            if assessments_set < 2:
+                                module.assessment_2_title = ""
+                                module.assessment_2_value = None
+                                if assessments_set < 1:
+                                    module.assessment_1_title = ""
+                                    module.assessment_1_value = None
+            module.save()
             return HttpResponseRedirect(module.get_absolute_url())
     else:
         form = ModuleForm()
