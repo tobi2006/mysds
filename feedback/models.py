@@ -42,7 +42,7 @@ class Marksheet(models.Model):
     deduction_explanation = models.TextField(blank=True)
     part_1_mark = models.IntegerField(blank=True, null=True)
     part_2_mark = models.IntegerField(blank=True, null=True)
-    submission_date = models.DateField()
+    submission_date = models.DateField(blank=True, null=True)
     comments = models.TextField(blank=True)
     comments_2 = models.TextField(blank=True)
     # Stuff for group marking
@@ -54,15 +54,15 @@ class Marksheet(models.Model):
     class Meta:
         unique_together = ('student', 'module', 'assessment')
 
-class GroupComponent(models.Model):
+class GroupPart(models.Model):
     MARKS = (
-            (39, '0 - 39 %'),
-            (49, '40 - 49 %'),
-            (59, '50 - 59 %'),
-            (69, '60 - 69 %'),
-            (79, '70 - 79 %'),
-            (80, '80 or more')
-            )
+        (39, '0 - 39 %'),
+        (49, '40 - 49 %'),
+        (59, '50 - 59 %'),
+        (69, '60 - 69 %'),
+        (79, '70 - 79 %'),
+        (80, '80 or more')
+        )
     category_mark_1 = models.IntegerField(choices=MARKS, blank=True, null=True)
     category_mark_2 = models.IntegerField(choices=MARKS, blank=True, null=True)
     category_mark_3 = models.IntegerField(choices=MARKS, blank=True, null=True)
@@ -80,6 +80,7 @@ class GroupComponent(models.Model):
     category_mark_7_free = models.IntegerField(blank=True, null=True)
     category_mark_8_free = models.IntegerField(blank=True, null=True)
     group_comments = models.TextField(blank=True)
+
     
 
 class FeedbackCategories(models.Model):

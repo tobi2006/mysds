@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+
+{% block title %}CCCU Law - {{ module }}{% endblock %}
+
+
+
+{% block formstart %}
+    <form action="{{ action_url }}" id="seminarGroupForm" method="post">
+    {% csrf_token %}
+{% endblock %}
+
+{% block content %}
+
+<style type="text/css">
+    /* show the move cursor as the user moves the mouse over the panel header.*/
+    .connectedLists .panel {
+        cursor: move;
+    }
+    .connectedLists
+    {
+    min-height:100px;
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <h4>Not assigned</h4>
+
+            <ul id="unsorted" class="list-unstyled connectedLists">
+            {% for student, performance in performances.items %}
+
+                <li class="panel panel-primary" id="{{ student.student_id }}">
+                    <input type="hidden" name="{{ student.student_id }}" value="0">
+                    <div class="panel-body">
+                        {{ student.short_first_name }} {{ student.last_name }}
+                    </div>
+                </li>
+
+            {% endfor %}
+            </ul>
+        </div>
+        <div class="col-md-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Presentation Group 1
+                    <span class="badge pull-right">0</span>
+                </div>
+                <div class="panel-body">
+                    <ul id="group1" class="list-unstyled connectedLists">
+                        <li class="panel panel-primary">
+                            <div class="panel-body">
+                                Huhu
+                            </div>
+                        </li>
+                        <li class="panel panel-primary">
+                            <div class="panel-body">
+                                Haha
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Presentation Group 2
+                    <span class="badge pull-right">0</span>
+                </div>
+                <div class="panel-body">
+                    <ul id="group2" class="list-unstyled connectedLists">
+                    </ul>
+                </div>
+            </div>
+    </div>
+</div>
+
+
+<input type="submit" value="Save Groups" class="btn btn-default" align=right>
+
+{% endblock %}
+
+{% block formend %}
+</form>
+{% endblock %}
+
+
+{% block scripts %}
+
+<script src="{{ STATIC_URL }}js/jquery-ui-1.10.4.custom.min.js"></script>
+
+<script type="text/javascript">
+    jQuery(function(event, ui) {
+        //$('#unsorted, #group1, #group2').sortable({
+        $('.connectedLists').sortable({
+            connectWith: ".connectedLists",
+
+            {% comment %}
+            //stop: function() {
+//                $('.panel', panelList).each(function(index, elem) {
+//                     var $listItem = $(elem),
+//                         newIndex = $listItem.index();
+//                });
+                //var group = $(this).parent().attr("id");
+                //var group = ui.item.text();
+               // var group = "Hallo";
+              //  alert(group);
+            //}
+            start: function(event, ui) {
+                item = ui.item;
+                oldList = ui.item.closest("ul");
+                //ui.item.parent().parent();
+            },
+            change: function(event, ui) {  
+                if(ui.sender) newList = ui.placeholder.parent().parent();
+            },
+            {% endcomment %}
+            stop: function(event, ui) {          
+                item = ui.item;
+                newList = item.closest("ul");
+                //formField = item.only-of-type("input");
+                alert("Moved " + item.attr('id') + " to " + newList.attr('id'));
+                //alert("Moved " + formField.val() + " to " + newList.attr('id'));
+            },
+        });
+    });
+</script>
+
+{% endblock %}
+
+{% comment %}
+<script type="text/javascript">
+
+    function assign_randomly(number_of_groups){
+        var all_students=[];
+        {% for student, performance in performances.items %}
+            all_students.push("{{ student.student_id }}");
+        {% endfor %}
+        var i = all_students.length, j, tempi, tempj;
+        if ( i == 0 ) return false;
+        while ( --i ) {
+                j = Math.floor( Math.random() * ( i + 1 ) );
+                tempi = all_students[i];
+                tempj = all_students[j];
+                all_students[i] = tempj;
+                all_students[j] = tempi;
+            }
+        var counter = 0;
+        for (var i=0;i<all_students.length;i++){
+            if (counter==number_of_groups){
+                counter = 1;
+            }
+            else{
+                counter ++;
+            }
+            var field = document.getElementById(all_students[i]);
+            field.value = counter;
+        }
+    }
+
+    function count_groups(){
+        var highest_group=0;
+        var fields = document.getElementsByClassName("form-control");
+        for(var i=0; i<fields.length; i++) {
+            var group = parseInt(fields[i].value);
+            if (group > highest_group){
+                highest_group = group;
+            }
+        }
+        if(highest_group==0){
+            var output="No groups assigned yet"
+        }
+        else{
+            var all_groups=[];
+            for(var i=0; i<highest_group; i++) {
+                all_groups[i] = 0;
+            }
+            for(var i=0; i<fields.length; i++) {
+                var group = parseInt(fields[i].value);
+                all_groups[group-1]++;
+            }
+            var output="";
+            for(var i=0; i<highest_group; i++) {
+                var group_no = i+1;
+                output = output + "Group " + group_no + ": " + all_groups[i] + "<br>";
+            }
+        }
+        document.getElementById("group_strengths").innerHTML=output;
+    }
+
+    window.onload = count_groups();
+
+</script>
+{% endcomment %}

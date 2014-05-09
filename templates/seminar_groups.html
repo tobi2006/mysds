@@ -1,6 +1,6 @@
 {% extends "sidebar.html" %}
 
-{% block title %}CCCU Law - {{current_module}}{% endblock %}
+{% block title %}CCCU Law - {{ module }}{% endblock %}
 
 {% block sidebar %}
 
@@ -22,10 +22,10 @@
 {% url "seminar_groups" as action_url%}
 
 <h2>
-    Assign Seminar Groups for {{ current_module.title }} ({{ current_module.year }})
+    Assign Seminar Groups for {{ module.title }} ({{ module.year }})
 </h2>
 
-<p align="center">Number of students: {{ current_module.student_set.count }}</p>
+<p align="center">Number of students: {{ module.student_set.count }}</p>
 <p align="center">
 Randomly assign students (number of groups / maximum number of students per group):
 </p>

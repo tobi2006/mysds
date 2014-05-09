@@ -1169,13 +1169,10 @@ def attendance(request, module_id, year, group):
 @login_required
 @user_passes_test(is_teacher)
 def seminar_groups(request, module_id, year):
-    test = "test"
     module = Module.objects.get(code=module_id, year=year)
     students = module.student_set.all()
-    student_ids = []
     performances = {}
     for student in students:
-        student_ids.append(student.student_id)
         performance = Performance.objects.get(student=student, module=module)
         performances[student] = performance
     random_options={}
@@ -1204,11 +1201,52 @@ def seminar_groups(request, module_id, year):
         return HttpResponseRedirect(module.get_absolute_url())
     return render_to_response(
             'seminar_groups.html',
-            {'current_module': module, 'performances': performances, 'random_options': random_options,
-                'students': student_ids},
+            {'module': module, 'performances': performances, 'random_options': random_options},
             context_instance = RequestContext(request)
         )
 
+#####################################
+#       Presentation Groups         #
+#####################################
+    
+@login_required
+@user_passes_test(is_teacher)
+def presentation_groups(request, module_id, year):
+    module = Module.objects.get(code=module_id, year=year)
+    students = module.student_set.all()
+    performances = {}
+    for student in students:
+        performance = Performance.objects.get(student=student, module=module)
+        performances[student] = performance
+    random_options={}
+    for i in range(1,30): 
+        # Up to 10 Seminar groups. Create a dictionary that lists the options
+        # and the maximum number of students per group
+        all = len(students)
+        number = all / i
+        left = all % i
+        if left > 0:
+            number = number + 1
+        random_options[i]=number
+
+#    if request.method == 'POST':
+#        for student in students:
+#            if student.student_id in request.POST:
+#                tmp = request.POST[student.student_id]
+#                try:
+#                    seminar_group = int(tmp)
+#                    if seminar_group in range(0, 99):
+#                        performance = Performance.objects.get(student=student, module=module)
+#                        performance.seminar_group = seminar_group
+#                        performance.save()
+#                except ValueError:
+#                        pass
+#        return HttpResponseRedirect(module.get_absolute_url())
+    return render_to_response(
+            'presentation_groups.html',
+            {'module': module, 'performances': performances, 'random_options': random_options},
+            context_instance = RequestContext(request)
+        )
 
 #####################################
 #            LSP View               #
