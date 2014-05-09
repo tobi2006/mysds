@@ -25,39 +25,33 @@
 <div class="container">
     <div class="row">
         <div class="col-md-3">
-            <h4>Not assigned</h4>
-
-            <ul id="unsorted" class="list-unstyled connectedLists">
-            {% for student, performance in performances.items %}
-
-                <li class="panel panel-primary" id="{{ student.student_id }}">
-                    <input type="hidden" name="{{ student.student_id }}" value="0">
-                    <div class="panel-body">
-                        {{ student.short_first_name }} {{ student.last_name }}
-                    </div>
-                </li>
-
-            {% endfor %}
-            </ul>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Not assigned
+                    <span class="badge pull-right">0</span>
+                </div>
+                <div class="panel-body">
+                    <ul id="unsorted" class="list-unstyled connectedLists">
+                    {% for student, performance in performances.items %}
+                        <li class="panel panel-primary" id="{{ student.student_id }}">
+                            <input type="hidden" name="{{ student.student_id }}" value="0">
+                            <div class="panel-body">
+                                {{ student.short_first_name }} {{ student.last_name }}
+                            </div>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            </div>
         </div>
         <div class="col-md-3">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     Presentation Group 1
-                    <span class="badge pull-right">0</span>
+                    <span class="badge pull-right" id="badge_1">0</span>
                 </div>
                 <div class="panel-body">
-                    <ul id="group1" class="list-unstyled connectedLists">
-                        <li class="panel panel-primary">
-                            <div class="panel-body">
-                                Huhu
-                            </div>
-                        </li>
-                        <li class="panel panel-primary">
-                            <div class="panel-body">
-                                Haha
-                            </div>
-                        </li>
+                    <ul id="1" class="list-unstyled connectedLists">
                     </ul>
                 </div>
             </div>
@@ -66,10 +60,10 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     Presentation Group 2
-                    <span class="badge pull-right">0</span>
+                    <span class="badge pull-right" id="badge_2">0</span>
                 </div>
                 <div class="panel-body">
-                    <ul id="group2" class="list-unstyled connectedLists">
+                    <ul id="2" class="list-unstyled connectedLists">
                     </ul>
                 </div>
             </div>
@@ -91,37 +85,25 @@
 <script src="{{ STATIC_URL }}js/jquery-ui-1.10.4.custom.min.js"></script>
 
 <script type="text/javascript">
+
+    $(".connectedLists").each(function(){
+        //var list = $(this).find("ul");
+        //var count = $(this).length;
+        //alert (count);
+        var badge = $(this).find(".badge");
+        badge.text("1");
+    });
+
     jQuery(function(event, ui) {
         //$('#unsorted, #group1, #group2').sortable({
         $('.connectedLists').sortable({
             connectWith: ".connectedLists",
-
-            {% comment %}
-            //stop: function() {
-//                $('.panel', panelList).each(function(index, elem) {
-//                     var $listItem = $(elem),
-//                         newIndex = $listItem.index();
-//                });
-                //var group = $(this).parent().attr("id");
-                //var group = ui.item.text();
-               // var group = "Hallo";
-              //  alert(group);
-            //}
-            start: function(event, ui) {
-                item = ui.item;
-                oldList = ui.item.closest("ul");
-                //ui.item.parent().parent();
-            },
-            change: function(event, ui) {  
-                if(ui.sender) newList = ui.placeholder.parent().parent();
-            },
-            {% endcomment %}
             stop: function(event, ui) {          
                 item = ui.item;
-                newList = item.closest("ul");
-                //formField = item.only-of-type("input");
-                alert("Moved " + item.attr('id') + " to " + newList.attr('id'));
-                //alert("Moved " + formField.val() + " to " + newList.attr('id'));
+                var newList = item.closest("ul");
+                var group = newList.attr('id');
+                var formField = item.find("input");
+                formField.val(group);
             },
         });
     });
