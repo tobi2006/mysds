@@ -32,7 +32,7 @@ class Marksheet(models.Model):
     category_mark_8 = models.IntegerField(choices=MARKS, blank=True, null=True)
     part_1_mark = models.IntegerField(blank=True, null=True)
     part_2_mark = models.IntegerField(blank=True, null=True)
-    submission_date = models.DateField()
+    submission_date = models.DateField(blank=True, null=True)
     comments = models.TextField(blank=True)
     comments_2 = models.TextField(blank=True)
     # Stuff for group marking
