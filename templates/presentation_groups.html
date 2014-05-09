@@ -28,10 +28,10 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     Not assigned
-                    <span class="badge pull-right">0</span>
+                    <span class="badge pull-right" id="badge_0">10</span>
                 </div>
                 <div class="panel-body">
-                    <ul id="unsorted" class="list-unstyled connectedLists">
+                    <ul id="0" class="list-unstyled connectedLists">
                     {% for student, performance in performances.items %}
                         <li class="panel panel-primary" id="{{ student.student_id }}">
                             <input type="hidden" name="{{ student.student_id }}" value="0">
@@ -48,7 +48,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     Presentation Group 1
-                    <span class="badge pull-right" id="badge_1">0</span>
+                    <span class="badge pull-right" id="badge_1">1</span>
                 </div>
                 <div class="panel-body">
                     <ul id="1" class="list-unstyled connectedLists">
@@ -60,7 +60,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     Presentation Group 2
-                    <span class="badge pull-right" id="badge_2">0</span>
+                    <span class="badge pull-right" id="badge_2">2</span>
                 </div>
                 <div class="panel-body">
                     <ul id="2" class="list-unstyled connectedLists">
@@ -86,26 +86,33 @@
 
 <script type="text/javascript">
 
-    $(".connectedLists").each(function(){
-        //var list = $(this).find("ul");
-        //var count = $(this).length;
-        //alert (count);
-        var badge = $(this).find(".badge");
-        badge.text("1");
-    });
+    $(document).ready(function(){
 
-    jQuery(function(event, ui) {
-        //$('#unsorted, #group1, #group2').sortable({
-        $('.connectedLists').sortable({
-            connectWith: ".connectedLists",
-            stop: function(event, ui) {          
-                item = ui.item;
-                var newList = item.closest("ul");
-                var group = newList.attr('id');
-                var formField = item.find("input");
-                formField.val(group);
-            },
+        function countAll(){
+            $(".connectedLists").each(function(){
+                var count = $(this).find("li").length;
+                var group_no = $(this).attr('id');
+                var badge = "#badge_" + group_no;
+                $(badge).text(count);
+            });
+        };
+
+        countAll();
+
+        jQuery(function(event, ui) {
+            $('.connectedLists').sortable({
+                connectWith: ".connectedLists",
+                stop: function(event, ui) {          
+                    item = ui.item;
+                    var newList = item.closest("ul");
+                    var group = newList.attr('id');
+                    var formField = item.find("input");
+                    formField.val(group);
+                    countAll();
+                },
+            });
         });
+
     });
 </script>
 
