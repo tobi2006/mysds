@@ -360,6 +360,7 @@ class Performance(models.Model):
     student = models.ForeignKey(Student)
     module = models.ForeignKey(Module)
     seminar_group = models.IntegerField(blank=True, null=True)
+    group_assessment_group = models.IntegerField(blank=True, null=True)
     assessment_1 = models.IntegerField(blank=True, null=True)
     assessment_2 = models.IntegerField(blank=True, null=True)
     assessment_3 = models.IntegerField(blank=True, null=True)
