@@ -217,6 +217,9 @@ class Module(models.Model):
     def get_seminar_groups_url(self):
         return reverse('seminar_groups', args=[self.code, str(self.year)])
 
+    def get_assessment_groups_url(self):
+        return reverse('assessment_groups', args=[self.code, str(self.year)])
+    
     def get_add_students_url(self):
         return reverse('add_students_to_module', args=[self.code, str(self.year)])
 

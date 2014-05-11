@@ -1206,45 +1206,45 @@ def seminar_groups(request, module_id, year):
         )
 
 #####################################
-#       Presentation Groups         #
+#       Assessment Groups           #
 #####################################
     
 @login_required
 @user_passes_test(is_teacher)
-def presentation_groups(request, module_id, year):
+def assessment_groups(request, module_id, year):
     module = Module.objects.get(code=module_id, year=year)
     students = module.student_set.all()
-    performances = {}
+    if request.method == 'POST':
+        for student in students:
+            tmp = request.POST[student.student_id]
+            group = int(tmp)
+            performance = Performance.objects.get(student=student, module=module)
+            if group == 0:
+                performance.group_assessment_group = None
+            else:
+                performance.group_assessment_group = group
+            performance.save()
+        return HttpResponseRedirect(module.get_absolute_url())
+    dictionary = {}
     for student in students:
         performance = Performance.objects.get(student=student, module=module)
-        performances[student] = performance
-    random_options={}
-    for i in range(1,30): 
-        # Up to 10 Seminar groups. Create a dictionary that lists the options
-        # and the maximum number of students per group
-        all = len(students)
-        number = all / i
-        left = all % i
-        if left > 0:
-            number = number + 1
-        random_options[i]=number
+        if performance.group_assessment_group == None:
+            group = "0"
+        else:
+            group = str(performance.group_assessment_group)
+        if group in dictionary:
+            dictionary[group].append(performance)
+        else:
+            dictionary[group] = [performance,]
+    no_of_students = len(students)
+    max_groups = no_of_students / 2
+    left = no_of_students % 2
+    if left == 1:
+        max_groups += 1
 
-#    if request.method == 'POST':
-#        for student in students:
-#            if student.student_id in request.POST:
-#                tmp = request.POST[student.student_id]
-#                try:
-#                    seminar_group = int(tmp)
-#                    if seminar_group in range(0, 99):
-#                        performance = Performance.objects.get(student=student, module=module)
-#                        performance.seminar_group = seminar_group
-#                        performance.save()
-#                except ValueError:
-#                        pass
-#        return HttpResponseRedirect(module.get_absolute_url())
     return render_to_response(
-            'presentation_groups.html',
-            {'module': module, 'performances': performances, 'random_options': random_options},
+            'assessment_groups.html',
+            {'module': module, 'dictionary': dictionary, 'max_groups': max_groups},
             context_instance = RequestContext(request)
         )
 
