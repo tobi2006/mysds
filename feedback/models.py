@@ -63,6 +63,12 @@ class GroupPart(models.Model):
         (79, '70 - 79 %'),
         (80, '80 or more')
         )
+    ASSESSMENTS = (
+            [(i, 'Assessment ' + str(i)) for i in range(1, 7)]
+            )
+    module = models.ForeignKey(Module)
+    assessment =  models.IntegerField(choices=ASSESSMENTS)
+    group_no = models.IntegerField()
     category_mark_1 = models.IntegerField(choices=MARKS, blank=True, null=True)
     category_mark_2 = models.IntegerField(choices=MARKS, blank=True, null=True)
     category_mark_3 = models.IntegerField(choices=MARKS, blank=True, null=True)
@@ -80,6 +86,9 @@ class GroupPart(models.Model):
     category_mark_7_free = models.IntegerField(blank=True, null=True)
     category_mark_8_free = models.IntegerField(blank=True, null=True)
     group_comments = models.TextField(blank=True)
+
+    class Meta:
+        unique_together = ('module', 'assessment', 'group_no')
 
     
 

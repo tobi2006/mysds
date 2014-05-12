@@ -14,6 +14,66 @@ from mysds.unisettings import *
 
 @login_required
 @user_passes_test(is_teacher)
+def edit_groupwork_feedback(request, module_id, year, assessment, student_id):
+    module = Module.objects.get(code=module_id, year=year)
+    student = Student.objects.get(student_id=student_id)
+    jump_to = "#" + student.student_id
+    performance = Performance.objects.get(module = module, student = student)
+    assessment_int = int(assessment)
+    if assessment == '1':
+        assessment_title = module.assessment_1_title
+        essay_mark = performance.assessment_1
+        feedback_type = module.assessment_1_type
+        deadline = module.assessment_1_submission_date
+    elif assessment == '2':
+        assessment_title = module.assessment_2_title
+        essay_mark = performance.assessment_2
+        feedback_type = module.assessment_2_type
+        deadline = module.assessment_2_submission_date
+    elif assessment == '3':
+        assessment_title = module.assessment_3_title
+        essay_mark = performance.assessment_3
+        feedback_type = module.assessment_3_type
+        deadline = module.assessment_3_submission_date
+    elif assessment == '4':
+        assessment_title = module.assessment_4_title
+        essay_mark = performance.assessment_4
+        feedback_type = module.assessment_4_type
+        deadline = module.assessment_4_submission_date
+    elif assessment == '5':
+        assessment_title = module.assessment_5_title
+        essay_mark = performance.assessment_5
+        feedback_type = module.assessment_5_type
+        deadline = module.assessment_5_submission_date
+    elif assessment == '6':
+        assessment_title = module.assessment_6_title
+        essay_mark = performance.assessment_6
+        feedback_type = module.assessment_6_type
+        deadline = module.assessment_6_submission_date
+    group = performance.group_assessment_group
+    all_group_members = Performance.objects.filter(module = module, group_assessment_group = group)
+    students = []
+    for student in all_group_members:
+        try:
+            feedback = Marksheet.objects.get(module=module, student=student, assessment=assessment_int)
+            edit = True
+        except Marksheet.DoesNotExist:
+            edit = False
+            feedback = Marksheet(
+                    student = student,
+                    module = module,
+                    assessment = assessment_int,
+                    marker = request.user,
+                    marking_date = datetime.datetime.today
+                    )
+
+    essay_legal_problem = FeedbackCategories.objects.get(assessment_type = 'Essay / Legal Problem')
+    if feedback_type == essay_legal_problem:
+        pass
+
+
+@login_required
+@user_passes_test(is_teacher)
 def edit_essay_feedback(request, module_id, year, assessment, student_id):
     penalty = LATE_SUBMISSION_PENALTY
     module = Module.objects.get(code=module_id, year=year)
