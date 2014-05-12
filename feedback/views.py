@@ -66,6 +66,9 @@ def edit_groupwork_feedback(request, module_id, year, assessment, student_id):
                     marker = request.user,
                     marking_date = datetime.datetime.today
                     )
+        students.append(feedback)
+    try:
+        group_feedback = GroupPart.objects.get(module=module,
 
     essay_legal_problem = FeedbackCategories.objects.get(assessment_type = 'Essay / Legal Problem')
     if feedback_type == essay_legal_problem:
