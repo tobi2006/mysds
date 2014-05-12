@@ -30,6 +30,7 @@
         left: 0;
         z-index: 1000;
         padding: 20px;
+        overflow:hidden;
       }
     }
 
@@ -37,7 +38,7 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-sm-4 col-md-3 sidebar">
+    <div class="col-sm-4 col-md-3 sidebar" id="side">
         <div class="unsortedList panel panel-default">
             <div class="panel-heading">
                 Not assigned
@@ -84,6 +85,7 @@
         </div>
         {% endfor %}
         <input type="submit" value="Save Groups" class="btn btn-default" align=right>
+        <p id="test"></p>
     </div>
 </div>
 
@@ -107,12 +109,19 @@
         $('#help').tooltip()
 
         function countAll(){
-            var last_panel = 0
+            var last_panel = 0;
+//            var biggest_panel = 0;
             $(".connectedLists").each(function(){
                 var count = $(this).find("li").length;
                 var group_no = $(this).attr('id');
                 var badge = "#badge_" + group_no;
                 $(badge).text(count);
+//                var panel = $(this).closest(".outerpanel");
+//                var height = panel.height();
+//                if (height > biggest_panel)
+//                {
+//                    biggest_panel = height;
+//                };
                 if (count > 0)
                 {
                     panel_no = parseInt(group_no);
@@ -133,6 +142,11 @@
                 div_id = "#panel_" + i;
                 $(div_id).hide();
             };
+//            alert(biggest_panel);
+//            $(".outerpanel").each(function(){
+//                $(this).height(biggest_panel)
+//                $(this).height(359);
+//            });
         };
 
         countAll();
@@ -148,11 +162,20 @@
                     formField.val(group);
                     countAll();
                 },
+                appendTo: 'body',
+                helper:  function(e, elt) {
+                    $(elt).css('list-style-type','none');
+                    return elt.clone(true);
+                }
             });
         });
 
         $('.panel-body').mousedown(function(){
+        //    var scroll = $('#side').scrollTop();
+            //$("#test").text(scroll);
             $('.sidebar').css('overflow-y','');
+            //$('#side').scrollTop(1458);
+            
         });
 
 
