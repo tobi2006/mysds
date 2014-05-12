@@ -6,3 +6,4 @@
 deploy.sh
 old_stuff/
 mysds/settings.py
+migrations/
