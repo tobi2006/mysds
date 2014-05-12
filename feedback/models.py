@@ -61,7 +61,7 @@ class GroupPart(models.Model):
         (59, '50 - 59 %'),
         (69, '60 - 69 %'),
         (79, '70 - 79 %'),
-        (80, '80 or more')
+j       (80, '80 or more')
         )
     ASSESSMENTS = (
             [(i, 'Assessment ' + str(i)) for i in range(1, 7)]
@@ -87,10 +87,6 @@ class GroupPart(models.Model):
     category_mark_8_free = models.IntegerField(blank=True, null=True)
     group_comments = models.TextField(blank=True)
 
-    class Meta:
-        unique_together = ('module', 'assessment', 'group_no')
-
-    
 
 class FeedbackCategories(models.Model):
     #    ASSESSMENT_TYPES = (
