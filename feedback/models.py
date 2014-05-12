@@ -84,15 +84,15 @@ class GroupPart(models.Model):
     
 
 class FeedbackCategories(models.Model):
-    ASSESSMENT_TYPES = (
-            ('essay', 'Essay'),
-            ('presentation', 'Oral Presentation'),
-            ('group_presentation', 'Group_presentation'),
-            ('legal_problem', 'Legal Problem'),
-            ('essay_legal_problem', 'Essay / Legal Problem')
-            )
+    #    ASSESSMENT_TYPES = (
+#            ('essay', 'Essay'),
+#            ('presentation', 'Oral Presentation'),
+#            ('group_presentation', 'Group_presentation'),
+#            ('legal_problem', 'Legal Problem'),
+#            ('essay_legal_problem', 'Essay / Legal Problem')
+#            )
     assessment_type = models.CharField(
-            max_length = 30,
+            max_length = 60,
             unique = True
             )
     category_1 = models.CharField(max_length = 100, blank=True)
@@ -111,9 +111,22 @@ class FeedbackCategories(models.Model):
     category_7_helptext = models.TextField(blank=True)
     category_8 = models.CharField(max_length = 100, blank=True)
     category_8_helptext = models.TextField(blank=True)
-    group_component = models.BooleanField()
-    individual_weight = models.IntegerField(null=True, blank=True)
-    group_weight = models.IntegerField(null=True, blank=True)
+    group_category_1 = models.CharField(max_length = 100, blank=True)
+    group_category_1_helptext = models.TextField(blank=True)
+    group_category_2 = models.CharField(max_length = 100, blank=True)
+    group_category_2_helptext = models.TextField(blank=True)
+    group_category_3 = models.CharField(max_length = 100, blank=True)
+    group_category_3_helptext = models.TextField(blank=True)
+    group_category_4 = models.CharField(max_length = 100, blank=True)
+    group_category_4_helptext = models.TextField(blank=True)
+    group_category_5 = models.CharField(max_length = 100, blank=True)
+    group_category_5_helptext = models.TextField(blank=True)
+    group_category_6 = models.CharField(max_length = 100, blank=True)
+    group_category_6_helptext = models.TextField(blank=True)
+    group_category_7 = models.CharField(max_length = 100, blank=True)
+    group_category_7_helptext = models.TextField(blank=True)
+    group_category_8 = models.CharField(max_length = 100, blank=True)
+    group_category_8_helptext = models.TextField(blank=True)
 
     def __unicode__(self):
         return self.assessment_type
