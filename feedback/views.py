@@ -50,29 +50,48 @@ def edit_groupwork_feedback(request, module_id, year, assessment, student_id):
         essay_mark = performance.assessment_6
         feedback_type = module.assessment_6_type
         deadline = module.assessment_6_submission_date
+    n_w = False
+    group_and_individual = False
+    negotiation_written = FeedbackCategries.objects.get(assessment_type = 'Negotiation / Written Submission')
+    if feedback_type == negotiation_written:
+        n_w = True
+        group_and_individual = True
     group = performance.group_assessment_group
-    all_group_members = Performance.objects.filter(module = module, group_assessment_group = group)
-    students = []
-    for student in all_group_members:
-        try:
-            feedback = Marksheet.objects.get(module=module, student=student, assessment=assessment_int)
-            edit = True
-        except Marksheet.DoesNotExist:
-            edit = False
-            feedback = Marksheet(
-                    student = student,
-                    module = module,
-                    assessment = assessment_int,
-                    marker = request.user,
-                    marking_date = datetime.datetime.today
-                    )
-        students.append(feedback)
     try:
-        group_feedback = GroupPart.objects.get(module=module,
-
-    essay_legal_problem = FeedbackCategories.objects.get(assessment_type = 'Essay / Legal Problem')
-    if feedback_type == essay_legal_problem:
-        pass
+        group_feedback = GroupMarksheet.objects.get(module=module, assessment=assessment_int, group_no = group)
+    except GroupMarksheet.DoesNotExist:
+        group_feedback = GroupMarksheet(
+                module = module,
+                assessment = assessment_int,
+                group_no = group,
+                marker = request.user,
+                marking_date = datetime.datetime.today
+                )
+    if group_and_individual:
+        all_group_members = Performance.objects.filter(module = module, group_assessment_group = group)
+        students = []
+        for student in all_group_members:
+            try:
+                group_feedback = Marksheet.objects.get(module=module, student=student, assessment=assessment_int)
+                edit = True
+            except Marksheet.DoesNotExist:
+                edit = False
+                group_feedback = Marksheet(
+                        student = student,
+                        module = module,
+                        assessment = assessment_int,
+                        marker = request.user,
+                        marking_date = datetime.datetime.today
+                        )
+            students.append(feedback)
+    if n_w:
+        return render_to_response('negotiation_feedback_form.html',
+                {'group_feedback': group_feedback, 'students': students, 'module': module,
+                    'group_no': group_no, 'assessment': assessment_title},
+                context_instance = RequestContext(request)
+            )
+    else:
+        return HttpResponseRedirect('/na')
 
 
 @login_required

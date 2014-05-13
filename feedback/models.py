@@ -45,23 +45,18 @@ class Marksheet(models.Model):
     submission_date = models.DateField(blank=True, null=True)
     comments = models.TextField(blank=True)
     comments_2 = models.TextField(blank=True)
-    # Stuff for group marking
-    other_group_members = models.ManyToManyField(Student, blank=True, null=True, related_name='group_marked_in')
-    group_component_mark = models.IntegerField(blank=True, null=True)
-    individual_component_mark = models.IntegerField(blank=True, null=True)
-    group_feedback = models.TextField(blank=True, null=True)
 
     class Meta:
         unique_together = ('student', 'module', 'assessment')
 
-class GroupPart(models.Model):
+class GroupMarksheet(models.Model):
     MARKS = (
         (39, '0 - 39 %'),
         (49, '40 - 49 %'),
         (59, '50 - 59 %'),
         (69, '60 - 69 %'),
         (79, '70 - 79 %'),
-j       (80, '80 or more')
+        (80, '80 or more')
         )
     ASSESSMENTS = (
             [(i, 'Assessment ' + str(i)) for i in range(1, 7)]
@@ -86,6 +81,15 @@ j       (80, '80 or more')
     category_mark_7_free = models.IntegerField(blank=True, null=True)
     category_mark_8_free = models.IntegerField(blank=True, null=True)
     group_comments = models.TextField(blank=True)
+    group_comments_2 = models.TextField(blank=True)
+    submission_date = models.DateField(blank=True, null=True)
+    marker = models.ForeignKey(User, limit_choices_to={'groups__name': 'teachers'}, blank=True, null=True, related_name="marker-groupwork")
+    second_first_marker = models.ForeignKey(User, limit_choices_to={'groups__name': 'teachers'}, blank=True, null=True, related_name="second_first_marker-groupwork")
+    second_marker = models.ForeignKey(User, limit_choices_to={'groups__name': 'teachers'}, blank=True, null=True, related_name="second_marker-groupwork")
+    marking_date = models.DateField(blank=True, null=True)
+
+    class Meta:
+        unique_together = ('module', 'assessment', 'group_no')
 
 
 class FeedbackCategories(models.Model):

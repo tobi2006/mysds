@@ -61,3 +61,16 @@ class EssayForm(forms.ModelForm):
                 'submission_date': forms.DateInput(attrs={'data-date-format': 'dd/mm/yyyy', 'class': 'form-control'}),
                 'marking_date': forms.DateInput(attrs={'data-date-format': 'dd/mm/yyyy', 'class': 'form-control'})
                 }
+
+
+class NegotiationForm(forms.Form):
+    marker = UserModelChoiceField(
+            User.objects.filter(groups__name='teachers'),
+            required = False,
+            widget=forms.Select(attrs={'class': 'form-control'}),
+            )
+    second_first_marker = UserModelChoiceField(
+            User.objects.filter(groups__name='teachers'),
+            required = False,
+            widget=forms.Select(attrs={'class': 'form-control'}),
+            )
