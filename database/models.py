@@ -420,7 +420,7 @@ class Performance(models.Model):
 
     average = models.IntegerField(blank=True, null=True)
     real_average = models.FloatField(blank=True, null=True)
-    part_of_average = models.IntegerField(blank=True, null=True)
+    part_of_average = models.IntegerField(blank=True, null=True)#Belongs to which year's avg
 
     attendance = models.CharField(max_length=50, blank=True)
 

@@ -86,7 +86,8 @@ def module_view(request, module_id, year):
     essay_legal_problem = FeedbackCategories.objects.get(assessment_type = 'Essay / Legal Problem')
     oral_presentation = FeedbackCategories.objects.get(assessment_type = 'Oral Presentation')
     online_test_court_report = FeedbackCategories.objects.get(assessment_type = 'Online Test / Court Report')
-    feedback_for = [essay, legal_problem, oral_presentation, essay_legal_problem, online_test_court_report]
+    negotiation_written = FeedbackCategories.objects.get(assessment_type = 'Negotiation / Written Submission')
+    feedback_for = [essay, legal_problem, oral_presentation, essay_legal_problem, online_test_court_report, negotiation_written]
     marksheet_exists = {}
     if module.assessment_1_type in feedback_for:
         feedback[1] = True

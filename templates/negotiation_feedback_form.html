@@ -13,244 +13,237 @@
 <h2>Group {{ group_no }}</h2>
 <br>
 
-<table cellpadding=10>
-    <tr>
-        <td>
-            <label for="marker">First Marker</label>
-        </td>
-        <td>
-            <input class="form-control" name="marker" value="{{ group_feedback.marker|default_if_none:"" }}">
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <label for="second_first_marker">Second First Marker (if marked by two teachers, NOT second marker!) Leave blank if only marked by yourself.</label>
-        </td>
-        <td>
-            <input class="form-control" name="second_first_marker" value="{{ group_feedback.second_first_marker|default_if_none:"" }}">
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <label for="submission_date">Submission Date</label>
-        </td>
-        <td>
-            <input class="form-control
-
-            {{ form.submission_date }}
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <label for="marking_date">Marking Date</label>
-        </td>
-        <td>
-            {{ form.marking_date }}
-        </td>
-    </tr>
-    {% if two_parts %}
-    </table>
-    <br><hr><br>
-    <h3>Part 1</h3>
-    <table cellpadding=10>
-    {% endif %}
-    <tr>
-        <td>
-            <label for="category_mark_1">{{ categories.category_1 }}</label>
-        </td>
-        <td>
-            {{ form.category_mark_1 }}
-        </td>
-        <td>
-            <span class="glyphicon glyphicon-question-sign" id="category_1"></span>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <label for="category_mark_2">{{ categories.category_2 }}</label>
-        </td>
-        <td>
-            {{ form.category_mark_2 }}
-        </td>
-        <td>
-            <span class="glyphicon glyphicon-question-sign" id="category_2"></span>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <label for="category_mark_3">{{ categories.category_3 }}</label>
-        </td>
-        <td>
-            {{ form.category_mark_3 }}
-        </td>
-        <td>
-            <span class="glyphicon glyphicon-question-sign" id="category_3"></span>
-        </td>
-    </tr>
-    {% if categories.category_4 %}
-    <tr>
-        <td>
-            <label for="category_mark_4">{{ categories.category_4 }}</label>
-        </td>
-        <td>
-            {{ form.category_mark_4 }}
-        </td>
-        <td>
-            <span class="glyphicon glyphicon-question-sign" id="category_4"></span>
-        </td>
-    </tr>
-    {% endif %}
-    {% if two_parts %}
-        </table>
-        <h4>Comments</h4>
-
-        {{ form.comments }}
-
-        <br>
-        <div class="form-group">
-            <div class="col-lg-3">
-                <label for "part_1_mark">Mark for Part 1 (out of 100)</label>
-            </div>
-            <div class="col-lg-1">
-                {{ form.part_1_mark }}
-            </div>
+<div class="panel-group" id="accordion">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseGroup">
+                    Group Part
+                </a>
+            </h4>
         </div>
-
-
-        <br><hr><br>
-        <h3>Part 2</h3>
-        <table cellpadding=10>
-    {% endif %}
-{% if categories.category_5 %}
-    <tr>
-        <td>
-            <label for="category_mark_5">{{ categories.category_5 }}</label>
-        </td>
-        <td>
-            {{ form.category_mark_5 }}
-        </td>
-        <td>
-            <span class="glyphicon glyphicon-question-sign" id="category_5"></span>
-        </td>
-    </tr>
-    {% endif %}
-    {% if categories.category_6 %}
-    <tr>
-        <td>
-            <label for="category_mark_6">{{ categories.category_6 }}</label>
-        </td>
-        <td>
-            {{ form.category_mark_6 }}
-        </td>
-        <td>
-            <span class="glyphicon glyphicon-question-sign" id="category_6"></span>
-        </td>
-    </tr>
-    {% endif %}
-    {% if categories.category_7 %}
-    <tr>
-        <td>
-            <label for="category_mark_7">{{ categories.category_7 }}</label>
-        </td>
-        <td>
-            {{ form.category_mark_7 }}
-        </td>
-        <td>
-            <span class="glyphicon glyphicon-question-sign" id="category_7"></span>
-        </td>
-    </tr>
-    {% endif %}
-    {% if categories.category_8 %}
-    <tr>
-        <td>
-            <label for="category_mark_8">{{ categories.category_8 }}</label>
-        </td>
-        <td>
-            {{ form.category_mark_8 }}
-        </td>
-        <td>
-            <span class="glyphicon glyphicon-question-sign" id="category_8"></span>
-        </td>
-    </tr>
-    {% endif %}
-</table>
-
-<div id="late_submission_warning"></div>
-
-    {% if two_parts %}
-
-        <h4>Comments</h4>
-
-        {{ form.comments_2 }}
-
-        <br>
-        <div class="form-group">
-            <div class="col-lg-3">
-                <label for "part_2_mark">Mark for Part 2 (out of 100)</label>
+        <div id="collapseGroup" class="panel-collapse collapse in">
+            <div class="panel-body">
+                <table cellpadding=10>
+                    <tr>
+                        <td>
+                            First Marker
+                        </td>
+                        <td>
+                            <select class="form-control" name="marker">
+                                <option value="0">----</option>
+                                {% for teacher in teachers %}
+                                <option value="{{ teacher.id }}"{% if teacher.marker %} selected{% endif %}>{{ teacher.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Second First Marker (if marked by two teachers, NOT second marker!) Leave blank if only marked by yourself.
+                        </td>
+                        <td>
+                            <select class="form-control" name="second_first_marker">
+                                <option value="0">----</option>
+                                {% for teacher in teachers %}
+                                <option value="{{ teacher.id }}"{% if teacher.second_first_marker %} selected{% endif %}>{{ teacher.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    {% comment %}
+                    <tr>
+                        <td>
+                            Submission Date
+                        </td>
+                        <td>
+                            <input class= "form-control enter_date" data-date-format="dd/mm/yyyy" name="submission_date" value='{{ group_feedback.submission_date|date:"d/m/Y" }}' type="text" />
+                        </td>
+                    </tr>
+                    {% endcomment %}
+                    <tr>
+                        <td>
+                            Marking Date
+                        </td>
+                        <td>
+                            <input class="form-control enter_date" data-date-format="dd/mm/yyyy" id="marking_date" name="marking_date" value='{{ group_feedback.marking_date|date:"d/m/Y" }}' type="text" />
+                        </td>
+                    </tr>
+                </table>
+                <br><hr><br>
+                <table cellpadding="10" class="table">
+                    <thead>
+                        <tr>
+                            <td>
+                                Category
+                            </td>
+                            <td>
+                                Marks available
+                            </td>
+                            <td>
+                                Mark
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <strong>Part 1: The Assessed Negotiation</strong>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                {{ categories.group_category_1 }}
+                            </td>
+                            <td>
+                                10
+                            </td>
+                            <td class="col-md-1">
+                                <input class="form-control" id="group_category_mark_1" name="group_category_mark_1" type="text" value="{{ group_feedback.category_mark_1_free|default_if_none:"" }}" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                {{ categories.group_category_2 }}
+                            </td>
+                            <td>
+                                10
+                            </td>
+                            <td class="col-md-1">
+                                <input class="form-control" id="group_category_mark_2" name="group_category_mark_2" type="text" value="{{ group_feedback.category_mark_2_free|default_if_none:"" }}" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Part 2: Written Submission</strong>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                {{ categories.group_category_3 }}
+                            </td>
+                            <td>
+                                10
+                            </td>
+                            <td class="col-md-1">
+                                <input class="form-control" id="group_category_mark_3" name="group_category_mark_3" type="text" value="{{ group_feedback.category_mark_3_free|default_if_none:"" }}" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                {{ categories.group_category_4 }}
+                            </td>
+                            <td>
+                                10
+                            </td>
+                            <td class="col-md-1">
+                                <input class="form-control" id="group_category_mark_4" name="group_category_mark_4" type="text" value="{{ group_feedback.category_mark_4_free|default_if_none:"" }}" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <strong>Comment on Group Work (both parts)</strong>
+                <textarea class="form-control" cols="40" id="group_comments" name="group_comments" rows="10">{{ group_feedback.group_comments|default_if_none:"" }}</textarea>
             </div>
-            <div class="col-lg-1">
-                {{ form.part_2_mark }}
-            </div>
-        </div>
-        <br><br><hr><br>
-
-    <div class="form-group">
-        <div class="col-lg-3">
-            <label for "overall">Overall Mark (average of 1 and 2)</label>
-        </div>
-        <div class="col-lg-1">
-            <input class="form-control" id="overall" type="text" value="{% if essay_mark %}{{ essay_mark }}{% endif %}" disabled>
         </div>
     </div>
-
-
-    {% else %}
-
-        <h4>General Comments</h4>
-
-        {{ form.comments }}
-
-        <br>
-        {% if online_court %}
-            <div class="form-group">
-                <div class="col-lg-3">
-                    <label for "part_1_mark">Mark for the Court Report (out of 100)</label>
-                </div>
-                <div class="col-lg-1">
-                    {{ form.part_1_mark }}
+    {% for student, marksheet in marksheets.items %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ student.student_id }}">
+                        {{ student.first_name }} {{ student.last_name }}
+                    </a>
+                </h4>
+            </div>
+            <div id="collapse{{ student.student_id }}" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <table cellpadding="10" class="table">
+                        <thead>
+                            <tr>
+                                <td>
+                                    Category
+                                </td>
+                                <td>
+                                    Marks available
+                                </td>
+                                <td>
+                                    Mark
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <strong>Part 1: The Assessed Negotiation</strong>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    {{ categories.category_1 }}
+                                </td>
+                                <td>
+                                    40
+                                </td>
+                                <td class="col-md-1">
+                                    <input class="form-control" id="{{ student.student_id }}_category_mark_1" name="{{ student.student_id }}_category_mark_1" type="text" value="{{ marksheet.category_mark_1_free|default_if_none:"" }}" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Part 2: Written Submission</strong>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    {{ categories.category_2 }}
+                                </td>
+                                <td>
+                                    10
+                                </td>
+                                <td class="col-md-1">
+                                    <input class="form-control" id="{{ student.student_id }}_category_mark_2" name="{{ student.student_id }}_category_mark_2" type="text" value="{{ marksheet.category_mark_2_free|default_if_none:"" }}" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    {{ categories.category_3 }}
+                                </td>
+                                <td>
+                                    10
+                                </td>
+                                <td class="col-md-1">
+                                    <input class="form-control" id="{{ student.student_id }}_category_mark_3" name="{{ student.student_id }}_category_mark_3" type="text" value="{{ marksheet.category_mark_3_free|default_if_none:"" }}" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    {{ categories.category_4 }}
+                                </td>
+                                <td>
+                                    12 <span class="glyphicon glyphicon-question-sign" id="deduction-help" data-placement="bottom" title="{{ categories.category_4_helptext }}"></span>
+                                </td>
+                                <td class="col-md-1">
+                                    <input class="form-control" id="{{ student.student_id }}_category_mark_4" name="{{ student.student_id }}_category_mark_4" type="text" value="{{ marksheet.category_mark_4_free|default_if_none:"" }}" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <strong>Comment on Individual Work (both parts)</strong>
+                    <textarea class="form-control" cols="40" id="{{ student.student_id }}_comments" name="{{ student.student_id }}_comments" rows="10">{{ marksheet.comments }}</textarea>
                 </div>
             </div>
-
-            <div class="form-group">
-                <div class="col-lg-3">
-                    <label for "part_2_mark">Mark for the Online Test (out of 100)</label>
-                </div>
-                <div class="col-lg-1">
-                    {{ form.part_2_mark }}
-                </div>
-            </div>
-            <br><br><hr><br>
-
-            <div class="form-group">
-                <div class="col-lg-3">
-                    <label for "overall">Overall Mark (average of 1 and 2)</label>
-                </div>
-                <div class="col-lg-1">
-                    <input class="form-control" id="overall" type="text" value="{% if essay_mark %}{{ essay_mark }}{% endif %}" disabled>
-                </div>
-            </div>
-
-        {% else %}
-            <div class="form-group">
-                <div class="col-lg-2">
-                    <label for "mark">Mark</label>
-                </div>
-                <div class="col-lg-1">
-                    <input class="form-control" id="mark" name="mark" type="text" value="{% if essay_mark %}{{ essay_mark }}{% endif %}" />
-                </div>
-            </div>
-        {% endif %}
-    {% endif %}
+        </div>
+    {% endfor %}
+</div>
 
 <br><br>
     <input type = "submit" value="Save" class="btn btn-default">
@@ -264,123 +257,8 @@
 <script type="text/javascript">
 
 $(document).ready(function(){
-    $( "#id_marking_date" ).datepicker();
-    $("#id_submission_date").datepicker();
-
-{% comment %}
-
-    Failed attempt to have a warning for late submission - check for answer on Stack overflow...
-    Currently, there is no output from the OnSelect event at all.
-
-    var deadline = new Date("{{ deadline.isoformat }}");
-
-    $("#id_submission_date").datepicker({
-        onSelect: function(dateText) {
-            console.log(dateText);
-        }
-    });
-
-{% endcomment %}
-
-    {% if average_split %}
-        function get_average(){
-            if ($("#id_part_1_mark").val() == 0)
-            {
-                if ($("#id_part_2_mark").val() == 0)
-                {
-                    var sum = 0;
-                }
-                else
-                {
-                    var part = parseInt($("#id_part_2_mark").val());
-                    var sum = part * {{ average_split.1 }};
-                }
-            }
-            else if ($("#id_part_2_mark").val() == 0)
-            {
-                if ($("#id_part_1_mark").val() == 0)
-                {
-                    var sum = 0;
-                }
-                else
-                {
-                    var part = parseInt($("#id_part_1_mark").val());
-                    var sum = part * {{ average_split.0 }};
-                }
-            }
-            else
-            {
-                var part1 = parseInt($("#id_part_1_mark").val());
-                var part2 = parseInt($("#id_part_2_mark").val());
-                part1 = part1 * {{ average_split.0 }};
-                part2 = part2 * {{ average_split.1 }};
-                var sum = part1 + part2;
-            };
-            var avg = Math.round(sum / {{ denominator }});
-            $( "#overall" ).val(avg);
-        };
-
-
-        $("#id_part_1_mark").change(function(){
-            get_average();
-        });
-        $("#id_part_2_mark").change(function(){
-            get_average();
-        });
-    {% endif %}
-
-    $("#category_1").qtip({
-        content: {
-            text: '{{ categories.category_1_helptext | linebreaksbr }}'
-            }
-        });
-    $("#category_2").qtip({
-        content: {
-            text: '{{ categories.category_2_helptext | linebreaksbr }}'
-            }
-        });
-    $("#category_3").qtip({
-        content: {
-            text: '{{ categories.category_3_helptext | linebreaksbr }}'
-            }
-        });
-    {% if categories.category_4 %}
-    $("#category_4").qtip({
-        content: {
-            text: '{{ categories.category_4_helptext | linebreaksbr }}'
-            }
-        });
-    {% endif %}
-    {% if categories.category_5 %}
-    $("#category_5").qtip({
-        content: {
-            text: '{{ categories.category_5_helptext | linebreaksbr }}'
-            }
-        });
-    {% endif %}
-    {% if categories.category_6 %}
-    $("#category_6").qtip({
-        content: {
-            text: '{{ categories.category_6_helptext | linebreaksbr }}'
-            }
-        });
-    {% endif %}
-    {% if categories.category_7 %}
-    $("#category_7").qtip({
-        content: {
-            text: '{{ categories.category_7_helptext | linebreaksbr }}'
-            }
-        });
-    {% endif %}
-    {% if categories.category_8 %}
-    $("#category_8").qtip({
-        content: {
-            text: '{{ categories.category_8_helptext | linebreaksbr }}'
-            }
-        });
-    {% endif %}
-
+    $(".enter_date").datepicker();
+    $('#deduction-help').tooltip()
 });
-
 </script>
 {% endblock %}
