@@ -69,6 +69,14 @@
                             <input class="form-control enter_date" data-date-format="dd/mm/yyyy" id="marking_date" name="marking_date" value='{{ group_feedback.marking_date|date:"d/m/Y" }}' type="text" />
                         </td>
                     </tr>
+                    <tr>
+                        <td>
+                            Presentation Date
+                        </td>
+                        <td>
+                            <input class="form-control enter_date" data-date-format="dd/mm/yyyy" id="presentation_date" name="presentation_date" value='{{ group_feedback.submission_date|date:"d/m/Y" }}' type="text" />
+                        </td>
+                    </tr>
                 </table>
                 <br><hr><br>
                 <table cellpadding="10" class="table">
