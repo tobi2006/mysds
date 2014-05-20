@@ -37,65 +37,138 @@
 
 <div class="btn-group">
     <div class="btn-group dropdown">
-        <a class = "btn btn-default dropdown-toggle" data-toggle="dropdown">Enter/Change Marks <span class="caret"></span></a>
+        <a class = "btn btn-default dropdown-toggle" data-toggle="dropdown">Marking <span class="caret"></span></a>
         <ul class="dropdown-menu" role="menu">
             {% if module.assessment_1_title %}
                 <li>
                     <a href="{{ module.get_mark_url }}assessment_1">
-                        {{ module.assessment_1_title }}
+                        Enter / Change Marks for {{ module.assessment_1_title }}
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ module.get_toggle_assessment_availability_url }}1">
+                        {% if module.assessment_1_available %} Hide {{ module.assessment_1_title }} from Students
+                        {% else %} Show {{ module.assessment_1_title }} to Students{% endif %}
                     </a>
                 </li>
             {% endif %}
             {% if module.assessment_2_title %}
+                <li class = "divider"></li>
                 <li>
                     <a href="{{ module.get_mark_url }}assessment_2">
                         {{ module.assessment_2_title }}
                     </a>
                 </li>
+                <li>
+                    <a href="{{ module.get_toggle_assessment_availability_url }}2">
+                        {% if module.assessment_2_available %} Hide {{ module.assessment_2_title }} from Students
+                        {% else %} Show {{ module.assessment_2_title }} to Students{% endif %}
+                    </a>
+                </li>
             {% endif %}
             {% if module.assessment_3_title %}
+                <li class = "divider"></li>
                 <li>
                     <a href="{{ module.get_mark_url }}assessment_3">
                         {{ module.assessment_3_title }}
                     </a>
                 </li>
+                <li>
+                    <a href="{{ module.get_toggle_assessment_availability_url }}3">
+                        {% if module.assessment_3_available %} Hide {{ module.assessment_3_title }} from Students
+                        {% else %} Show {{ module.assessment_3_title }} to Students{% endif %}
+                    </a>
+                </li>
             {% endif %}
             {% if module.assessment_4_title %}
+                <li class = "divider"></li>
                 <li>
                     <a href="{{ module.get_mark_url }}assessment_4">
                         {{ module.assessment_4_title }}
                     </a>
                 </li>
+                <li>
+                    <a href="{{ module.get_toggle_assessment_availability_url }}4">
+                        {% if module.assessment_4_available %} Hide {{ module.assessment_4_title }} from Students
+                        {% else %} Show {{ module.assessment_4_title }} to Students{% endif %}
+                    </a>
+                </li>
             {% endif %}
             {% if module.assessment_5_title %}
+                <li class = "divider"></li>
                 <li>
                     <a href="{{ module.get_mark_url }}assessment_5">
                         {{ module.assessment_5_title }}
                     </a>
                 </li>
+                <li>
+                    <a href="{{ module.get_toggle_assessment_availability_url }}5">
+                        {% if module.assessment_5_available %} Hide {{ module.assessment_5_title }} from Students
+                        {% else %} Show {{ module.assessment_5_title }} to Students{% endif %}
+                    </a>
+                </li>
             {% endif %}
             {% if module.assessment_6_title %}
+                <li class = "divider"></li>
                 <li>
                     <a href="{{ module.get_mark_url }}assessment_6">
                         {{ module.assessment_6_title }}
                     </a>
                 </li>
+                <li>
+                    <a href="{{ module.get_toggle_assessment_availability_url }}6">
+                        {% if module.assessment_6_available %} Hide {{ module.assessment_6_title }} from Students
+                        {% else %} Show {{ module.assessment_6_title }} to Students{% endif %}
+                    </a>
+                </li>
             {% endif %}
             {% if module.exam_value %}
+                <li class = "divider"></li>
                 <li>
                     <a href="{{ module.get_mark_url }}exam">
-                        Exam
+                        Enter / Change Marks Exam
                     </a>
                 </li>
             {% endif %}
             {% if module.exam_value %}
                 <li>
                     <a href="{{ module.get_anonymous_mark_url }}exam">
-                        Anonymous Exam Marks
+                        Enter / Change Anonymous Exam Marks
                     </a>
                 </li>
             {% endif %}
             {% comment %}
+
+            {% if module.assessment_2_title %}
+            {% endif %}
+            {% if module.assessment_3_title %}
+                <li>
+                    <a href="{{ module.get_toggle_assessment_availability_url }}3">
+                        {% if module.assessment_3_available %}Hide {% else %}Show {% endif %}{{ module.assessment_3_title }}
+                    </a>
+                </li>
+            {% endif %}
+            {% if module.assessment_4_title %}
+                <li>
+                    <a href="{{ module.get_toggle_assessment_availability_url }}4">
+                        {% if module.assessment_4_available %}Hide {% else %}Show {% endif %}{{ module.assessment_4_title }}
+                    </a>
+                </li>
+            {% endif %}
+            {% if module.assessment_5_title %}
+                <li>
+                    <a href="{{ module.get_toggle_assessment_availability_url }}5">
+                        {% if module.assessment_5_available %}Hide {% else %}Show {% endif %}{{ module.assessment_5_title }}
+                    </a>
+                </li>
+            {% endif %}
+            {% if module.assessment_6_title %}
+                <li>
+                    <a href="{{ module.get_toggle_assessment_availability_url }}6">
+                        {% if module.assessment_6_available %}Hide {% else %}Show {% endif %}{{ module.assessment_6_title }}
+                    </a>
+                </li>
+            {% endif %}
 
             Uncomment this part if you want to anonymise marking for all assessments
 
@@ -156,53 +229,6 @@
         </ul>
     </div>
     <div class="btn-group dropdown">
-        <a class = "btn btn-default dropdown-toggle" data-toggle="dropdown">Availability to Students<span class="caret"></span></a>
-        <ul class="dropdown-menu" role="menu">
-            {% if module.assessment_1_title %}
-                <li>
-                    <a href="{{ module.get_toggle_assessment_availability_url }}1">
-                        {% if module.assessment_1_available %}Hide {% else %}Show {% endif %}{{ module.assessment_1_title }}
-                    </a>
-                </li>
-            {% endif %}
-            {% if module.assessment_2_title %}
-                <li>
-                    <a href="{{ module.get_toggle_assessment_availability_url }}2">
-                        {% if module.assessment_2_available %}Hide {% else %}Show {% endif %}{{ module.assessment_2_title }}
-                    </a>
-                </li>
-            {% endif %}
-            {% if module.assessment_3_title %}
-                <li>
-                    <a href="{{ module.get_toggle_assessment_availability_url }}3">
-                        {% if module.assessment_3_available %}Hide {% else %}Show {% endif %}{{ module.assessment_3_title }}
-                    </a>
-                </li>
-            {% endif %}
-            {% if module.assessment_4_title %}
-                <li>
-                    <a href="{{ module.get_toggle_assessment_availability_url }}4">
-                        {% if module.assessment_4_available %}Hide {% else %}Show {% endif %}{{ module.assessment_4_title }}
-                    </a>
-                </li>
-            {% endif %}
-            {% if module.assessment_5_title %}
-                <li>
-                    <a href="{{ module.get_toggle_assessment_availability_url }}5">
-                        {% if module.assessment_5_available %}Hide {% else %}Show {% endif %}{{ module.assessment_5_title }}
-                    </a>
-                </li>
-            {% endif %}
-            {% if module.assessment_6_title %}
-                <li>
-                    <a href="{{ module.get_toggle_assessment_availability_url }}6">
-                        {% if module.assessment_6_available %}Hide {% else %}Show {% endif %}{{ module.assessment_6_title }}
-                    </a>
-                </li>
-            {% endif %}
-        </ul>
-    </div>
-    <div class="btn-group dropdown">
         <a class = "btn btn-default dropdown-toggle" data-toggle="dropdown">Attendance<span class="caret"></span></a>
         <ul class="dropdown-menu" role="menu">
             <li>
@@ -237,6 +263,13 @@
     <a class="btn btn-default" href="/na">
         Sits/Resits
     </a>
+    <div class="btn-group dropdown">
+        <a class = "btn btn-default dropdown-toggle" data-toggle="dropdown">Group Tasks<span class="caret"></span></a>
+        <ul class="dropdown-menu" role="menu">
+            <li><a href="{{ module.get_assessment_groups_url }}">Assign Groups</a></li>
+            <li><a href="/na">Group Overview</a></li>
+        </ul>
+    </div>
     {% if adminorinstructor %}
         <div class="btn-group dropdown">
             <a class = "btn btn-default dropdown-toggle" data-toggle="dropdown">Export<span class="caret"></span></a>

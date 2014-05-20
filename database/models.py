@@ -199,6 +199,70 @@ class Module(models.Model):
             number_of_sessions -= len(no_t_in.split(","))
         return number_of_sessions
 
+    def get_assessment_title(self, assessment):
+        number = int(assessment)
+        if number == 1:
+            returnvalue = self.assessment_1_title
+        elif number == 2:
+            returnvalue = self.assessment_2_title
+        elif number == 3:
+            returnvalue = self.assessment_3_title
+        elif number == 4:
+            returnvalue = self.assessment_4_title
+        elif number == 5:
+            returnvalue = self.assessment_5_title
+        elif number == 6:
+            returnvalue = self.assessment_6_title
+        return returnvalue
+
+    def get_assessment_type(self, assessment):
+        number = int(assessment)
+        if number == 1:
+            returnvalue = self.assessment_1_type
+        elif number == 2:
+            returnvalue = self.assessment_2_type
+        elif number == 3:
+            returnvalue = self.assessment_3_type
+        elif number == 4:
+            returnvalue = self.assessment_4_type
+        elif number == 5:
+            returnvalue = self.assessment_5_type
+        elif number == 6:
+            returnvalue = self.assessment_6_type
+        return returnvalue
+
+    def get_assessment_max_wordcount(self, assessment):
+        number = int(assessment)
+        if number == 1:
+            returnvalue = self.assessment_1_max_word_count
+        elif number == 2:
+            returnvalue = self.assessment_2_max_word_count
+        elif number == 3:
+            returnvalue = self.assessment_3_max_word_count
+        elif number == 4:
+            returnvalue = self.assessment_4_max_word_count
+        elif number == 5:
+            returnvalue = self.assessment_5_max_word_count
+        elif number == 6:
+            returnvalue = self.assessment_6_max_word_count
+        return returnvalue
+
+    def get_assessment_submission_date(self, assessment):
+        number = int(assessment)
+        if number == 1:
+            returnvalue = self.assessment_1_submission_date
+        elif number == 2:
+            returnvalue = self.assessment_2_submission_date
+        elif number == 3:
+            returnvalue = self.assessment_3_submission_date
+        elif number == 4:
+            returnvalue = self.assessment_4_submission_date
+        elif number == 5:
+            returnvalue = self.assessment_5_submission_date
+        elif number == 6:
+            returnvalue = self.assessment_6_submission_date
+        return returnvalue
+
     def get_absolute_url(self):
         return reverse('module_view', args=[self.code, str(self.year)])
 
@@ -217,6 +281,9 @@ class Module(models.Model):
     def get_seminar_groups_url(self):
         return reverse('seminar_groups', args=[self.code, str(self.year)])
 
+    def get_assessment_groups_url(self):
+        return reverse('assessment_groups', args=[self.code, str(self.year)])
+    
     def get_add_students_url(self):
         return reverse('add_students_to_module', args=[self.code, str(self.year)])
 
@@ -360,6 +427,7 @@ class Performance(models.Model):
     student = models.ForeignKey(Student)
     module = models.ForeignKey(Module)
     seminar_group = models.IntegerField(blank=True, null=True)
+    group_assessment_group = models.IntegerField(blank=True, null=True)
     assessment_1 = models.IntegerField(blank=True, null=True)
     assessment_2 = models.IntegerField(blank=True, null=True)
     assessment_3 = models.IntegerField(blank=True, null=True)
@@ -416,7 +484,7 @@ class Performance(models.Model):
 
     average = models.IntegerField(blank=True, null=True)
     real_average = models.FloatField(blank=True, null=True)
-    part_of_average = models.IntegerField(blank=True, null=True)
+    part_of_average = models.IntegerField(blank=True, null=True)#Belongs to which year's avg
 
     attendance = models.CharField(max_length=50, blank=True)
 
@@ -547,6 +615,23 @@ class Performance(models.Model):
                 if self.exam ==None:
                     result = False
         return result
+
+    def get_assessment_result(self, assessment):
+        number = int(assessment)
+        if number == 1:
+            returnvalue = self.assessment_1
+        elif number == 2:
+            returnvalue = self.assessment_2
+        elif number == 3:
+            returnvalue = self.assessment_3
+        elif number == 4:
+            returnvalue = self.assessment_4
+        elif number == 5:
+            returnvalue = self.assessment_5
+        elif number == 6:
+            returnvalue = self.assessment_6
+        return returnvalue
+
 
 
 class Tutee_Session(models.Model):

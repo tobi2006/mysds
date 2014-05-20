@@ -69,6 +69,13 @@ def get_item(dictionary, key):
     return dictionary.get(key)
 
 @register.filter
+def get_item_p_1(dictionary, key):
+    number = int(key)
+    number += 1
+    key = str(number)
+    return dictionary.get(key)
+
+@register.filter
 def get_range( value ):
   """
     Filter - returns a list containing range made from given value
