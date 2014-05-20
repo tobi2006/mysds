@@ -12,3 +12,4 @@ todo.md
 mysds/settings.py
 database/fixtures
 old_stuff
+migrations/
