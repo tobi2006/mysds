@@ -247,6 +247,22 @@ class Module(models.Model):
             returnvalue = self.assessment_6_max_word_count
         return returnvalue
 
+    def get_assessment_submission_date(self, assessment):
+        number = int(assessment)
+        if number == 1:
+            returnvalue = self.assessment_1_submission_date
+        elif number == 2:
+            returnvalue = self.assessment_2_submission_date
+        elif number == 3:
+            returnvalue = self.assessment_3_submission_date
+        elif number == 4:
+            returnvalue = self.assessment_4_submission_date
+        elif number == 5:
+            returnvalue = self.assessment_5_submission_date
+        elif number == 6:
+            returnvalue = self.assessment_6_submission_date
+        return returnvalue
+
     def get_absolute_url(self):
         return reverse('module_view', args=[self.code, str(self.year)])
 

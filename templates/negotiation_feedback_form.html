@@ -3,7 +3,7 @@
 {% block title %} Feedback for {{ student }}{% endblock %}
 
 {% block formstart %}
-    <form action="" method="post" accept-charset="utf-8" role="form">
+    <form action="" method="post" accept-charset="utf-8" role="form" id="form">
     {% csrf_token %}
 {% endblock %}
 
@@ -18,7 +18,7 @@
         <div class="panel-heading">
             <h4 class="panel-title">
                 <a data-toggle="collapse" data-parent="#accordion" href="#collapseGroup">
-                    Group Part
+                    Group Part<span class="badge pull-right" id="badge_group">No group mark yet</span>
                 </a>
             </h4>
         </div>
@@ -111,7 +111,7 @@
                                 10
                             </td>
                             <td class="col-md-1">
-                                <input class="form-control" id="group_category_mark_1" name="group_category_mark_1" type="text" value="{{ group_feedback.category_mark_1_free|default_if_none:"" }}" />
+                                <input class="form-control group_entry" id="groupMark_1" name="group_category_mark_1" type="text" value="{{ group_feedback.category_mark_1_free|default_if_none:"" }}" /><div class="error text-warning" id="groupError_1"></div>
                             </td>
                         </tr>
                         <tr>
@@ -122,7 +122,7 @@
                                 10
                             </td>
                             <td class="col-md-1">
-                                <input class="form-control" id="group_category_mark_2" name="group_category_mark_2" type="text" value="{{ group_feedback.category_mark_2_free|default_if_none:"" }}" />
+                                <input class="form-control group_entry" id="groupMark_2" name="group_category_mark_2" type="text" value="{{ group_feedback.category_mark_2_free|default_if_none:"" }}" /><div class="error text-warning" id="groupError_2"></div>
                             </td>
                         </tr>
                         <tr>
@@ -142,7 +142,7 @@
                                 10
                             </td>
                             <td class="col-md-1">
-                                <input class="form-control" id="group_category_mark_3" name="group_category_mark_3" type="text" value="{{ group_feedback.category_mark_3_free|default_if_none:"" }}" />
+                                <input class="form-control group_entry" id="groupMark_3" name="group_category_mark_3" type="text" value="{{ group_feedback.category_mark_3_free|default_if_none:"" }}" /><div class="error text-warning" id="groupError_3"></div>
                             </td>
                         </tr>
                         <tr>
@@ -153,7 +153,7 @@
                                 10
                             </td>
                             <td class="col-md-1">
-                                <input class="form-control" id="group_category_mark_4" name="group_category_mark_4" type="text" value="{{ group_feedback.category_mark_4_free|default_if_none:"" }}" />
+                                <input class="form-control group_entry" id="groupMark_4" name="group_category_mark_4" type="text" value="{{ group_feedback.category_mark_4_free|default_if_none:"" }}" /><div class="error text-warning" id="groupError_4"></div>
                             </td>
                         </tr>
                     </tbody>
@@ -168,7 +168,7 @@
             <div class="panel-heading">
                 <h4 class="panel-title">
                     <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ student.student_id }}">
-                        {{ student.first_name }} {{ student.last_name }}
+                        {{ student.first_name }} {{ student.last_name }} <span class="badge pull-right" id="badge_{{ student.student_id }}">Not marked yet</span>
                     </a>
                 </h4>
             </div>
@@ -202,7 +202,7 @@
                                     40
                                 </td>
                                 <td class="col-md-1">
-                                    <input class="form-control" id="{{ student.student_id }}_category_mark_1" name="{{ student.student_id }}_category_mark_1" type="text" value="{{ marksheet.category_mark_1_free|default_if_none:"" }}" />
+                                    <input class="form-control student_entry" id="{{ student.student_id }}_mark_1" name="{{ student.student_id }}_category_mark_1" type="text" value="{{ marksheet.category_mark_1_free|default_if_none:"" }}" /><div class="error text-warning" id="{{ student.student_id }}_error_1"></div>
                                 </td>
                             </tr>
                             <tr>
@@ -218,7 +218,7 @@
                                     10
                                 </td>
                                 <td class="col-md-1">
-                                    <input class="form-control" id="{{ student.student_id }}_category_mark_2" name="{{ student.student_id }}_category_mark_2" type="text" value="{{ marksheet.category_mark_2_free|default_if_none:"" }}" />
+                                    <input class="form-control student_entry" id="{{ student.student_id }}_mark_2" name="{{ student.student_id }}_category_mark_2" type="text" value="{{ marksheet.category_mark_2_free|default_if_none:"" }}" /><div class="error text-warning" id="{{ student.student_id }}_error_2"></div>
                                 </td>
                             </tr>
                             <tr>
@@ -229,7 +229,7 @@
                                     10
                                 </td>
                                 <td class="col-md-1">
-                                    <input class="form-control" id="{{ student.student_id }}_category_mark_3" name="{{ student.student_id }}_category_mark_3" type="text" value="{{ marksheet.category_mark_3_free|default_if_none:"" }}" />
+                                    <input class="form-control student_entry" id="{{ student.student_id }}_mark_3" name="{{ student.student_id }}_category_mark_3" type="text" value="{{ marksheet.category_mark_3_free|default_if_none:"" }}" /><div class="error text-warning" id="{{ student.student_id }}_error_3"></div>
                                 </td>
                             </tr>
                             <tr>
@@ -240,7 +240,7 @@
                                     12 <span class="glyphicon glyphicon-question-sign" id="deduction-help" data-placement="bottom" title="{{ categories.category_4_helptext }}"></span>
                                 </td>
                                 <td class="col-md-1">
-                                    <input class="form-control" id="{{ student.student_id }}_category_mark_4" name="{{ student.student_id }}_category_mark_4" type="text" value="{{ marksheet.category_mark_4_free|default_if_none:"" }}" />
+                                    <input class="form-control student_entry" id="{{ student.student_id }}_mark_4" name="{{ student.student_id }}_category_mark_4" type="text" value="{{ marksheet.category_mark_4_free|default_if_none:"" }}" /><div class="error text-warning" id="{{ student.student_id }}_error_4"></div>
                                 </td>
                             </tr>
                         </tbody>
@@ -264,9 +264,221 @@
 
 <script type="text/javascript">
 
-$(document).ready(function(){
+$(document).ready(function () {
+
     $(".enter_date").datepicker();
-    $('#deduction-help').tooltip()
+    $('#deduction-help').tooltip();
+
+    function calculate_and_validate_group() {
+        var sum = 0;
+        var marked = false;
+        $(".group_entry").each(function() {
+            entry = $(this).val();
+            var error = false;
+            var this_id = $(this).attr("id");
+            var this_number = this_id.split("_").pop();
+            var errorDiv = '#groupError_' + this_number;
+
+            if (entry==null || entry=="") {
+            }
+            else {
+                var tmp = parseInt(entry);
+                if(isNaN(tmp)) {
+                    var errortext = "Please enter a number";
+                    error = true;
+                }
+                else {
+                    if (tmp>10) {
+                        var errortext = "The highest mark possible is 10.";
+                        error = true;
+                    }
+                    else {
+                        sum += tmp;
+                        marked = true;
+                    }
+                };
+                if (error) {
+                    $(errorDiv).text(errortext);
+                }
+                else {
+                    $(errorDiv).text('');
+                };
+            };
+        });
+        if (marked) {
+            return sum;
+        }
+        else {
+            return 'Not marked yet';
+        };
+    };
+
+    function display_group_sum() {
+        var sum = calculate_and_validate_group();
+        if (typeof sum == 'string' || sum instanceof String) {
+            var badge_text = sum;
+        }
+        else {
+            var badge_text = sum + ' / 40';
+        };
+        $("#badge_group").text(badge_text)
+    };
+
+
+    function calculate_and_validate_student(student_id) {
+        var tmp = calculate_and_validate_group();
+        var marked = false;
+        if (typeof tmp == 'string' || tmp instanceof String) {
+            var sum = 0;
+        }
+        else {
+            var sum = tmp;
+        };
+        var mark_1_id = '#' + student_id + '_mark_1';
+        var entry = $(mark_1_id).val();
+        var error_1 = false;
+        if (entry==null || entry=="") {
+        }
+        else {
+            var mark_1 = parseInt(entry);
+            if (isNaN(mark_1)) {
+                var errortext = "Please enter a number";
+                error_1 = true;
+            } 
+            else {
+                if (mark_1 > 40) {
+                    var errortext = "The highest mark possible is 40.";
+                    error_1 = true;
+                }
+                else {
+                    marked = true;
+                    sum += mark_1;
+                };
+            };
+            var error_1_id = '#' + student_id + '_error_1';
+            if (error_1) {
+                $(error_1_id).text(errortext);
+            }
+            else {
+                $(error_1_id).text('');
+            };
+        };
+        var mark_2_id = '#' + student_id + '_mark_2';
+        var entry = $(mark_2_id).val();
+        var error_2 = false;
+        if (entry==null || entry=="") {
+        }
+        else {
+            var mark_2 = parseInt(entry);
+            if (isNaN(mark_2)) {
+                var errortext = "Please enter a number";
+                error_2 = true;
+            } 
+            else {
+                if (mark_2 > 10) {
+                    var errortext = "The highest mark possible is 10.";
+                    error_2 = true;
+                }
+                else {
+                    marked = true;
+                    sum += mark_2;
+                };
+            };
+            var error_2_id = '#' + student_id + '_error_2';
+            if (error_2) {
+                $(error_2_id).text(errortext);
+            }
+            else {
+                $(error_2_id).text('');
+            };
+        };
+        var mark_3_id = '#' + student_id + '_mark_3';
+        var entry = $(mark_3_id).val();
+        var error_3 = false;
+        if (entry==null || entry=="") {
+        }
+        else {
+            var mark_3 = parseInt(entry);
+            if (isNaN(mark_3)) {
+                var errortext = "Please enter a number";
+                error_3 = true;
+            } 
+            else {
+                if (mark_3 > 10) {
+                    var errortext = "The highest mark possible is 10.";
+                    error_3 = true;
+                }
+                else {
+                    marked = true;
+                    sum += mark_3;
+                };
+            };
+            var error_3_id = '#' + student_id + '_error_3';
+            if (error_3) {
+                $(error_3_id).text(errortext);
+            }
+            else {
+                $(error_3_id).text('');
+            };
+        };
+        var mark_4_id = '#' + student_id + '_mark_4';
+        var entry = $(mark_4_id).val();
+        var error_4 = false;
+        if (entry==null || entry=="") {
+        }
+        else {
+            var mark_4 = parseInt(entry);
+            if (isNaN(mark_4)) {
+                var errortext = "Please enter a number";
+                error_4 = true;
+            } 
+            else {
+                if (mark_4 > 12) {
+                    var errortext = "The highest deduction possible is 12.";
+                    error_4 = true;
+                }
+                else {
+                    marked = true;
+                    sum -= mark_4;
+                };
+            };
+            var error_4_id = '#' + student_id + '_error_4';
+            if (error_4) {
+                $(error_4_id).text(errortext);
+            }
+            else {
+                $(error_4_id).text('');
+            };
+        };
+        if (marked) {
+            var badgetext = sum + ' / 100'
+        }
+        else {
+            var badgetext = 'Not marked yet'
+        };
+        $('#badge_' + student_id).text(badgetext);
+    };
+
+    function check_all() {
+        var all_students = [{% for student_id in student_ids %}"{{ student_id }}",{% endfor %}];
+        display_group_sum();
+
+        for (var i = 0; i < all_students.length; i++) {
+            calculate_and_validate_student(all_students[i]);
+        };
+    };
+
+    $('.student_entry').change(function() {
+        var tmp = $(this).attr("id");
+        var student_id = tmp.split("_").shift();
+        calculate_and_validate_student(student_id);
+    });
+
+    check_all();
+
+    $('.group_entry').change(function() {check_all()});
+    
 });
 </script>
+
 {% endblock %}

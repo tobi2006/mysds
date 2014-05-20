@@ -31,40 +31,14 @@ def edit_groupwork_feedback(request, module_id, year, assessment, student_id):
 @user_passes_test(is_teacher)
 def edit_essay_feedback(request, module_id, year, assessment, student_id):
     penalty = LATE_SUBMISSION_PENALTY
+    assessment_int = int(assessment)
     module = Module.objects.get(code=module_id, year=year)
     student = Student.objects.get(student_id=student_id)
     performance = Performance.objects.get(module = module, student = student)
-    assessment_int = int(assessment)
-    if assessment == '1':
-        assessment_title = module.assessment_1_title
-        essay_mark = performance.assessment_1
-        feedback_type = module.assessment_1_type
-        deadline = module.assessment_1_submission_date
-    elif assessment == '2':
-        assessment_title = module.assessment_2_title
-        essay_mark = performance.assessment_2
-        feedback_type = module.assessment_2_type
-        deadline = module.assessment_2_submission_date
-    elif assessment == '3':
-        assessment_title = module.assessment_3_title
-        essay_mark = performance.assessment_3
-        feedback_type = module.assessment_3_type
-        deadline = module.assessment_3_submission_date
-    elif assessment == '4':
-        assessment_title = module.assessment_4_title
-        essay_mark = performance.assessment_4
-        feedback_type = module.assessment_4_type
-        deadline = module.assessment_4_submission_date
-    elif assessment == '5':
-        assessment_title = module.assessment_5_title
-        essay_mark = performance.assessment_5
-        feedback_type = module.assessment_5_type
-        deadline = module.assessment_5_submission_date
-    elif assessment == '6':
-        assessment_title = module.assessment_6_title
-        essay_mark = performance.assessment_6
-        feedback_type = module.assessment_6_type
-        deadline = module.assessment_6_submission_date
+    assessment_title = module.get_assessment_title(assessment)
+    essay_mark = performance.get_assessment_result(assessment)
+    feedback_type = module.get_assessment_type(assessment)
+    deadline = module.get_assessment_submission_date(assessment)
     essay_legal_problem = FeedbackCategories.objects.get(assessment_type = 'Essay / Legal Problem')
     online_test_court_report = FeedbackCategories.objects.get(assessment_type = 'Online Test / Court Report')
     negotiation_written = FeedbackCategories.objects.get(assessment_type = 'Negotiation / Written Submission')
@@ -76,6 +50,7 @@ def edit_essay_feedback(request, module_id, year, assessment, student_id):
     average_split = False 
     negotiation_written_submission = False
     today = datetime.date.today()
+    student_ids = [] # Only needed for the group marksheets
     if feedback_type == essay_legal_problem:
         need_average = True
         two_parts = True
@@ -112,6 +87,7 @@ def edit_essay_feedback(request, module_id, year, assessment, student_id):
             all_group_members = Performance.objects.filter(module = module, group_assessment_group = group)
             marksheets = {} 
             for performance in all_group_members:
+                student_ids.append(performance.student.student_id)
                 try:
                     feedback = Marksheet.objects.get(module=module, student=performance.student, assessment=assessment_int)
                     edit = True
@@ -332,7 +308,7 @@ def edit_essay_feedback(request, module_id, year, assessment, student_id):
         if negotiation_written_submission:
             return render_to_response('negotiation_feedback_form.html',
                         {'group_feedback': group_feedback, 'marksheets': marksheets, 'module': module,
-                            'categories': feedback_type,
+                            'categories': feedback_type, 'student_ids': student_ids,
                             'group_no': group, 'assessment': assessment_title, 'teachers': teachers},
                         context_instance = RequestContext(request)
                     )
