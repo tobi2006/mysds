@@ -3,7 +3,8 @@
 {% block title %}Enter Anonymous IDs{% endblock %}
 
 {% block formstart %}
-<form action="{% url "edit_anon_ids" %}" method="post" enctype="multipart/form-data">
+<form action="" method="post" accept-charset="utf-8" role="form" id="form">
+{% csrf_token %}
 {% endblock %}
 
 {% block content %}
@@ -60,6 +61,5 @@
 {% endblock %}
 
 {% block endform %}
-{% csrf_token %}
 </form>
 {% endblock %}

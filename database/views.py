@@ -460,6 +460,89 @@ def toggle_assessment_availability(request, code, year, assessment):
     module.save()
     return HttpResponseRedirect(module.get_absolute_url())
 
+#####################################
+#   Address Marks ending with 9     #
+#####################################
+
+@login_required
+@user_passes_test(is_teacher)
+def address_nines(request, code, year):
+    module = Module.objects.get(code = code, year = year)
+    performances_in_module = Performance.objects.filter(module = module)
+    performances = []
+    for performance in performances_in_module:
+        tmp = str(performance.average)
+        if tmp[-1] == '9':
+            performances.append(performance)
+    if request.method == 'POST':
+        for performance in performances:
+            student_id = performance.student.student_id
+            assessment = student_id + '_1'
+            if assessment in request.POST:
+                try:
+                    mark = int(request.POST[assessment])
+                    if mark in range(0, 100):
+                        performance.assessment_1 = mark
+                except ValueError:
+                    pass
+            assessment = student_id + '_2'
+            if assessment in request.POST:
+                try:
+                    mark = int(request.POST[assessment])
+                    if mark in range(0, 100):
+                        performance.assessment_2 = mark
+                except ValueError:
+                    pass
+            assessment = student_id + '_3'
+            if assessment in request.POST:
+                try:
+                    mark = int(request.POST[assessment])
+                    if mark in range(0, 100):
+                        performance.assessment_3 = mark
+                except ValueError:
+                    pass
+            assessment = student_id + '_4'
+            if assessment in request.POST:
+                try:
+                    mark = int(request.POST[assessment])
+                    if mark in range(0, 100):
+                        performance.assessment_4 = mark
+                except ValueError:
+                    pass
+            assessment = student_id + '_5'
+            if assessment in request.POST:
+                try:
+                    mark = int(request.POST[assessment])
+                    if mark in range(0, 100):
+                        performance.assessment_5 = mark
+                except ValueError:
+                    pass
+            assessment = student_id + '_6'
+            if assessment in request.POST:
+                try:
+                    mark = int(request.POST[assessment])
+                    if mark in range(0, 100):
+                        performance.assessment_6 = mark
+                except ValueError:
+                    pass
+            assessment = student_id + '_exam'
+            if assessment in request.POST:
+                try:
+                    mark = int(request.POST[assessment])
+                    if mark in range(0, 100):
+                        performance.exam = mark
+                except ValueError:
+                    pass
+            performance.save_with_avg()
+        return HttpResponseRedirect(module.get_absolute_url())
+    return render_to_response(
+        'address_nines.html', 
+        {'module': module, 'performances': performances}, 
+        context_instance = RequestContext(request)
+    )
+
+
+
 
 ###############################################################################
 ###############################################################################

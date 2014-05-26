@@ -14,21 +14,6 @@ from mysds.unisettings import *
 
 @login_required
 @user_passes_test(is_teacher)
-def edit_groupwork_feedback(request, module_id, year, assessment, student_id):
-    n_w = False
-    
-    if n_w:
-        return render_to_response('negotiation_feedback_form.html',
-                {'group_feedback': group_feedback, 'students': students, 'module': module,
-                    'group_no': group_no, 'assessment': assessment_title, 'teachers': teachers},
-                context_instance = RequestContext(request)
-            )
-    else:
-        return HttpResponseRedirect('/na')
-
-
-@login_required
-@user_passes_test(is_teacher)
 def edit_essay_feedback(request, module_id, year, assessment, student_id):
     penalty = LATE_SUBMISSION_PENALTY
     assessment_int = int(assessment)

@@ -3,6 +3,15 @@
 
 {% block title %}CCCU Law - {{current_module}}{% endblock %}
 
+{% block style %}
+
+.form-control
+{
+    width: 80px;
+}
+
+{% endblock %}
+
 {% block formstart %}
 <form action="" id="markForm" method="post">
 {% csrf_token %}
@@ -46,7 +55,7 @@
                 </th>
             {% elif to_mark == 9 %}
                 <th>
-                    Exam
+                    Exam Mark
                 </th>
             {% endif %}
             <th>
@@ -56,7 +65,7 @@
     <tbody>
     {% for exam_id, performance in performances.items|sort %}
         <tr>
-            <td>
+            <td class="col-md-4">
                 <label>{{ exam_id }}</label>
             </td>
             {% if to_mark == 1 %}

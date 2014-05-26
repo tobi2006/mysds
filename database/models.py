@@ -263,6 +263,24 @@ class Module(models.Model):
             returnvalue = self.assessment_6_submission_date
         return returnvalue
 
+    def get_number_of_assessments(self):
+        number = 0
+        if self.assessment_1_title:
+            number += 1
+        if self.assessment_2_title:
+            number += 1
+        if self.assessment_3_title:
+            number += 1
+        if self.assessment_4_title:
+            number += 1
+        if self.assessment_5_title:
+            number += 1
+        if self.assessment_6_title:
+            number += 1
+        if self.exam_value:
+            number += 1
+        return number
+
     def get_absolute_url(self):
         return reverse('module_view', args=[self.code, str(self.year)])
 
@@ -286,6 +304,9 @@ class Module(models.Model):
     
     def get_add_students_url(self):
         return reverse('add_students_to_module', args=[self.code, str(self.year)])
+
+    def get_address_nines_url(self):
+        return reverse('address_nines', args=[self.code, str(self.year)])
 
     def get_attendance_sheet_url(self):
         return reverse('export_attendance_sheet', args=[self.code, str(self.year)])
@@ -347,6 +368,10 @@ class Student(models.Model):
     def short_first_name(self):
         first_names = self.first_name.split(" ")
         return first_names[0]
+
+    def short_name(self):
+        name = self.last_name + ', ' + self.short_first_name()
+        return name
 
     def get_edit_url(self):
         return reverse('edit_student', args=[self.student_id])
