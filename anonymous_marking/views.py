@@ -134,7 +134,6 @@ def mark_anonymously(request, module_id, year, assessment):
     for student in students:
         exam_id = student.exam_id
         exam_ids.append(exam_id)
-        print exam_id
     performances = {}
     for exam_id in exam_ids:
         try:
@@ -155,7 +154,6 @@ def mark_anonymously(request, module_id, year, assessment):
                 try:
                     mark = int(tmp)
                     if mark in range(0, 100):
-                        print student.exam_id + ": " + str(mark)
                         try:
                             performance = AnonymousMarks.objects.get(exam_id=student.exam_id, module=module)
                         except ObjectDoesNotExist:
