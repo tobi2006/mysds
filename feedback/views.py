@@ -131,9 +131,12 @@ def edit_essay_feedback(request, module_id, year, assessment, student_id):
             marking_date_string = request.POST['marking_date']
             tmp = marking_date_string.split("/")
             marking_date = tmp[2] + "-" + tmp[1] + "-" + tmp[0]
-            presentation_date = request.POST['presentation_date']
-            tmp = presentation_date.split("/")
-            presentation_date = tmp[2] + "-" + tmp[1] + "-" + tmp[0]
+            try:
+                presentation_date = request.POST['presentation_date']
+                tmp = presentation_date.split("/")
+                presentation_date = tmp[2] + "-" + tmp[1] + "-" + tmp[0]
+            except ValidationError:
+                presentation_date = None
             if negotiation_written_submission:
                 try:
                     tmp = int(request.POST['group_category_mark_1'])
