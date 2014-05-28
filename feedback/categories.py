@@ -1,5 +1,33 @@
 # Feedback Categories
 
+PRESENTATION = {
+    'title': 'Oral Presentation',
+    'i-1': 'Understanding, Analysis and Content',
+    'i-1-helptext': """
+        80+ very full and perceptive awareness of socio-legal issues, with original critical and analytical assessment of the issues and an excellent grasp of their wider significance. Balanced argument. Exceptionally well-argued. Excellent response to questions. In-depth critical analysis.
+        70+ Comprehensive awareness of socio-legal issues and a clear grasp of their wider significance. Balanced argument. Well argued.  Very good response to questions. Good critical analysis of issues.
+        60 - 69 very good awareness of socio-legal issues and a serious understanding of their wider significance. Balanced argument with evidence of some critical discussion. Good response to questions.
+        50 - 59 some awareness of issues and their wider significance. Clear argument. Limited critical discussion. Reasonable responses to questions.
+        40 - 49 limited awareness of issues and their wider significance. Argument not always clearly advanced. No critical discussion. Lack of understanding of key concepts, principles etc. Some difficulty in answering questions/response to questions limited.
+        Fail - very poor awareness of issues and of their wider significance, with incoherent argument and structure. Some major inaccuracies re- key principles etc. Unable to provide more than a very basic response to questions.""",
+    'i-2': 'Organisation and Application of Material',
+    'i-2-helptext': """
+        80+ Exceptionally well-structured and well-planned presentation. Clear, coherent progression between points. Extensive range of academic sources used. Material applied to offer critical and persuasive analysis of issues.
+        70+ Very well-structured and well-planned presentation. Clear progression between points. Wide range of academic sources used. Material applied to offer critical and persuasive analysis of issues.
+        60 - 69 Well-structured and well organised presentation. Clear progression between points. Range of relevant academic sources used. Material applied to offer somewhat critical analysis of issues.
+        50 - 59 Generally well-structured and organised presentation. Progression between points. Some relevant academic sources used. Material applied to offer analysis of issues.
+        40 - 49 Poorly organised presentation. Little progression between points. Very few academic sources used. Limited application of material.
+        Fail - very poorly organised presentation. No reference to academic sources. No application of material.""",
+    'i-3': 'Delivery (inc visual aides, timing, planning)',
+    'i-3-helptext': """
+        80+ excellent delivery of material - excellent eye contact. Confident. Engaging presentation delivered without the use of prompts. Well-paced, well-timed. Excellent use and range of visual aides.
+        70+ Confident delivery of material - very good eye contact. Engaging presentation delivered without the use of prompts. Well-paced, well-timed. Very good use and range of visual aides. Visual aides clear, accurate and concise.
+        60 - 69 Confident delivery of material - good eye contact. Engaging presentation delivered with limited use of prompts. Well-paced, well-timed. Good use and range of clear and reasonably concise visual aides.
+        50 - 59 Good delivery of material - good eye contact. Over-reliance of prompts. Fair pace. Some engagement with audience. Visual aides used, but too detailed or lacking in clarity. Some errors in visual aides. 
+        40 - 49 Limited eye contact. Presentation mainly delivered by reading from script. Very little engagement with audience. Limited use of visual aides. Visual aides unclear/poorly presented with a number of errors.
+        Fail - No eye contact. Direct reading from script. No engagement with audience. Exceptionally poorly paced. No/very limited use of visual aides. Visual aides very clear/poorly presented with a significant number of errors."""
+}
+
 ESSAY = {
     'title': 'Essay',
     'i-1': 'Reading and Knowledge',
@@ -17,7 +45,7 @@ ESSAY = {
         60 - 69 adequate awareness of issues and a serious understanding of their wider significance.
         50 - 59 some awareness of issues and their wider significance.
         40 - 49 limited awareness of issues and their wider significance.
-        Below 40 very limited awareness of issues and of their wider significance."""
+        Below 40 very limited awareness of issues and of their wider significance.""",
     'i-3': 'Argument',
     'i-3-helptext': """
         80+ clear evidence of independent and original thought and the ability to defend a position logically and convincingly, with arguments presented that are sophisticated and highly challenging.
@@ -36,6 +64,31 @@ ESSAY = {
         30 - 39 very little effort at organising the material.  The work will show significant errors in English and have poor footnoting and bibliography."""
 }
 
+LEGAL_PROBLEM = {
+    'title': 'Legal Problem',
+    'i-1': 'Analysis of Issues',
+    'i-1-helptext': """
+        80+ identification of all core issues and almost all peripheral issues.
+        70+ identification of all core issues and most marginal issues.
+        60 - 69 identification of all (or nearly all) core issues.
+        50 - 59 identification of at least half the core issues.
+        40 - 49 identification of some relevant issues.
+        30 - 39 identification of very few issues. 
+        Below 30 no issues are correctly identified""",
+    'i-2': 'Rule Identification',
+    'i-2-helptext': '',
+    'i-3': 'Analysis and Application of Law',
+    'i-3-helptext': """
+        80+ excellent issue analysis is excellent: an in-depth understanding and application of legal principles, cases and legislation, going beyond the main authorities.
+        70+ very good issue analysis and understanding and application of legal principles, cases and legislation, going beyond the main authorities.
+        60 - 69  good issue analysis and understanding of legal principles and effective use of main cases/legislation.
+        50 - 59 fair issue analysis which goes beyond a descriptive account with some understanding of relevant legal principles and some use of main cases and legislation.
+        40 - 49 issue analysis mainly descriptive with very little application of legal principles, cases or legislation.
+        30 - 39 unclear presentation and application of the law to the facts.
+        Below 30 lack of coherency in the presentation of the law and/or fails to demonstrate the ability to apply the law.""",
+    'i-4': 'Structure and Presentation',
+    'i-4-helptext': ''
+}
 
 NEGOTIATION_WRITTEN = {
     'title': 'Negotiation / Written Submission',
@@ -66,7 +119,7 @@ ONLINE_TEST_COURT_REPORT = {
         60 - 69 good range of reading and adequate knowledge.
         50 - 59 fair range of reading and reasonable knowledge.
         40 - 49 limited reading and incomplete knowledge.
-        Below 40 very limited reading and knowledge."""
+        Below 40 very limited reading and knowledge.""",
     'i-2': 'Understanding and Analysis',
     'i-2-helptext': """
         80+ very full and perceptive awareness of issues, with original
