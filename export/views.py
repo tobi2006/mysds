@@ -74,7 +74,10 @@ def get_one_feedback_sheet(student, module, assessment):
     family_name = [Paragraph('Student family name', styles['Normal']), Spacer(1,3), Paragraph(last_name_string, styles['Normal'])]
     first_name_string = '<b>' + student.first_name + '</b>'
     first_name = [Paragraph('First name', styles['Normal']), Spacer(1,3), Paragraph(first_name_string, styles['Normal'])]
-    module_title_string = '<b>' + module.title + '</b>'
+    if module.title == 'English Legal Institutions and Legal Method':
+        module_title_string = '<b>' + 'ELIM' + '</b>'
+    else:
+        module_title_string = '<b>' + module.title + '</b>'
     module_title = [Paragraph('Module Title', styles['Normal']), Spacer(1,3), Paragraph(module_title_string, styles['Normal'])]
     module_code_string = '<b>' + module.code + '</b>'
     module_code = [Paragraph('Module Code', styles['Normal']), Spacer(1,3), Paragraph(module_code_string, styles['Normal'])]

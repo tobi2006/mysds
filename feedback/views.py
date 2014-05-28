@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
 import datetime
+from django.core.exceptions import ValidationError
 
 from feedback.models import *
 from database.models import *
@@ -135,7 +136,7 @@ def edit_essay_feedback(request, module_id, year, assessment, student_id):
                 presentation_date = request.POST['presentation_date']
                 tmp = presentation_date.split("/")
                 presentation_date = tmp[2] + "-" + tmp[1] + "-" + tmp[0]
-            except ValidationError:
+            except (ValidationError, IndexError):
                 presentation_date = None
             if negotiation_written_submission:
                 try:
