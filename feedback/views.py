@@ -13,6 +13,8 @@ from database.views import is_teacher, is_admin
 from feedback import forms 
 from mysds.unisettings import *
 
+# Functions
+
 @login_required
 @user_passes_test(is_teacher)
 def edit_essay_feedback(request, module_id, year, assessment, student_id):
