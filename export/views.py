@@ -31,7 +31,8 @@ def logo():
     try:
         image = Image(url, 2.45*inch, 1*inch)
     except IOError:
-        image = Paragraph("CCCU", styles['Heading1'])
+        image = Paragraph(
+                "Canterbury Christ Church University", styles['Heading1'])
     return image
 
 def bold(string):
@@ -332,7 +333,6 @@ def legal_problem_sheet(student, module, assessment):
     assessment_title = bold(module.get_assessment_title(assessment))
     mark = str(performance.get_assessment_result(assessment))
     elements.append(logo())
-    elements.append(im)
     elements.append(Spacer(1,5))
     title = heading('Law Undergraduate Assessment Sheet: Legal Problem')
     elements.append(title)
@@ -560,7 +560,6 @@ def presentation_sheet(student, module, assessment):
     assessment_title = bold(module.get_assessment_title(assessment))
     mark = str(performance.get_assessment_result(assessment))
     elements.append(logo())
-    elements.append(im)
     elements.append(Spacer(1,5))
     title = heading('Law Undergraduate Assessment Sheet: Oral Presentation')
     elements.append(title)
@@ -1408,7 +1407,6 @@ def negotiation_written_sheet(student, module, assessment):
     )
     mark = str(performance.get_assessment_result(assessment))
     elements.append(logo())
-    elements.append(im)
     elements.append(Spacer(1,3))
     title = heading(
             'Law Undergraduate Assessment Sheet: Negotiation Study', 'Heading3'
@@ -1473,21 +1471,26 @@ def negotiation_written_sheet(student, module, assessment):
     part_1_subheader = bold_paragraph('1. Individual Work')
     part_2_subheader = bold_paragraph('2. Group Work')
     sub_total_1_string = bold_paragraph('Sub-Total Part 1')
-    sub_total_1 = (
-            marksheet.category_mark_1_free + 
-            group_feedback.category_mark_1_free +
-            group_feedback.category_mark_2_free
-            )
+    sub_total_1 = 0
+    if marksheet.category_mark_1_free is not None:
+        sub_total_1 += marksheet.category_mark_1_free
+    if group_feedback.category_mark_1_free is not None:
+        sub_total_1 += group_feedback.category_mark_1_free
+    if group_feedback.category_mark_2_free is not None:
+        sub_total_1 += group_feedback.category_mark_2_free
     table_header_4 = bold_paragraph(
             'Part 2: Individual and Written Submission'
             )
     sub_total_2_string = paragraph('Sub-Total Part 2')
-    sub_total_2 = (
-            marksheet.category_mark_2_free +
-            marksheet.category_mark_3_free +
-            group_feedback.category_mark_3_free +
-            group_feedback.category_mark_4_free
-            )
+    sub_total_2 = 0
+    if marksheet.category_mark_2_free is not None:
+        sub_total_2 += marksheet.category_mark_2_free
+    if marksheet.category_mark_3_free is not None:
+        sub_total_2 += marksheet.category_mark_3_free
+    if group_feedback.category_mark_3_free is not None:
+        sub_total_2 += group_feedback.category_mark_3_free
+    if group_feedback.category_mark_4_free is not None:
+        sub_total_2 += group_feedback.category_mark_4_free
     deductions_h_1 = bold_paragraph('Deductions possible')
     deductions_h_2 = bold_paragraph('Deductions incurred')
     i_mark_1 = str(marksheet.category_mark_1_free)
