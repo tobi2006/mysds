@@ -4,6 +4,12 @@ from database.models import Module, Student
 from django.contrib.auth.models import User
 
 class Marksheet(models.Model):
+    """The model for a marksheet for an individual performance.
+
+    Make sure to implement setting complete = True in the functions,
+    otherwise there will be a warning sign next to the download
+    icon in the module view.
+    """
     MARKS = (
             (39, '0 - 39 %'),
             (49, '40 - 49 %'),
@@ -18,9 +24,19 @@ class Marksheet(models.Model):
     module = models.ForeignKey(Module)
     student = models.ForeignKey(Student)
     assessment =  models.IntegerField(choices=ASSESSMENTS)
-    marker = models.ForeignKey(User, limit_choices_to={'groups__name': 'teachers'}, blank=True, null=True, related_name="marker")
-    second_first_marker = models.ForeignKey(User, limit_choices_to={'groups__name': 'teachers'}, blank=True, null=True, related_name="second_first_marker")
-    second_marker = models.ForeignKey(User, limit_choices_to={'groups__name': 'teachers'}, blank=True, null=True, related_name="second_marker")
+    completed = models.BooleanField(blank=True, default=False)
+    marker = models.ForeignKey(
+            User, limit_choices_to={'groups__name': 'teachers'},
+            blank=True, null=True, related_name="marker"
+            )
+    second_first_marker = models.ForeignKey(
+            User, limit_choices_to={'groups__name': 'teachers'},
+            blank=True, null=True, related_name="second_first_marker"
+            )
+    second_marker = models.ForeignKey(
+            User, limit_choices_to={'groups__name': 'teachers'},
+            blank=True, null=True, related_name="second_marker"
+            )
     marking_date = models.DateField(blank=True, null=True)
     category_mark_1 = models.IntegerField(choices=MARKS, blank=True, null=True)
     category_mark_2 = models.IntegerField(choices=MARKS, blank=True, null=True)
@@ -50,6 +66,13 @@ class Marksheet(models.Model):
         unique_together = ('student', 'module', 'assessment')
 
 class GroupMarksheet(models.Model):
+    """The model for a marksheet for a group performance.
+
+    Make sure to implement setting complete = True in the functions,
+    otherwise the Download Marksheet symbol will not be displayed
+    in the module view. You could call the test() function for this,
+    but it might be easier to do this when validating the form.
+    """
     MARKS = (
         (39, '0 - 39 %'),
         (49, '40 - 49 %'),
@@ -63,6 +86,7 @@ class GroupMarksheet(models.Model):
             )
     module = models.ForeignKey(Module)
     assessment =  models.IntegerField(choices=ASSESSMENTS)
+    completed = models.BooleanField(blank=True, default=False)
     group_no = models.IntegerField()
     category_mark_1 = models.IntegerField(choices=MARKS, blank=True, null=True)
     category_mark_2 = models.IntegerField(choices=MARKS, blank=True, null=True)
@@ -83,9 +107,15 @@ class GroupMarksheet(models.Model):
     group_comments = models.TextField(blank=True)
     group_comments_2 = models.TextField(blank=True)
     submission_date = models.DateField(blank=True, null=True)
-    marker = models.ForeignKey(User, limit_choices_to={'groups__name': 'teachers'}, blank=True, null=True, related_name="marker-groupwork")
-    second_first_marker = models.ForeignKey(User, limit_choices_to={'groups__name': 'teachers'}, blank=True, null=True, related_name="second_first_marker-groupwork")
-    second_marker = models.ForeignKey(User, limit_choices_to={'groups__name': 'teachers'}, blank=True, null=True, related_name="second_marker-groupwork")
+    marker = models.ForeignKey(
+            User, limit_choices_to={'groups__name': 'teachers'},
+            blank=True, null=True, related_name="marker-groupwork")
+    second_first_marker = models.ForeignKey(
+            User, limit_choices_to={'groups__name': 'teachers'}, blank=True,
+            null=True, related_name="second_first_marker-groupwork")
+    second_marker = models.ForeignKey(
+            User, limit_choices_to={'groups__name': 'teachers'}, blank=True,
+            null=True, related_name="second_marker-groupwork")
     marking_date = models.DateField(blank=True, null=True)
 
     class Meta:
@@ -93,13 +123,10 @@ class GroupMarksheet(models.Model):
 
 
 class FeedbackCategories(models.Model):
-    #    ASSESSMENT_TYPES = (
-#            ('essay', 'Essay'),
-#            ('presentation', 'Oral Presentation'),
-#            ('group_presentation', 'Group_presentation'),
-#            ('legal_problem', 'Legal Problem'),
-#            ('essay_legal_problem', 'Essay / Legal Problem')
-#            )
+    """ This model represents the different types of marksheets.
+
+    Hopefully, this will be obsolete soon.
+    """
     assessment_type = models.CharField(
             max_length = 60,
             unique = True

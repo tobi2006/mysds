@@ -146,10 +146,10 @@ def essay_sheet(student, module, assessment):
             Spacer(1,3),
             bold_paragraph(tmp)]
     criteria = paragraph('Criteria')
-    category_1 = paragraph(ESSAY['i-1'])
-    category_2 = paragraph(ESSAY['i-2'])
-    category_3 = paragraph(ESSAY['i-3'])
-    category_4 = paragraph(ESSAY['i-4'])
+    category_1 = paragraph(CATEGORIES['ESSAY']['i_1'])
+    category_2 = paragraph(CATEGORIES['ESSAY']['i_2'])
+    category_3 = paragraph(CATEGORIES['ESSAY']['i_3'])
+    category_4 = paragraph(CATEGORIES['ESSAY']['i_4'])
     data = [
             [last_name, '', first_name, ''],
             [module_title, '', module_code, submission_date, ''],
@@ -373,10 +373,10 @@ def legal_problem_sheet(student, module, assessment):
             Spacer(1,3),
             bold_paragraph(tmp)]
     criteria = paragraph('Criteria')
-    category_1 = paragraph(LEGAL_PROBLEM['i-1'])
-    category_2 = paragraph(LEGAL_PROBLEM['i-2'])
-    category_3 = paragraph(LEGAL_PROBLEM['i-3'])
-    category_4 = paragraph(LEGAL_PROBLEM['i-4'])
+    category_1 = paragraph(CATEGORIES['LEGAL_PROBLEM']['i_1'])
+    category_2 = paragraph(CATEGORIES['LEGAL_PROBLEM']['i_2'])
+    category_3 = paragraph(CATEGORIES['LEGAL_PROBLEM']['i_3'])
+    category_4 = paragraph(CATEGORIES['LEGAL_PROBLEM']['i_4'])
     data = [
             [last_name, '', first_name, ''],
             [module_title, '', module_code, submission_date, ''],
@@ -589,25 +589,14 @@ def presentation_sheet(student, module, assessment):
             paragraph('Assessment Title'),
             Spacer(1,3),
             paragraph(assessment_title)]
-    if module.get_assessment_max_wordcount(assessment):
-        tmp = (
-                str(module.get_assessment_max_wordcount(assessment)) + 
-                ' Words max.')
-    else:
-        tmp = ''
-    word_count = [
-        paragraph('Word Count'),
-        Spacer(1,3),
-        bold_paragraph(tmp)
-    ]
     criteria = paragraph('Criteria')
-    category_1 = paragraph(PRESENTATION['i-1'])
-    category_2 = paragraph(PRESENTATION['i-2'])
-    category_3 = paragraph(PRESENTATION['i-3'])
+    category_1 = paragraph(CATEGORIES['PRESENTATION']['i_1'])
+    category_2 = paragraph(CATEGORIES['PRESENTATION']['i_2'])
+    category_3 = paragraph(CATEGORIES['PRESENTATION']['i_3'])
     data = [
             [last_name, '', first_name, ''],
             [module_title, '', module_code, submission_date],
-            [assessment_title, '', word_count, ''],
+            [assessment_title, '', '', ''],
             [criteria, category_1, category_2, category_3]]
     row = ['80 +']
     if marksheet.category_mark_1 == 80:
@@ -802,14 +791,14 @@ def essay_legal_problem_sheet(student, module, assessment):
             Spacer(1,3),
             bold_paragraph(tmp)]
     criteria = paragraph('Criteria')
-    category_1 = paragraph(ESSAY['i-1'])
-    category_2 = paragraph(ESSAY['i-2'])
-    category_3 = paragraph(ESSAY['i-3'])
-    category_4 = paragraph(ESSAY['i-4'])
-    category_5 = paragraph(LEGAL_PROBLEM['i-1'])
-    category_6 = paragraph(LEGAL_PROBLEM['i-2'])
-    category_7 = paragraph(LEGAL_PROBLEM['i-3'])
-    category_8 = paragraph(LEGAL_PROBLEM['i-4'])
+    category_1 = paragraph(CATEGORIES['ESSAY']['i_1'])
+    category_2 = paragraph(CATEGORIES['ESSAY']['i_2'])
+    category_3 = paragraph(CATEGORIES['ESSAY']['i_3'])
+    category_4 = paragraph(CATEGORIES['ESSAY']['i_4'])
+    category_5 = paragraph(CATEGORIES['LEGAL_PROBLEM']['i_1'])
+    category_6 = paragraph(CATEGORIES['LEGAL_PROBLEM']['i_2'])
+    category_7 = paragraph(CATEGORIES['LEGAL_PROBLEM']['i_3'])
+    category_8 = paragraph(CATEGORIES['LEGAL_PROBLEM']['i_4'])
     data = [
             [last_name, '', first_name, ''],
             [module_title, '', module_code, submission_date, ''],
@@ -1203,10 +1192,10 @@ def online_test_court_report_sheet(student, module, assessment):
             Spacer(1,3),
             bold_paragraph(tmp)]
     criteria = paragraph('Criteria')
-    category_1 = paragraph(ESSAY['i-1'])
-    category_2 = paragraph(ESSAY['i-2'])
-    category_3 = paragraph(ESSAY['i-3'])
-    category_4 = paragraph(ESSAY['i-4'])
+    category_1 = paragraph(CATEGORIES['ESSAY']['i_1'])
+    category_2 = paragraph(CATEGORIES['ESSAY']['i_2'])
+    category_3 = paragraph(CATEGORIES['ESSAY']['i_3'])
+    category_4 = paragraph(CATEGORIES['ESSAY']['i_4'])
     data = [
             [last_name, '', first_name, ''],
             [module_title, '', module_code, submission_date, ''],
@@ -1439,15 +1428,19 @@ def negotiation_written_sheet(student, module, assessment):
             paragraph('Seminar/LAU Group'),
             Spacer(1,3),
             bold_paragraph(tmp)]
-    individual_category_1 = bold_paragraph(NEGOTIATION_WRITTEN['i-1'])
-    individual_category_2 = bold_paragraph(NEGOTIATION_WRITTEN['i-2'])
-    individual_category_3 = bold_paragraph(NEGOTIATION_WRITTEN['i-3'])
-    individual_category_4 = bold_paragraph(NEGOTIATION_WRITTEN['i-4'])
-    group_category_1 = bold_paragraph(NEGOTIATION_WRITTEN['g-1'])
-    group_category_2 = bold_paragraph(NEGOTIATION_WRITTEN['g-2'])
-    group_category_3 = bold_paragraph(NEGOTIATION_WRITTEN['g-3'])
-    group_category_4 = bold_paragraph(NEGOTIATION_WRITTEN['g-4'])
-    deduction_explanation = paragraph(NEGOTIATION_WRITTEN['i-4-helptext'])
+    individual_category_1 = bold_paragraph(
+            CATEGORIES['NEGOTIATION_WRITTEN']['i_1'])
+    individual_category_2 = bold_paragraph(
+            CATEGORIES['NEGOTIATION_WRITTEN']['i_2'])
+    individual_category_3 = bold_paragraph(
+            CATEGORIES['NEGOTIATION_WRITTEN']['i_3'])
+    individual_category_4 = bold_paragraph(
+            CATEGORIES['NEGOTIATION_WRITTEN']['i_4'])
+    group_category_1 = bold_paragraph(CATEGORIES['NEGOTIATION_WRITTEN']['g_1'])
+    group_category_2 = bold_paragraph(CATEGORIES['NEGOTIATION_WRITTEN']['g_2'])
+    group_category_3 = bold_paragraph(CATEGORIES['NEGOTIATION_WRITTEN']['g_3'])
+    group_category_4 = bold_paragraph(CATEGORIES['NEGOTIATION_WRITTEN']['g_4'])
+    deduction_explanation = paragraph(CATEGORIES['NEGOTIATION_WRITTEN']['i_4_helptext'])
     marker = marksheet.marker
     if marksheet.second_first_marker:
         marker2 = marksheet.second_first_marker
@@ -1608,20 +1601,20 @@ def export_feedback_sheet(request, code, year, assessment, student_id):
     """
     module = Module.objects.get(code=code, year=year)
     assessment_title = get_title(module, assessment)
-    assessment_type = module.get_assessment_type(assessment)
+    assessment_type = module.get_marksheet_type(assessment)
 
     # Replace this part!
-    essay = FeedbackCategories.objects.get(assessment_type = 'Essay')
-    legal_problem = FeedbackCategories.objects.get(
-            assessment_type = 'Legal Problem')
-    oral_presentation = FeedbackCategories.objects.get(
-            assessment_type = 'Oral Presentation')
-    essay_legal_problem = FeedbackCategories.objects.get(
-            assessment_type = 'Essay / Legal Problem')
-    online_test_court_report = FeedbackCategories.objects.get(
-            assessment_type = 'Online Test / Court Report')
-    negotiation_written = FeedbackCategories.objects.get(
-            assessment_type = 'Negotiation / Written Submission')
+#    essay = FeedbackCategories.objects.get(assessment_type = 'Essay')
+#    legal_problem = FeedbackCategories.objects.get(
+#            assessment_type = 'Legal Problem')
+#    oral_presentation = FeedbackCategories.objects.get(
+#            assessment_type = 'Oral Presentation')
+#    essay_legal_problem = FeedbackCategories.objects.get(
+#            assessment_type = 'Essay / Legal Problem')
+#    online_test_court_report = FeedbackCategories.objects.get(
+#            assessment_type = 'Online Test / Court Report')
+#    negotiation_written = FeedbackCategories.objects.get(
+#            assessment_type = 'Negotiation / Written Submission')
     if student_id == 'all':
         if is_teacher(request.user) or is_admin(request.user):
             response = HttpResponse(mimetype='application/pdf')
@@ -1642,20 +1635,20 @@ def export_feedback_sheet(request, code, year, assessment, student_id):
                     pass
             for student in students:
                 #This needs to be changed to take the database out
-                if assessment_type == essay:
+                if assessment_type == 'ESSAY':
                     elements = essay_sheet(student, module, assessment)
-                elif assessment_type == legal_problem:
+                elif assessment_type == 'LEGAL_PROBLEM':
                     elements = legal_problem_sheet(
                             student, module, assessment)
-                elif assessment_type == oral_presentation:
+                elif assessment_type == 'PRESENTATION':
                     elements = presentation_sheet(student, module, assessment)
-                elif assessment_type == essay_legal_problem:
+                elif assessment_type == 'ESSAY_LEGAL_PROBLEM':
                     elements = essay_legal_problem_sheet(
                             student, module, assessment)
-                elif assessment_type == online_test_court_report:
+                elif assessment_type == 'ONLINE_TEST_COURT_REPORT':
                     elements = online_test_court_report_sheet(
                             student, module, assessment)
-                elif assessment_type == negotiation_written:
+                elif assessment_type == 'NEGOTIATION_WRITTEN':
                     elements = negotiation_written_sheet(
                             student, module, assessment)
                 for element in elements:
@@ -1698,21 +1691,21 @@ def export_feedback_sheet(request, code, year, assessment, student_id):
             response['Content-Disposition'] = filename_string
             document = SimpleDocTemplate(response)
             document.setAuthor = 'Canterbury Christ Church University'
-            if assessment_type == essay:
+            if assessment_type == 'ESSAY':
                 elements = essay_sheet(student, module, assessment)
-            elif assessment_type == legal_problem:
+            elif assessment_type == 'LEGAL_PROBLEM':
                 elements = legal_problem_sheet(
                         student, module, assessment
                         )
-            elif assessment_type == oral_presentation:
+            elif assessment_type == 'PRESENTATION':
                 elements = presentation_sheet(student, module, assessment)
-            elif assessment_type == essay_legal_problem:
+            elif assessment_type == 'ESSAY_LEGAL_PROBLEM':
                 elements = essay_legal_problem_sheet(
                         student, module, assessment)
-            elif assessment_type == online_test_court_report:
+            elif assessment_type == 'ONLINE_TEST_COURT_REPORT':
                 elements = online_test_court_report_sheet(
                         student, module, assessment)
-            elif assessment_type == negotiation_written:
+            elif assessment_type == 'NEGOTIATION_WRITTEN':
                 elements = negotiation_written_sheet(
                         student, module, assessment)
 

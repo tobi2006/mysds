@@ -66,7 +66,15 @@ class ModuleForm(forms.ModelForm):
 
     class Meta:
         model = Module
-        exclude = ('last_recorded_session',)
+        exclude = (
+                'last_recorded_session',
+                'assessment_1_type',
+                'assessment_2_type',
+                'assessment_3_type',
+                'assessment_4_type',
+                'assessment_5_type',
+                'assessment_6_type'
+                )
         widgets = {
                 'year': forms.Select(attrs={'class': 'year'}),
                 'successor_of': forms.Select(attrs={'class': 'form-control'}),
@@ -80,32 +88,32 @@ class ModuleForm(forms.ModelForm):
                 'number_of_sessions': forms.TextInput(attrs={'class': 'form-control'}),
                 'assessment_1_title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Title of the assessment - eg Essay, Court Report, Critical Narrative'}),
                 'assessment_1_value': forms.TextInput(attrs={'class': 'form-control'}),
-                'assessment_1_type': forms.Select(attrs={'class': 'form-control'}),
+                'assessment_1_marksheet_type': forms.Select(attrs={'class': 'form-control'}),
                 'assessment_1_max_word_count': forms.TextInput(attrs={'class': 'form-control'}),
                 'assessment_1_submission_date': forms.DateInput(attrs={'data-date-format': 'dd/mm/yyyy', 'class': 'form-control'}),
                 'assessment_2_title': forms.TextInput(attrs={'class': 'form-control'}),
                 'assessment_2_value': forms.TextInput(attrs={'class': 'form-control'}),
-                'assessment_2_type': forms.Select(attrs={'class': 'form-control'}),
+                'assessment_2_marksheet_type': forms.Select(attrs={'class': 'form-control'}),
                 'assessment_2_max_word_count': forms.TextInput(attrs={'class': 'form-control'}),
                 'assessment_2_submission_date': forms.DateInput(attrs={'data-date-format': 'dd/mm/yyyy', 'class': 'form-control'}),
                 'assessment_3_title': forms.TextInput(attrs={'class': 'form-control'}),
                 'assessment_3_value': forms.TextInput(attrs={'class': 'form-control'}),
-                'assessment_3_type': forms.Select(attrs={'class': 'form-control'}),
+                'assessment_3_marksheet_type': forms.Select(attrs={'class': 'form-control'}),
                 'assessment_3_max_word_count': forms.TextInput(attrs={'class': 'form-control'}),
                 'assessment_3_submission_date': forms.DateInput(attrs={'data-date-format': 'dd/mm/yyyy', 'class': 'form-control'}),
                 'assessment_4_title': forms.TextInput(attrs={'class': 'form-control'}),
                 'assessment_4_value': forms.TextInput(attrs={'class': 'form-control'}),
-                'assessment_4_type': forms.Select(attrs={'class': 'form-control'}),
+                'assessment_4_marksheet_type': forms.Select(attrs={'class': 'form-control'}),
                 'assessment_4_max_word_count': forms.TextInput(attrs={'class': 'form-control'}),
                 'assessment_4_submission_date': forms.DateInput(attrs={'data-date-format': 'dd/mm/yyyy', 'class': 'form-control'}),
                 'assessment_5_title': forms.TextInput(attrs={'class': 'form-control'}),
                 'assessment_5_value': forms.TextInput(attrs={'class': 'form-control'}),
-                'assessment_5_type': forms.Select(attrs={'class': 'form-control'}),
+                'assessment_5_marksheet_type': forms.Select(attrs={'class': 'form-control'}),
                 'assessment_5_max_word_count': forms.TextInput(attrs={'class': 'form-control'}),
                 'assessment_5_submission_date': forms.DateInput(attrs={'data-date-format': 'dd/mm/yyyy', 'class': 'form-control'}),
                 'assessment_6_title': forms.TextInput(attrs={'class': 'form-control'}),
                 'assessment_6_value': forms.TextInput(attrs={'class': 'form-control'}),
-                'assessment_6_type': forms.Select(attrs={'class': 'form-control'}),
+                'assessment_6_marksheet_type': forms.Select(attrs={'class': 'form-control'}),
                 'assessment_6_max_word_count': forms.TextInput(attrs={'class': 'form-control'}),
                 'assessment_6_submission_date': forms.DateInput(attrs={'data-date-format': 'dd/mm/yyyy', 'class': 'form-control'}),
                 'exam_value': forms.TextInput(attrs={'class': 'form-control'})
