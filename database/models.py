@@ -817,16 +817,22 @@ class Performance(models.Model):
         safe_mark = int(mark)
         if number == 1:
             self.assessment_1 = safe_mark
+            self.assessment_1_modified = datetime.datetime.now()
         elif number == 2:
             self.assessment_2 = safe_mark
+            self.assessment_2_modified = datetime.datetime.now()
         elif number == 3:
             self.assessment_3 = safe_mark
+            self.assessment_3_modified = datetime.datetime.now()
         elif number == 4:
             self.assessment_4 = safe_mark
+            self.assessment_4_modified = datetime.datetime.now()
         elif number == 5:
             self.assessment_5 = safe_mark
+            self.assessment_5_modified = datetime.datetime.now()
         elif number == 6:
             self.assessment_6 = safe_mark
+            self.assessment_6_modified = datetime.datetime.now()
         self.save_with_avg()
         return
 

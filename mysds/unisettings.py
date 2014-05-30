@@ -1,3 +1,4 @@
+PASSMARK = 40
 
 LATE_SUBMISSION_PENALTY = 5
 # Penalty (in marks) that is deducted per day if a piece of coursework is late. This will not 
