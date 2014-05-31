@@ -1602,19 +1602,6 @@ def export_feedback_sheet(request, code, year, assessment, student_id):
     module = Module.objects.get(code=code, year=year)
     assessment_title = get_title(module, assessment)
     assessment_type = module.get_marksheet_type(assessment)
-
-    # Replace this part!
-#    essay = FeedbackCategories.objects.get(assessment_type = 'Essay')
-#    legal_problem = FeedbackCategories.objects.get(
-#            assessment_type = 'Legal Problem')
-#    oral_presentation = FeedbackCategories.objects.get(
-#            assessment_type = 'Oral Presentation')
-#    essay_legal_problem = FeedbackCategories.objects.get(
-#            assessment_type = 'Essay / Legal Problem')
-#    online_test_court_report = FeedbackCategories.objects.get(
-#            assessment_type = 'Online Test / Court Report')
-#    negotiation_written = FeedbackCategories.objects.get(
-#            assessment_type = 'Negotiation / Written Submission')
     if student_id == 'all':
         if is_teacher(request.user) or is_admin(request.user):
             response = HttpResponse(mimetype='application/pdf')

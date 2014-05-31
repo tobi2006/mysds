@@ -1,18 +1,20 @@
 from database.models import MetaData, Module
 import datetime
 
+
 def module_dictionary(module_list):
-    module_dict={}
+    module_dict = {}
     for item in module_list:
         title = item.title
         if title not in module_dict:
             module_dict[title] = [item]
         else:
             module_dict[title].append(item)
-    #module_dict.sort()
+    # module_dict.sort()
     for entry in module_dict:
-        module_dict[entry].sort(key = lambda x: x.year)
+        module_dict[entry].sort(key=lambda x: x.year)
     return module_dict
+
 
 def modules_for_menubar():
     future = []
@@ -30,11 +32,12 @@ def modules_for_menubar():
         elif module.year < current_year:
             if module.year not in past:
                 past.append(module.year)
-    current.sort(key = lambda x: x.title)
+    current.sort(key=lambda x: x.title)
     future.sort()
     past.sort()
     dict_to_return = {'current': current, 'past': past, 'future': future}
     return dict_to_return
+
 
 def get_number_of_assessments(module):
     number_of_assessments = 0
@@ -51,4 +54,3 @@ def get_number_of_assessments(module):
     elif module.assessment_1_title:
         number_of_assessments = 1
     return number_of_assessments
-

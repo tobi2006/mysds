@@ -15,10 +15,12 @@ from database import functions
 from database.forms import *
 from database.models import *
 from database.strings import *
-from feedback.models import FeedbackCategories, Marksheet
+from feedback.models import Marksheet
+from feedback.categories import AVAILABLE_MARKSHEETS
 from mysds.unisettings import *
 
 # Basic functions
+
 
 def is_teacher(user):
     """Checks if user belongs to group 'teachers'"""
@@ -65,10 +67,11 @@ def is_pastoral(user):
 
 # Module Functions
 
+
 @login_required
 @user_passes_test(is_teacher)
 def module_view(request, module_id, year):
-    """The overview function for a module.
+    """Displays the overview for the module.
 
     Shows a summary of all the students in a module with their
     performance information.
@@ -79,38 +82,15 @@ def module_view(request, module_id, year):
     performances = {}
     # Find out which marksheet template for which essay
     feedback = {1: False, 2: False, 3: False, 4: False, 5: False, 6: False}
-    essay = FeedbackCategories.objects.get(assessment_type = 'Essay')
-    legal_problem = FeedbackCategories.objects.get(assessment_type = 'Legal Problem')
-    essay_legal_problem = FeedbackCategories.objects.get(assessment_type = 'Essay / Legal Problem')
-    oral_presentation = FeedbackCategories.objects.get(assessment_type = 'Oral Presentation')
-    online_test_court_report = FeedbackCategories.objects.get(assessment_type = 'Online Test / Court Report')
-    negotiation_written = FeedbackCategories.objects.get(assessment_type = 'Negotiation / Written Submission')
-    feedback_for = [essay, legal_problem, oral_presentation, essay_legal_problem, online_test_court_report, negotiation_written]
     marksheet_exists = {}
-    if module.assessment_1_type in feedback_for:
-        feedback[1] = True
-        if Marksheet.objects.filter(module = module, assessment = 1).exists():
-            marksheet_exists[1] = True
-    if module.assessment_2_type in feedback_for:
-        feedback[2] = True
-        if Marksheet.objects.filter(module = module, assessment = 2).exists():
-            marksheet_exists[2] = True
-    if module.assessment_3_type in feedback_for:
-        feedback[3] = True
-        if Marksheet.objects.filter(module = module, assessment = 3).exists():
-            marksheet_exists[3] = True
-    if module.assessment_4_type in feedback_for:
-        feedback[4] = True
-        if Marksheet.objects.filter(module = module, assessment = 4).exists():
-            marksheet_exists[4] = True
-    if module.assessment_5_type in feedback_for:
-        feedback[5] = True
-        if Marksheet.objects.filter(module = module, assessment = 5).exists():
-            marksheet_exists[5] = True
-    if module.assessment_6_type in feedback_for:
-        feedback[6] = True
-        if Marksheet.objects.filter(module = module, assessment = 6).exists():
-            marksheet_exists[6] = True
+    for assessment in range(1, 7):
+        marksheet = module.get_marksheet_type(assessment)
+        if any(marksheet in available for available in AVAILABLE_MARKSHEETS):
+            feedback[assessment] = True
+            if (
+                    Marksheet.objects.filter(
+                        module=module, assessment=assessment).exists()):
+                marksheet_exists[assessment] = True
     rows = []
     email_dict = {}
     no_email_addresses = []
@@ -140,11 +120,11 @@ def module_view(request, module_id, year):
                     and performance.attendance[session_before_last] == '0'):
                 row['no_attendance_twice'] = True
         # Check what symbols / links to show next to assessments
-        for assessment in range(1,7):
+        for assessment in range(1, 7):
             row[assessment] = False
             try:
                 marksheet = Marksheet.objects.get(
-                        student=student, module=module, assessment=assessment)
+                    student=student, module=module, assessment=assessment)
                 if marksheet.comments:
                     row[assessment] = True
             except Marksheet.DoesNotExist:
@@ -154,23 +134,24 @@ def module_view(request, module_id, year):
         adminorinstructor = True
     else:
         adminorinstructor = False
-    groupstring = '' #create string of seminar groups to make this iterable
+    groupstring = ''  # create string of seminar groups to make this iterable
     for i in range(0, number_of_groups):
         groupstring += str(i+1)
 
-    return render_to_response('module_view.html',
-            {
-                'module': module,
-                'rows': rows,
-                'email_dict': email_dict,
-                'no_email_addresses': no_email_addresses,
-                'adminorinstructor': adminorinstructor,
-                'feedback': feedback,
-                'marksheet_exists': marksheet_exists,
-                'number_of_groups': groupstring
-            },
-            context_instance = RequestContext(request)
-            )
+    return render_to_response(
+        'module_view.html',
+        {
+            'module': module,
+            'rows': rows,
+            'email_dict': email_dict,
+            'no_email_addresses': no_email_addresses,
+            'adminorinstructor': adminorinstructor,
+            'feedback': feedback,
+            'marksheet_exists': marksheet_exists,
+            'number_of_groups': groupstring
+        },
+        context_instance=RequestContext(request)
+        )
 
 
 @login_required
@@ -204,7 +185,7 @@ def edit_module(request, module_id, year):
                                     module.assessment_1_value = None
                 module.sessions_recorded = request.session['sessions_recorded']
                 module.save()
-                if (request.session['old_number_of_sessions'] != 
+                if (request.session['old_number_of_sessions'] !=
                         module.get_number_of_sessions()):
                     performances = Performance.objects.filter(module=module)
                     for performance in performances:
@@ -214,7 +195,7 @@ def edit_module(request, module_id, year):
                             attendance += '0'
                         while (len(attendance) >
                                 module.get_number_of_sessions()):
-                            attendance = attendance[:-1] 
+                            attendance = attendance[:-1]
                         performance.attendance = attendance
                         performance.save()
 
@@ -222,22 +203,22 @@ def edit_module(request, module_id, year):
     else:
         form = ModuleForm(instance=module)
         request.session['old_number_of_sessions'] = (
-                module.get_number_of_sessions())
+            module.get_number_of_sessions())
         request.session['sessions_recorded'] = (
-                module.sessions_recorded)
+            module.sessions_recorded)
 
     return render_to_response(
-        'module_form.html', 
-        {'module_form': form, 'add': False, 'object': module, 
-            'assessments': number_of_assessments}, 
-        context_instance = RequestContext(request)
+        'module_form.html',
+        {'module_form': form, 'add': False, 'object': module,
+            'assessments': number_of_assessments},
+        context_instance=RequestContext(request)
     )
 
-    
+
 @login_required
 @user_passes_test(is_teacher)
 def add_module(request):
-    """Function to add a new module"""
+    """Shows a form to add a new module"""
     assessments = 0
     if request.is_ajax():
         if 'successor_of' not in request.POST:
@@ -245,17 +226,17 @@ def add_module(request):
             predecessor_year = year - 1
             predecessor_modules = Module.objects.filter(year=predecessor_year)
             new_options = (
-                    '<option value="" ' +
-                    'selected="selected">---------</option>\n'
-                    )
+                '<option value="" ' +
+                'selected="selected">---------</option>\n'
+                )
             for module in predecessor_modules:
                 toadd = (
-                        '<option value="' +
-                        str(module.id) +
-                        '">' + 
-                        str(module) + 
-                        '</option>\n'
-                        )
+                    '<option value="' +
+                    str(module.id) +
+                    '">' +
+                    str(module) +
+                    '</option>\n'
+                    )
                 new_options += toadd
             return HttpResponse(new_options)
         else:
@@ -272,20 +253,20 @@ def add_module(request):
             for entry in Module.ELIGIBLE:
                 if entry[0] == predecessor.eligible:
                     eligible += (
-                            '<option value="' +
-                            entry[0] +
-                            '" selected="selected">' +
-                            entry[1] +
-                            '</option>\n'
-                            )
+                        '<option value="' +
+                        entry[0] +
+                        '" selected="selected">' +
+                        entry[1] +
+                        '</option>\n'
+                        )
                 else:
                     eligible += (
-                            '<option value="' +
-                            entry[0] +
-                            '">' +
-                            entry[1] +
-                            '</option>\n'
-                            )
+                        '<option value="' +
+                        entry[0] +
+                        '">' +
+                        entry[1] +
+                        '</option>\n'
+                        )
             suggestions['eligible'] = eligible
             suggestions['is_foundational'] = predecessor.is_foundational
             suggestions['is_pg'] = predecessor.is_pg
@@ -327,23 +308,24 @@ def add_module(request):
                     value = str(predecessor.assessment_6_value)
                 count = str(counter)
                 assessments += (
-                        '<tr><td><strong>Assessment ' +
-                        count +
-                        ':</strong></td>\n <td>Title</td><td>\n ' +
-                        '<input id="id_assessment_' +
-                        count +
-                        '_title" maxlength="30" name="assessment_' +
-                        count +
-                        '_title" type="text" value="' +
-                        title +
-                        '" /></td>\n <td>Percentage</td><td>\n ' +
-                        '<input id="id_assessment_' +
-                        count +
-                        '_value" name="assessment_' +
-                        count +
-                        '_value" type="text" value="' +
-                        value +
-                        '" /></tr>'
+                    '<tr><td><strong>Assessment ' +
+                    count +
+                    ':</strong></td>\n <td>Title</td><td>\n ' +
+                    '<input id="id_assessment_' +
+                    count +
+                    '_title" maxlength="30" name="assessment_' +
+                    count +
+                    '_title" type="text" value="' +
+                    title +
+                    '" /></td>\n <td>Percentage</td><td>\n ' +
+                    '<input id="id_assessment_' +
+                    count +
+                    '_value" name="assessment_' +
+                    count +
+                    '_value" type="text" value="' +
+                    value +
+                    '" /></tr>'
+                    )
                 counter += 1
             suggestions['number_of_assessments'] = no_of_assessments
             suggestions['assessments'] = assessments
@@ -379,10 +361,10 @@ def add_module(request):
     else:
         form = ModuleForm()
     return render_to_response(
-        'module_form.html', 
-        {'module_form': form, 'add': True, 
-        'assessments': assessments}, 
-        context_instance = RequestContext(request)
+        'module_form.html',
+        {'module_form': form, 'add': True,
+            'assessments': assessments},
+        context_instance=RequestContext(request)
     )
 
 
@@ -390,9 +372,9 @@ def add_module(request):
 @user_passes_test(is_teacher)
 def delete_module(request, module_id, year):
     """Deletes a module"""
-    module = Module.objects.get(code = module_id, year = year)
+    module = Module.objects.get(code=module_id, year=year)
     if request.user in module.instructors.all() or is_admin(request.user):
-        performances = Performance.objects.filter(module = module)
+        performances = Performance.objects.filter(module=module)
         for performance in performances:
             performance.delete()
         module.delete()
@@ -400,23 +382,23 @@ def delete_module(request, module_id, year):
         title = 'Module deleted'
     else:
         printstring = (
-                'Only the module instructors or an ' +
-                'admin can delete this module'
-                )
+            'Only the module instructors or an ' +
+            'admin can delete this module'
+            )
         title = 'CCCU Law DB: Not allowed'
     return render_to_response(
-            'blank.html', 
-            {'printstring': printstring, 'title': title},
-            context_instance = RequestContext(request))
+        'blank.html',
+        {'printstring': printstring, 'title': title},
+        context_instance=RequestContext(request))
 
 
 @login_required
 @user_passes_test(is_teacher)
 def remove_student_from_module(request, module_id, year, student_id):
     """Removes student from module, deletes performance object"""
-    module = Module.objects.get(code = module_id, year = year)
-    student = Student.objects.get(student_id = student_id)
-    performance = Performance.objects.get(module = module, student = student)
+    module = Module.objects.get(code=module_id, year=year)
+    student = Student.objects.get(student_id=student_id)
+    performance = Performance.objects.get(module=module, student=student)
     performance.delete()
     student.modules.remove(module)
     return HttpResponseRedirect(module.get_absolute_url())
@@ -437,25 +419,25 @@ def seminar_group_overview(request, code, year):
     for group in range(0, number_of_groups):
         seminar_group = group + 1
         performances = Performance.objects.filter(
-                module=module, seminar_group=seminar_group)
+            module=module, seminar_group=seminar_group)
         printstring += (
-                "<h3>Seminar Group " +
-                str(seminar_group) +
-                "</h3><br><br>"
-                )
+            "<h3>Seminar Group " +
+            str(seminar_group) +
+            "</h3><br><br>"
+            )
         for performance in performances:
             printstring += (
-                    performance.student.first_name +
-                    " " +
-                    performance.student.last_name +
-                    "<br>"
-                    )
+                performance.student.first_name +
+                " " +
+                performance.student.last_name +
+                "<br>"
+                )
         printstring += "<br><br>"
 
     return render_to_response(
-            'blank.html', 
-            {'printstring': printstring, 'title': title},
-            context_instance = RequestContext(request))
+        'blank.html',
+        {'printstring': printstring, 'title': title},
+        context_instance=RequestContext(request))
 
 
 @login_required
@@ -464,32 +446,32 @@ def toggle_assessment_availability(request, code, year, assessment):
     """Allows students to see their marksheets"""
     module = Module.objects.get(code=code, year=year)
     if assessment == '1':
-        if module.assessment_1_available == True:
+        if module.assessment_1_available:
             module.assessment_1_available = False
         else:
             module.assessment_1_available = True
     elif assessment == '2':
-        if module.assessment_2_available == True:
+        if module.assessment_2_available:
             module.assessment_2_available = False
         else:
             module.assessment_2_available = True
     elif assessment == '3':
-        if module.assessment_3_available == True:
+        if module.assessment_3_available:
             module.assessment_3_available = False
         else:
             module.assessment_3_available = True
     elif assessment == '4':
-        if module.assessment_4_available == True:
+        if module.assessment_4_available:
             module.assessment_4_available = False
         else:
             module.assessment_4_available = True
     elif assessment == '5':
-        if module.assessment_5_available == True:
+        if module.assessment_5_available:
             module.assessment_5_available = False
         else:
             module.assessment_5_available = True
     elif assessment == '6':
-        if module.assessment_6_available == True:
+        if module.assessment_6_available:
             module.assessment_6_available = False
         else:
             module.assessment_6_available = True
@@ -501,8 +483,8 @@ def toggle_assessment_availability(request, code, year, assessment):
 @user_passes_test(is_teacher)
 def address_nines(request, code, year):
     """Allows teachers to change marks when the average ends with 9"""
-    module = Module.objects.get(code = code, year = year)
-    performances_in_module = Performance.objects.filter(module = module)
+    module = Module.objects.get(code=code, year=year)
+    performances_in_module = Performance.objects.filter(module=module)
     performances = []
     for performance in performances_in_module:
         tmp = str(performance.average)
@@ -570,9 +552,9 @@ def address_nines(request, code, year):
             performance.save_with_avg()
         return HttpResponseRedirect(module.get_absolute_url())
     return render_to_response(
-        'address_nines.html', 
-        {'module': module, 'performances': performances}, 
-        context_instance = RequestContext(request)
+        'address_nines.html',
+        {'module': module, 'performances': performances},
+        context_instance=RequestContext(request)
     )
 
 
@@ -605,7 +587,7 @@ def student_view(request, student_id, meeting_id=None):
             tutee_session = Tutee_Session(tutee=student, tutor=request.user)
             edit = False
         if request.method == 'POST':
-            form = TuteeForm(instance = tutee_session, data = request.POST)
+            form = TuteeForm(instance=tutee_session, data=request.POST)
             if form.is_valid():
                 if meeting_id:
                     to_delete = Tutee_Session.objects.get(id=meeting_id)
@@ -619,11 +601,11 @@ def student_view(request, student_id, meeting_id=None):
         pastoral = True
         tutee_sessions = Tutee_Session.objects.filter(tutee=student)
 
-    all_performances = Performance.objects.filter(student = student)
+    all_performances = Performance.objects.filter(student=student)
     sorted_performances = {}
     for performance in all_performances:
         use_performance = False
-        if performance.module.sessions_recorded != None:
+        if performance.module.sessions_recorded is not None:
             use_performance = True
         elif performance.assessment_1:
             use_performance = True
@@ -644,40 +626,43 @@ def student_view(request, student_id, meeting_id=None):
             if sorted_performances.get(year):
                 sorted_performances[year].append(performance)
             else:
-                sorted_performances[year] = [performance,]
-            
+                sorted_performances[year] = [performance]
+
     if tutor:
-        return render_to_response('student_view.html',
-                {
-                    'form': form,
-                    'student': student,
-                    'years_performances': sorted_performances,
-                    'tutor': True,
-                    'show_meeting_notes': True,
-                    'edit': edit,
-                    'meetings': tutee_sessions,
-                    'mdexplanation': MD_EXPLANATION
-                },
-                context_instance = RequestContext(request)
-                )
+        return render_to_response(
+            'student_view.html',
+            {
+                'form': form,
+                'student': student,
+                'years_performances': sorted_performances,
+                'tutor': True,
+                'show_meeting_notes': True,
+                'edit': edit,
+                'meetings': tutee_sessions,
+                'mdexplanation': MD_EXPLANATION
+            },
+            context_instance=RequestContext(request)
+            )
     elif pastoral:
-        return render_to_response('student_view.html',
-                {
-                    'student': student,
-                    'years_performances': sorted_performances,
-                    'show_meeting_notes': True,
-                    'meetings': tutee_sessions
-                },
-                context_instance = RequestContext(request)
-                )
+        return render_to_response(
+            'student_view.html',
+            {
+                'student': student,
+                'years_performances': sorted_performances,
+                'show_meeting_notes': True,
+                'meetings': tutee_sessions
+            },
+            context_instance=RequestContext(request)
+            )
     else:
-        return render_to_response('student_view.html',
-                {
-                    'student': student,
-                    'years_performances': sorted_performances
-                },
-                context_instance = RequestContext(request)
-                )
+        return render_to_response(
+            'student_view.html',
+            {
+                'student': student,
+                'years_performances': sorted_performances
+            },
+            context_instance=RequestContext(request)
+            )
 
 
 @login_required
@@ -696,16 +681,21 @@ def search_student(request):
                 search = q.split()
                 first_name = search[0]
                 last_name = search[-1]
-            students = Student.objects.filter(last_name__icontains=last_name, first_name__icontains=first_name)
+            students = Student.objects.filter(
+                last_name__icontains=last_name,
+                first_name__icontains=first_name
+                )
         if len(students) == 0:
-            students = Student.objects.filter(Q(last_name__istartswith=q) | Q(first_name__istartswith=q))
+            students = Student.objects.filter(
+                Q(last_name__istartswith=q) | Q(first_name__istartswith=q))
         if len(students) == 1:
             student = students[0]
             return HttpResponseRedirect(student.get_absolute_url())
         else:
-            return render_to_response('search_results.html',
-                    {'students': students, 'query': q},
-                    context_instance = RequestContext (request)
+            return render_to_response(
+                'search_results.html',
+                {'students': students, 'query': q},
+                context_instance=RequestContext(request)
                 )
     else:
         return HttpResponse('Please submit a search term.')
@@ -756,7 +746,7 @@ def year_view(request, year):
         elif selected[0] == 'since':
             startyear = selected[1]
             for student_id in students_to_add:
-                student = Student.objects.get(student_id = student_id)
+                student = Student.objects.get(student_id=student_id)
                 student.since = startyear
                 student.save()
         elif selected[0] == 'year':
@@ -783,7 +773,7 @@ def year_view(request, year):
                     for performance in performances:
                         performance.delete()
                     tutee_sessions = Tutee_Session.objects.filter(
-                            tutee=student)
+                        tutee=student)
                     for tutee_session in tutee_sessions:
                         tutee_session.delete()
                     student.delete()
@@ -839,33 +829,33 @@ def year_view(request, year):
         courses = Course.objects.all
 
     tutors = User.objects.filter(groups__name='teachers')
-    
-    return render_to_response('year_view.html',
-            {
-                'students': students,
-                'year': year, 
-                'ug': ug,
-                'pg':pg,
-                'phd': phd,
-                'alumnus': alumnus,
-                'llb': llb,
-                'more_than_one_year': more_than_one_year,
-                'tutors': tutors,
-                'academic_years': academic_years,
-                'courses': courses,
-                'all_students': all_students,
-                'show_inactive': inactive
-            },
-            context_instance = RequestContext(request)
+    return render_to_response(
+        'year_view.html',
+        {
+            'students': students,
+            'year': year,
+            'ug': ug,
+            'pg': pg,
+            'phd': phd,
+            'alumnus': alumnus,
+            'llb': llb,
+            'more_than_one_year': more_than_one_year,
+            'tutors': tutors,
+            'academic_years': academic_years,
+            'courses': courses,
+            'all_students': all_students,
+            'show_inactive': inactive
+        },
+        context_instance=RequestContext(request)
         )
 
 
 @login_required
 @user_passes_test(is_admin)
 def all_attendances(request, year):
-    """This shows all assessments per year."""
+    """Shows all assessments per year."""
     year = int(year)
-    students = Student.objects.filter(year = year, active=True)
+    students = Student.objects.filter(year=year, active=True)
     all_attendances = {}
     meta_stuff = MetaData.objects.get(data_id=1)
     current_year = meta_stuff.current_year
@@ -874,36 +864,36 @@ def all_attendances(request, year):
         modules = student.modules.all()
         for module in modules:
             if module.year == current_year:
-                email_string = '<a href="mailto:' + student.email 
+                email_string = '<a href="mailto:' + student.email
                 email_string += (
-                        '?Subject=Attendance for ' + module.title + '">')
+                    '?Subject=Attendance for ' + module.title + '">')
                 email_string += (
-                        '<span class="glyphicon glyphicon-envelope">' + 
-                        '</span></a>'
-                        )
+                    '<span class="glyphicon glyphicon-envelope">' +
+                    '</span></a>'
+                    )
                 url = student.get_absolute_url()
                 student_string = (
-                        '<a href="' +
-                        url +
-                        '">' +
-                        student.last_name +
-                        ', ' +
-                        student.first_name +
-                        '</a>'
-                        )
+                    '<a href="' +
+                    url +
+                    '">' +
+                    student.last_name +
+                    ', ' +
+                    student.first_name +
+                    '</a>'
+                    )
                 url = module.get_absolute_url()
                 module_string = (
-                        '<a href="' +
-                        url +
-                        '">' +
-                        module.title +
-                        ' (' +
-                        module.code +
-                        ')</a>'
-                        )
+                    '<a href="' +
+                    url +
+                    '">' +
+                    module.title +
+                    ' (' +
+                    module.code +
+                    ')</a>'
+                    )
                 row = [email_string, student_string, module_string]
                 performance = Performance.objects.get(
-                        student = student, module = module)
+                    student=student, module=module)
                 attendance_list = performance.attendance
                 attendance = []
                 no_teaching = []
@@ -911,12 +901,12 @@ def all_attendances(request, year):
                 for item in tmp:
                     try:
                         no_teaching.append(int(item))
-                    except ValueError: # Ignore whitespace or wrong entries
+                    except ValueError:  # Ignore whitespace or wrong entries
                         pass
                 first = int(module.first_session)
                 counter = 0
-                for week in range(5,30):
-                    attendance = 'NT' # No teaching
+                for week in range(5, 30):
+                    attendance = 'NT'  # No teaching
                     if week >= first:
                         week_no = counter + 1
                         if week_no <= module.sessions_recorded:
@@ -926,9 +916,10 @@ def all_attendances(request, year):
                     row.append(attendance)
                 all_rows.append(row)
 
-    return render_to_response('all_attendances.html',
-            {'all_rows': all_rows},
-            context_instance = RequestContext(request)
+    return render_to_response(
+        'all_attendances.html',
+        {'all_rows': all_rows},
+        context_instance=RequestContext(request)
         )
 
 
@@ -948,7 +939,7 @@ def tutee_list(request):
         else:
             name = tutee.first_name + " " + tutee.last_name
             no_email_addresses.append(name)
-        #Check if there are any issues the tutor should see in the overview
+        # Check if there are any issues the tutor should see in the overview
         performances = Performance.objects.filter(student=tutee)
         problems = []
         for performance in performances:
@@ -962,12 +953,12 @@ def tutee_list(request):
                             performance.attendance[last_session] == '0'
                             and performance.attendance[session_before_last] ==
                             '0'
-                        ):
+                    ):
                         problemstring = (
-                                "Did not attend at least the last two " +
-                                "sessions in " +
-                                module.title
-                                )
+                            "Did not attend at least the last two " +
+                            "sessions in " +
+                            module.title
+                            )
                         problems.append(problemstring)
             if module.is_foundational and tutee.qld:
                 for assessment in range(1, 7):
@@ -976,11 +967,11 @@ def tutee_list(request):
                         if (performance.get_assessment_result(assessment) <
                                 PASSMARK):
                             problemstring = (
-                                    "Failed " +
-                                    module.get_assessment_title(assessment) +
-                                    " for " +
-                                    module.title
-                                    )
+                                "Failed " +
+                                module.get_assessment_title(assessment) +
+                                " for " +
+                                module.title
+                                )
                             problems.append(problemstring)
                 if performance.exam:
                     if performance.exam < PASSMARK:
@@ -994,15 +985,16 @@ def tutee_list(request):
         if len(problems) > 0:
             problem_students[tutee] = problems
 
-    return render_to_response('tutee_list.html',
-            {
-                'tutees': tutees,
-                'email_addresses': email_addresses,
-                'no_email_addresses': no_email_addresses,
-                'problem_students': problem_students
-            },
-            context_instance=RequestContext(request)
-            )
+    return render_to_response(
+        'tutee_list.html',
+        {
+            'tutees': tutees,
+            'email_addresses': email_addresses,
+            'no_email_addresses': no_email_addresses,
+            'problem_students': problem_students
+        },
+        context_instance=RequestContext(request)
+        )
 
 
 @login_required
@@ -1017,48 +1009,49 @@ def delete_tutee_meeting(request, meeting_id):
         return HttpResponseRedirect(url)
     else:
         printstring = (
-                'Only the tutor in question or an administrator ' +
-                'can delete this.'
-                )
+            'Only the tutor in question or an administrator ' +
+            'can delete this.'
+            )
         title = 'CCCU Law DB: Not allowed'
         return render_to_response(
-                'blank.html', 
-                {'printstring': printstring, 'title': title},
-                context_instance = RequestContext(request))
+            'blank.html',
+            {'printstring': printstring, 'title': title},
+            context_instance=RequestContext(request))
 
 
 @login_required
 @user_passes_test(is_admin)
 def all_tutees(request, year):
     """Gives an overview of all tutee meetings for a year"""
-    students = Student.objects.filter(year = year)
+    students = Student.objects.filter(year=year)
     tutee_dict = {}
     most_sessions = 0
     for student in students:
         sessions = []
         try:
-            tutee_sessions = Tutee_Session.objects.filter(tutee = student)
+            tutee_sessions = Tutee_Session.objects.filter(tutee=student)
             for session in tutee_sessions:
                 sessions.append(session)
         except Tutee_Session.DoesNotExist:
             pass
         if len(sessions) > most_sessions:
             most_sessions = len(sessions)
-        tutee_dict[student] = sessions 
-    return render_to_response('all_tutees.html',
-            {
-                'year': year,
-                'tutee_dict': tutee_dict,
-                'most_sessions': most_sessions
-            },
-            context_instance=RequestContext(request)
-            )
+        tutee_dict[student] = sessions
+    return render_to_response(
+        'all_tutees.html',
+        {
+            'year': year,
+            'tutee_dict': tutee_dict,
+            'most_sessions': most_sessions
+        },
+        context_instance=RequestContext(request)
+        )
 
 
 @login_required
 @user_passes_test(is_teacher)
 def add_student(request):
-    """Form to add a student"""
+    """Displays and processes a form to add a student"""
     if request.method == 'POST':
         form = StudentForm(data=request.POST)
         if form.is_valid():
@@ -1067,16 +1060,16 @@ def add_student(request):
     else:
         form = StudentForm()
     return render_to_response(
-        'student_form.html', 
-        {'student_form': form, 'add': True}, 
-        context_instance = RequestContext(request)
+        'student_form.html',
+        {'student_form': form, 'add': True},
+        context_instance=RequestContext(request)
     )
 
 
 @login_required
 @user_passes_test(is_teacher)
 def edit_student(request, student_id):
-    """Form to edit a student"""
+    """Displays and processes a form to edit a student"""
     student = Student.objects.get(student_id=student_id)
     if request.method == 'POST':
         form = StudentForm(instance=student, data=request.POST)
@@ -1086,22 +1079,22 @@ def edit_student(request, student_id):
     else:
         form = StudentForm(instance=student)
     return render_to_response(
-        'student_form.html', 
-        {'student_form': form, 'add': False, 'student': student}, 
-        context_instance = RequestContext(request)
+        'student_form.html',
+        {'student_form': form, 'add': False, 'student': student},
+        context_instance=RequestContext(request)
     )
 
 
 @login_required
 @user_passes_test(is_teacher)
 def mark(request, module_id, year, assessment):
-    """Simple mark form (only mark, no feedback"""
+    """Simple mark form (only marks, no feedback)"""
     module = Module.objects.get(code=module_id, year=year)
     students = module.student_set.all()
     performances = {}
     for student in students:
         performance = Performance.objects.get(student=student, module=module)
-        student_name = student.last_name + ", " + student.first_name 
+        student_name = student.last_name + ", " + student.first_name
         performances[student_name] = performance
     if assessment == "exam":
         to_change = 9
@@ -1117,32 +1110,31 @@ def mark(request, module_id, year, assessment):
                     mark = int(tmp)
                     if mark in range(0, 100):
                         performance = Performance.objects.get(
-                                student=student, module=module)
-                        if (mark != 
+                            student=student, module=module)
+                        if (mark !=
                                 performance.get_assessment_result(to_change)):
                             performance.set_assessment_result(to_change, mark)
                 except ValueError:
                     pass
         return HttpResponseRedirect(module.get_absolute_url())
     return render_to_response(
-            'mark.html',
-            {
-                'current_module': module,
-                'performances': performances,
-                'to_mark': to_change
-            },
-            context_instance = RequestContext(request)
-            )
+        'mark.html',
+        {
+            'current_module': module,
+            'performances': performances,
+            'to_mark': to_change
+        },
+        context_instance=RequestContext(request)
+        )
 
 
 @login_required
 @user_passes_test(is_teacher)
 def attendance(request, module_id, year, group):
-    """Modify attendance record for a group"""
+    """Displays and processes attendance record for a group"""
     module = Module.objects.get(code=module_id, year=year)
     no_of_sessions = range(module.get_number_of_sessions())
     students = module.student_set.all()
-    #students.order_by('last_name')
     if group == "all":
         students_in_group = students
         seminar_group = None
@@ -1151,14 +1143,14 @@ def attendance(request, module_id, year, group):
         students_in_group = []
         for student in students:
             performance = Performance.objects.get(
-                    student=student, module=module)
+                student=student, module=module)
             if performance.seminar_group == int(group):
                 students_in_group.append(student)
     if request.method == 'POST':
         last_session = 0
         for student in students_in_group:
             performance = Performance.objects.get(
-                    student=student, module=module)
+                student=student, module=module)
             counter = 0
             attendance = ""
             while counter < module.get_number_of_sessions():
@@ -1180,7 +1172,7 @@ def attendance(request, module_id, year, group):
                 except MultiValueDictKeyError:
                     attendance = attendance + "0"
                 counter += 1
-            performance.attendance  = attendance
+            performance.attendance = attendance
             performance.save()
         module.sessions_recorded = last_session
         module.save()
@@ -1196,7 +1188,7 @@ def attendance(request, module_id, year, group):
         attendances = {}
         for student in students_in_group:
             performance = Performance.objects.get(
-                    student=student, module=module)
+                student=student, module=module)
             attendance = {}
             counter = 0
             for session in performance.attendance:
@@ -1210,18 +1202,18 @@ def attendance(request, module_id, year, group):
             attendances[student] = attendance
 
     return render_to_response(
-            'attendance.html',
-            {
-                'module': module,
-                'attendances': attendances,
-                'seminar_group': seminar_group,
-                'sessions': no_of_sessions,
-                'header': header
-            },
-            context_instance = RequestContext(request)
-            )
+        'attendance.html',
+        {
+            'module': module,
+            'attendances': attendances,
+            'seminar_group': seminar_group,
+            'sessions': no_of_sessions,
+            'header': header
+        },
+        context_instance=RequestContext(request)
+        )
 
-    
+
 @login_required
 @user_passes_test(is_teacher)
 def seminar_groups(request, module_id, year):
@@ -1232,8 +1224,8 @@ def seminar_groups(request, module_id, year):
     for student in students:
         performance = Performance.objects.get(student=student, module=module)
         performances[student] = performance
-    random_options={}
-    for i in range(1,10): 
+    random_options = {}
+    for i in range(1, 10):
         # Up to 10 Seminar groups. Create a dictionary that lists the options
         # and the maximum number of students per group
         all = len(students)
@@ -1241,7 +1233,7 @@ def seminar_groups(request, module_id, year):
         left = all % i
         if left > 0:
             number = number + 1
-        random_options[i]=number
+        random_options[i] = number
 
     if request.method == 'POST':
         for student in students:
@@ -1251,21 +1243,21 @@ def seminar_groups(request, module_id, year):
                     seminar_group = int(tmp)
                     if seminar_group in range(0, 99):
                         performance = Performance.objects.get(
-                                student=student, module=module)
+                            student=student, module=module)
                         performance.seminar_group = seminar_group
                         performance.save()
                 except ValueError:
                         pass
         return HttpResponseRedirect(module.get_absolute_url())
     return render_to_response(
-            'seminar_groups.html',
-            {
-                'module': module,
-                'performances': performances,
-                'random_options': random_options
-            },
-            context_instance = RequestContext(request)
-            )
+        'seminar_groups.html',
+        {
+            'module': module,
+            'performances': performances,
+            'random_options': random_options
+        },
+        context_instance=RequestContext(request)
+        )
 
 
 @login_required
@@ -1279,7 +1271,7 @@ def assessment_groups(request, module_id, year):
             tmp = request.POST[student.student_id]
             group = int(tmp)
             performance = Performance.objects.get(
-                    student=student, module=module)
+                student=student, module=module)
             if group == 0:
                 performance.group_assessment_group = None
             else:
@@ -1289,14 +1281,14 @@ def assessment_groups(request, module_id, year):
     dictionary = {}
     for student in students:
         performance = Performance.objects.get(student=student, module=module)
-        if performance.group_assessment_group == None:
+        if performance.group_assessment_group is None:
             group = "0"
         else:
             group = str(performance.group_assessment_group)
         if group in dictionary:
             dictionary[group].append(performance)
         else:
-            dictionary[group] = [performance,]
+            dictionary[group] = [performance]
     no_of_students = len(students)
     max_groups = no_of_students / 2
     left = no_of_students % 2
@@ -1304,14 +1296,14 @@ def assessment_groups(request, module_id, year):
         max_groups += 1
 
     return render_to_response(
-            'assessment_groups.html',
-            {
-                'module': module,
-                'dictionary': dictionary,
-                'max_groups': max_groups
-            },
-            context_instance = RequestContext(request)
-            )
+        'assessment_groups.html',
+        {
+            'module': module,
+            'dictionary': dictionary,
+            'max_groups': max_groups
+        },
+        context_instance=RequestContext(request)
+        )
 
 
 @login_required
@@ -1322,10 +1314,10 @@ def lsp_view(request, student_id):
     student = Student.objects.get(student_id=student_id)
     edit = False
     return render_to_response(
-            'lsp.html',
-            {'student': student, 'edit': edit},
-            context_instance = RequestContext(request)
-            )
+        'lsp.html',
+        {'student': student, 'edit': edit},
+        context_instance=RequestContext(request)
+        )
 
 
 @login_required
@@ -1339,17 +1331,17 @@ def lsp_edit(request, student_id):
             form.save()
             return HttpResponseRedirect(student.get_absolute_url())
     else:
-        form = LSPForm(instance = student)
+        form = LSPForm(instance=student)
     return render_to_response(
-            'lsp.html',
-            {
-                'form': form,
-                'student': student,
-                'edit': True,
-                'mdexplanation': MD_EXPLANATION
-            },
-            context_instance = RequestContext(request)
-            )
+        'lsp.html',
+        {
+            'form': form,
+            'student': student,
+            'edit': True,
+            'mdexplanation': MD_EXPLANATION
+        },
+        context_instance=RequestContext(request)
+        )
 
 
 @login_required
@@ -1363,17 +1355,17 @@ def notes_edit(request, student_id):
             form.save()
             return HttpResponseRedirect(student.get_absolute_url())
     else:
-        form = NotesForm(instance = student)
+        form = NotesForm(instance=student)
     return render_to_response(
-            'student_notes.html',
-            {
-                'form': form,
-                'student': student,
-                'edit': True,
-                'mdexplanation': MD_EXPLANATION
-            },
-            context_instance = RequestContext(request)
-            )
+        'student_notes.html',
+        {
+            'form': form,
+            'student': student,
+            'edit': True,
+            'mdexplanation': MD_EXPLANATION
+        },
+        context_instance=RequestContext(request)
+        )
 
 
 @login_required
@@ -1395,7 +1387,7 @@ def add_students_to_module(request, module_id, year):
     else:
         students_from_db = Student.objects.filter(year__lte=3)
     for number in module.eligible:
-        year = int(number) # Find out which students are eligible
+        year = int(number)  # Find out which students are eligible
         meta_stuff = MetaData.objects.get(data_id=1)
         current_year = meta_stuff.current_year
         time_difference = module.year - current_year
@@ -1410,27 +1402,27 @@ def add_students_to_module(request, module_id, year):
     if request.method == 'POST':
         students_to_add = request.POST.getlist('selected_student_id')
         for student_id in students_to_add:
-            student_to_add = Student.objects.get(student_id = student_id)
+            student_to_add = Student.objects.get(student_id=student_id)
             student_to_add.modules.add(module)
             # Generate Performance entry for the student
             performance = Performance(
-                    student = student_to_add,
-                    module = module
+                student=student_to_add,
+                module=module
                 )
             performance.initial_save()
 
         return HttpResponseRedirect(module.get_absolute_url())
     return render_to_response(
-            'add_students_to_module.html',
-            {
-                'module': module,
-                'more_than_one_year': more_than_one_year, 
-                'students': students,
-                'llb': llb,
-                'eligible': eligible
-            },
-            context_instance = RequestContext(request)
-            )
+        'add_students_to_module.html',
+        {
+            'module': module,
+            'more_than_one_year': more_than_one_year,
+            'students': students,
+            'llb': llb,
+            'eligible': eligible
+        },
+        context_instance=RequestContext(request)
+        )
 
 
 @login_required
@@ -1493,7 +1485,7 @@ def parse_csv(request):
                         counter += 1
                     try:
                         current = Student.objects.get(
-                                student_id=result['student_id'])
+                            student_id=result['student_id'])
                         if 'first_name' in result:
                             current.first_name = result['first_name']
                         if 'last_name' in result:
@@ -1511,25 +1503,25 @@ def parse_csv(request):
                             current.email = result['email']
                         if 'course' in result:
                             parse_result = (
-                                    result['course'].split("-")[-1].strip())
+                                result['course'].split("-")[-1].strip())
                             courses = Course.objects.filter(title=parse_result)
                             if courses:
                                 course = courses[0]
                                 current.course = course
                             else:
-                                new_course = Course(title = parse_result)
+                                new_course = Course(title=parse_result)
                                 new_course.save()
                                 current.course = new_course
                         if 'qld' in result:
                             current.qld = result['qld']
                         if 'tutor' in result:
                             tutor_results = User.objects.filter(
-                                    name=result['tutor'])
+                                name=result['tutor'])
                             tutor = tutors[0]
                             current.tutor = tutor
                         if 'notes' in result:
                             current.notes = (
-                                    current.notes + '\n' + result['notes'])
+                                current.notes + '\n' + result['notes'])
                         if 'lsp' in result:
                             current.lsp = result['lsp']
                         if 'permanent_email' in result:
@@ -1574,22 +1566,22 @@ def parse_csv(request):
                             current.home_address = ""
                             if 'home_address1' in result:
                                 current.home_address += (
-                                        result['home_address1'] + "\n")
+                                    result['home_address1'] + "\n")
                             if 'home_address2' in result:
                                 current.home_address += (
-                                        result['home_address2'] + "\n")
+                                    result['home_address2'] + "\n")
                             if 'home_address3' in result:
                                 current.home_address += (
-                                        result['home_address3'] + "\n")
+                                    result['home_address3'] + "\n")
                             if 'home_address3' in result:
                                 current.home_address += (
-                                        result['home_address4'] + "\n")
+                                    result['home_address4'] + "\n")
                             if 'home_address5' in result:
                                 current.home_address += (
-                                        result['home_address5'] + "\n")
+                                    result['home_address5'] + "\n")
                         current.save()
 
-                    except Student.DoesNotExist: # Enter new student
+                    except Student.DoesNotExist:  # Enter new student
                         if 'first_name' not in result:
                             result['first_name'] = ""
                         if 'last_name' not in result:
@@ -1602,7 +1594,7 @@ def parse_csv(request):
                             tmp = result['year']
                             result['year'] = int(tmp[0])
                         if 'is_part_time' not in result:
-                            result['is_part_time'] = False 
+                            result['is_part_time'] = False
                         if 'email' not in result:
                             result['email'] = ""
                         if 'phone_no' not in result:
@@ -1611,14 +1603,13 @@ def parse_csv(request):
                             result['course'] = None
                         else:
                             parse_result = (
-                                    result['course'].split("-")[-1].strip())
-                            courses = Course.objects.filter(
-                                    title = parse_result)
+                                result['course'].split("-")[-1].strip())
+                            courses = Course.objects.filter(title=parse_result)
                             if courses:
                                 course = courses[0]
                                 result['course'] = course
                             else:
-                                new_course = Course(title = parse_result)
+                                new_course = Course(title=parse_result)
                                 new_course.save()
                                 result['course'] = new_course
                         result['modules'] = ""
@@ -1662,22 +1653,22 @@ def parse_csv(request):
                             home_address += result['home_address5'] + "\n"
 
                         new = Student(
-                                student_id = result['student_id'],
-                                first_name = result['first_name'],
-                                last_name = result['last_name'],
-                                year = result['year'],
-                                is_part_time = result['is_part_time'],
-                                email = result['email'],
-                                course = result['course'],
-                                qld = result['qld'],
-                                notes = result['notes'],
-                                highlighted = result['highlighted'],
-                                active = result['active'],
-                                lsp = result['lsp'],
-                                permanent_email = result['permanent_email'],
-                                phone_no = result['phone_no'],
-                                address = address,
-                                home_address = home_address
+                            student_id=result['student_id'],
+                            first_name=result['first_name'],
+                            last_name=result['last_name'],
+                            year=result['year'],
+                            is_part_time=result['is_part_time'],
+                            email=result['email'],
+                            course=result['course'],
+                            qld=result['qld'],
+                            notes=result['notes'],
+                            highlighted=result['highlighted'],
+                            active=result['active'],
+                            lsp=result['lsp'],
+                            permanent_email=result['permanent_email'],
+                            phone_no=result['phone_no'],
+                            address=address,
+                            home_address=home_address
                             )
                         new.save()
                         successful_entrys += 1
@@ -1686,9 +1677,9 @@ def parse_csv(request):
     else:
         form = CSVParseForm()
     return render_to_response(
-            'parse_csv.html',
-            {'form': form, 'csv_list': table, 'first_row': first_row},
-            context_instance = RequestContext(request)
+        'parse_csv.html',
+        {'form': form, 'csv_list': table, 'first_row': first_row},
+        context_instance=RequestContext(request)
         )
 
 
@@ -1709,9 +1700,11 @@ def upload_csv(request):
             return HttpResponseRedirect('/parse_csv')
     else:
         form = CSVUploadForm()
-    return render_to_response('upload_csv.html',
-            {'form': form},
-            context_instance=RequestContext(request))
+    return render_to_response(
+        'upload_csv.html',
+        {'form': form},
+        context_instance=RequestContext(request)
+        )
 
 
 @login_required
@@ -1721,14 +1714,14 @@ def import_success(request):
     module_dict = functions.modules_for_menubar()
     successful_entrys = request.session.get('number_of_imports')
     printstring = (
-            'CSV File imported successfully: ' +
-            '%s students added to the database' % (successful_entrys)
-            )
+        'CSV File imported successfully: ' +
+        '%s students added to the database' % (successful_entrys)
+        )
     title = 'CCCU Law DB: Data'
     return render_to_response(
-            'blank.html', 
-            {'printstring': printstring, 'title': title},
-            context_instance = RequestContext(request)
+        'blank.html',
+        {'printstring': printstring, 'title': title},
+        context_instance=RequestContext(request)
         )
 
 
@@ -1738,8 +1731,8 @@ def import_success(request):
 @login_required
 @user_passes_test(is_student)
 def student_marks(request):
-    """Allows student to see their own mark"""
-    student = Student.objects.get(belongs_to = request.user)
+    """Allows student to see their own mark and feedback"""
+    student = Student.objects.get(belongs_to=request.user)
     all_performances = Performance.objects.filter(student=student)
     sorted_performances = {}
     for performance in all_performances:
@@ -1751,7 +1744,7 @@ def student_marks(request):
             output['assessment_1'] = performance.assessment_1
             try:
                 marksheet = Marksheet.objects.get(
-                        student=student, module=module, assessment=1)
+                    student=student, module=module, assessment=1)
                 if marksheet.comments:
                     output['assessment_1_marksheet'] = True
             except Marksheet.DoesNotExist:
@@ -1760,7 +1753,7 @@ def student_marks(request):
             output['assessment_2'] = performance.assessment_2
             try:
                 marksheet = Marksheet.objects.get(
-                        student=student, module=module, assessment=2)
+                    student=student, module=module, assessment=2)
                 if marksheet.comments:
                     output['assessment_2_marksheet'] = True
             except Marksheet.DoesNotExist:
@@ -1769,7 +1762,7 @@ def student_marks(request):
             output['assessment_3'] = performance.assessment_3
             try:
                 marksheet = Marksheet.objects.get(
-                        student=student, module=module, assessment=3)
+                    student=student, module=module, assessment=3)
                 if marksheet.comments:
                     output['assessment_3_marksheet'] = True
             except Marksheet.DoesNotExist:
@@ -1778,7 +1771,7 @@ def student_marks(request):
             output['assessment_4'] = performance.assessment_4
             try:
                 marksheet = Marksheet.objects.get(
-                        student=student, module=module, assessment=4)
+                    student=student, module=module, assessment=4)
                 if marksheet.comments:
                     output['assessment_4_marksheet'] = True
             except Marksheet.DoesNotExist:
@@ -1787,7 +1780,7 @@ def student_marks(request):
             output['assessment_5'] = performance.assessment_5
             try:
                 marksheet = Marksheet.objects.get(
-                        student=student, module=module, assessment=5)
+                    student=student, module=module, assessment=5)
                 if marksheet.comments:
                     output['assessment_5_marksheet'] = True
             except Marksheet.DoesNotExist:
@@ -1796,18 +1789,22 @@ def student_marks(request):
             output['assessment_6'] = performance.assessment_6
             try:
                 marksheet = Marksheet.objects.get(
-                        student=student, module=module, assessment=6)
+                    student=student, module=module, assessment=6)
                 if marksheet.comments:
                     output['assessment_6_marksheet'] = True
             except Marksheet.DoesNotExist:
                 pass
+        if module.exam_available:
+            output['exam'] = performance.exam
+        else:
+            output['exam'] = None
         if sorted_performances.get(year):
             sorted_performances[year].append(output)
         else:
-            sorted_performances[year] = [output,]
+            sorted_performances[year] = [output]
 
     return render_to_response(
-            'student_own_marks.html',
-            {'student': student, 'sorted_performances': sorted_performances},
-            context_instance = RequestContext(request)
+        'student_own_marks.html',
+        {'student': student, 'sorted_performances': sorted_performances},
+        context_instance=RequestContext(request)
         )
