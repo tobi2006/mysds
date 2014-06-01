@@ -70,7 +70,7 @@
             </td>
             {% if current_module.assessment_1_title %}
                 <td id="{{ performance.student.student_id }}_1" class="col-md-1">
-                    {% if to_mark == 1 %}
+                    {% if to_mark == '1' %}
                         {% if performance.assessment_1 %}
                         <input type="text" class="form-control" minlenght="5" name="{{ performance.student.student_id }}" value="{{ performance.assessment_1 }}" onchange="process(this, '{{ performance.student.student_id }}')">
                         {% else %}
@@ -83,7 +83,7 @@
             {% endif %}
             {% if current_module.assessment_2_title %}
                 <td id="{{ performance.student.student_id }}_2" class="col-md-1">
-                    {% if to_mark == 2 %}
+                    {% if to_mark == '2' %}
                         {% if performance.assessment_2 %}
                         <input type="text" class="form-control" name="{{ performance.student.student_id }}" value="{{ performance.assessment_2 }}" onchange="process(this, '{{ performance.student.student_id }}')">
                         {% else %}
@@ -96,7 +96,7 @@
             {% endif %}
             {% if current_module.assessment_3_title %}
                 <td id="{{ performance.student.student_id }}_3" class="col-md-1">
-                    {% if to_mark == 3 %}
+                    {% if to_mark == '3' %}
                         {% if performance.assessment_3 %}
                             <input type="text" class="form-control" name="{{ performance.student.student_id }}" value="{{ performance.assessment_3 }}" onchange="process(this, '{{ performance.student.student_id }}')">
                         {% else %}
@@ -109,7 +109,7 @@
             {% endif %}
             {% if current_module.assessment_4_title %}
                 <td id="{{ performance.student.student_id }}_4" class="col-md-1">
-                    {% if to_mark == 4 %}
+                    {% if to_mark == '4' %}
                         {% if performance.assessment_4 %}
                             <input type="text" class="form-control" name="{{ performance.student.student_id }}" value="{{ performance.assessment_4 }}" onchange="process(this, '{{ performance.student.student_id }}')">
                         {% else %}
@@ -122,7 +122,7 @@
             {% endif %}
             {% if current_module.assessment_5_title %}
                 <td id="{{ performance.student.student_id }}_5" class="col-md-1">
-                    {% if to_mark == 5 %}
+                    {% if to_mark == '5' %}
                         {% if performance.assessment_5 %}
                             <input type="text" class="form-control" name="{{ performance.student.student_id }}" value="{{ performance.assessment_5 }}" onchange="process(this, '{{ performance.student.student_id }}')">
                         {% else %}
@@ -135,7 +135,7 @@
             {% endif %}
             {% if current_module.assessment_6_title %}
                 <td id="{{ performance.student.student_id }}_6" class="col-md-1">
-                    {% if to_mark == 6 %}
+                    {% if to_mark == '6' %}
                         {% if performance.assessment_6 %}
                             <input type="text" class="form-control" name="{{ performance.student.student_id }}" value="{{ performance.assessment_6 }}" onchange="process(this, '{{ performance.student.student_id }}')">
                         {% else %}
@@ -148,7 +148,7 @@
             {% endif %}
             {% if current_module.exam_value %}
                 <td id="{{ performance.student.student_id }}_e" class="col-md-1">
-                    {% if to_mark == 9 %}
+                    {% if to_mark == 'exam' %}
                         {% if performance.exam %}
                             <input type="text" class="form-control" name="{{ performance.student.student_id }}" value="{{ performance.exam }}" onchange="process(this, '{{ performance.student.student_id }}')">
                         {% else %}

@@ -65,6 +65,7 @@ def is_pastoral(user):
     else:
         return False
 
+
 # Module Functions
 
 
@@ -1096,11 +1097,6 @@ def mark(request, module_id, year, assessment):
         performance = Performance.objects.get(student=student, module=module)
         student_name = student.last_name + ", " + student.first_name
         performances[student_name] = performance
-    if assessment == "exam":
-        to_change = 9
-    else:
-        tmp = assessment.split("_")
-        to_change = int(tmp[1])
     if request.method == 'POST':
         students = module.student_set.all()
         for student in students:
@@ -1112,8 +1108,8 @@ def mark(request, module_id, year, assessment):
                         performance = Performance.objects.get(
                             student=student, module=module)
                         if (mark !=
-                                performance.get_assessment_result(to_change)):
-                            performance.set_assessment_result(to_change, mark)
+                                performance.get_assessment_result(assessment)):
+                            performance.set_assessment_result(assessment, mark)
                 except ValueError:
                     pass
         return HttpResponseRedirect(module.get_absolute_url())
@@ -1122,7 +1118,7 @@ def mark(request, module_id, year, assessment):
         {
             'current_module': module,
             'performances': performances,
-            'to_mark': to_change
+            'to_mark': assessment
         },
         context_instance=RequestContext(request)
         )
