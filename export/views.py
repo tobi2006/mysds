@@ -1817,6 +1817,59 @@ def export_anonymous_exam_marks(request, year):
     doc.build(elements)
     return response
 
+
+@login_required
+@user_passes_test(is_teacher)
+def export_anonymous_exam_marks(request, code, year, assessment):
+    """Gives an overview of all anonymous marks in the module"""
+    module = Module.objects.get(code=code, year=year)
+    response = HttpResponse(mimetype='application/pdf')
+    module_string = module.title.replace(" ", "_")
+    filename_string = 'attachment; filename='
+    filename_string += module_string
+    filename_string += '.pdf'
+    response['Content-Disposition'] = filename_string
+    doc = BaseDocTemplate(response)
+    elements = []
+    styles = getSampleStyleSheet()
+    frame1 = Frame(
+            doc.leftMargin, doc.bottomMargin, doc.width/2-6,
+            doc.height, id='col1')
+    frame2 = Frame(
+            doc.leftMargin+doc.width/2+6, doc.bottomMargin, doc.width/2-6,
+            doc.height, id='col2')
+    d = formatted_date(date.today())
+    datenow = "Exported from MySDS, the CCCU Law DB on " + d 
+    heading = (
+            "Anonymous Marks for " + module.title + " (" +
+            str(module.year) + "/" + str(module.year + 1) +") - ")
+    if assessment == 'exam':
+        heading += "Exam"
+    else:
+        assessment = int(assessment)
+        heading += module.get_assessment_title(assessment)
+    elements.append(Paragraph(heading, styles['Heading2']))
+    elements.append(Spacer(1,20))
+    data = []
+    header = ['Exam ID', 'Mark']
+    data.append(header)
+    marks = AnonymousMarks.objects.filter(module=module)
+    for mark in marks:
+        row = [mark.exam_id, mark.get_assessment_result(assessment)]
+        data.append(row)
+    table = Table(data, repeatRows=1)
+    table.setStyle(
+            TableStyle([
+                    ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
+                    ('BACKGROUND',(0,0),(-1,0),colors.lightgrey),
+                    ('BOX', (0,0), (-1,-1), 0.25, colors.black)])
+            )
+    elements.append(table)
+    elements.append(paragraph(datenow))
+    doc.addPageTemplates([PageTemplate(id='TwoCol',frames=[frame1,frame2]), ])
+    doc.build(elements)
+    return response
+
 @login_required
 @user_passes_test(is_teacher)
 def export_marks(request, code, year):
