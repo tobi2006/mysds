@@ -1890,7 +1890,11 @@ def export_marks(request, code, year):
     styles = getSampleStyleSheet()
     d = formatted_date(date.today())
     datenow = "Exported from MySDS, the CCCU Law DB on " + d
-    heading = "Marks for " + module
+    modulestring = (
+            module.title + ' (' + str(module.year) + '/' +
+            str(module.year + 1) + ')'
+            )
+    heading = "Marks for " + modulestring
     elements.append(Paragraph(heading, styles['Heading2']))
     elements.append(Spacer(1,20))
     data = []
