@@ -424,6 +424,9 @@ class Module(models.Model):
     def get_anonymous_mark_url(self):
         return reverse('mark_anon', args=[self.code, str(self.year)])
 
+    def get_de_anonymize_url(self):
+        return reverse('de_anonymize_no', args=[self.code, str(self.year)])
+
     def get_attendance_url(self):
         return reverse('attendance_no', args=[self.code, str(self.year)])
 

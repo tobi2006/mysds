@@ -190,9 +190,9 @@ def mark_anonymously(request, code, year, assessment):
                 if mark in range(0, 100):
                     performance = AnonymousMarks.objects.get(
                         exam_id=exam_id, module=module)
-                    if (performance.get_assessment_result(assessment) != 
+                    if (performance.get_assessment_result(assessment) !=
                             mark):
-                    # Otherwise, new timestamp would be set
+                        # Otherwise, new timestamp would be set
                         performance.set_assessment_result(assessment, mark)
             except ValueError:
                 pass
@@ -208,17 +208,23 @@ def mark_anonymously(request, code, year, assessment):
         )
 
 
-def de_anonymise_module(module):
+@login_required
+@user_passes_test(is_teacher)
+def de_anonymize(request, code, year, assessment):
     """Goes through a module and de-anonymizes all assessments"""
+    module = Module.objects.get(code=code, year=year)
     all_anonymous_marks = AnonymousMarks.objects.filter(module=module)
     for a in all_anonymous_marks:
         student = Student.objects.get(exam_id=a.exam_id)
         p = Performance.objects.get(student=student, module=module)
-        # assessment_range = [1, 2, 3, 4, 5, 6, 'exam'] (for all assessments)
-        assessment_range = ['exam']
-        for i in assessment_range:
+        if assessment == 'all':
+            assessments = ['1', '2', '3', '4', '5', '6', 'exam']
+        else:
+            assessments = [assessment]
+        for i in assessments:
             if a.get_assessment_result(i):
-                if a.get_assessment_result(i) != p.get_assessment_result(i):
+                if (a.get_assessment_result(i) !=
+                        p.get_assessment_result(i)):
                     if p.get_assessment_modified(i):
                         if (a.get_assessment_modified(i) >
                                 p.get_assessment_modified(i)):
@@ -233,7 +239,7 @@ def de_anonymise_module(module):
                             a.get_assessment_result(i),
                             a.get_assessment_modified(i)
                             )
-        for i in assessment_range:
+        for i in assessments:
             if a.get_assessment_result(i, r=True):
                 if (a.get_assessment_result(i, r=True) !=
                         p.get_assessment_result(i, r=True)):
@@ -253,7 +259,7 @@ def de_anonymise_module(module):
                             a.get_assessment_modified(i, r=True),
                             r=True
                             )
-        for i in assessment_range:
+        for i in assessments:
             if a.get_assessment_result(i, q=True):
                 if (a.get_assessment_result(i, q=True) !=
                         p.get_assessment_result(i, q=True)):
@@ -274,43 +280,42 @@ def de_anonymise_module(module):
                             a.get_assessment_modified(i, q=True),
                             q=True
                             )
-    return True
-
-
-@login_required
-@user_passes_test(is_admin)
-def write_anonymous_marks_to_db(request, confirmation):
-    """De-Anonymises all marks for the current year"""
-    if confirmation == 'confirm':
-        printstring = (
-            'This function will write the anonymous marks ' +
-            'entered so far into the database. After this, the marks of ' +
-            'all students will be visible. <br><br>' +
-            'Are you sure you want to go ahead?<br><br>' +
-            '<a href="/write_anonymous_marks_to_db/de_anonymise" ' +
-            'class="btn btn-primary" type="button">Go ahead</a>'
-            )
-        title = "Confirm De-Anonymisation"
-        return render_to_response(
-            'blank.html',
-            {'printstring': printstring, 'title': title},
-            context_instance=RequestContext(request))
-
-    elif confirmation == 'de_anonymise':
-        metadata = MetaData.objects.get(id=1)
-        year = metadata.current_year
-        year_string = metadata.academic_year_string()
-        modules = Module.objects.filter(year=year)
-        for module in modules:
-            if de_anonymise_module(module):
-                printstring = (
-                    'The anonymous marks for ' +
-                    '%s ' % (year_string) +
-                    'have been transferred to the database.'
-                    )
-            title = "CCCU Law DB"
-
-    return render_to_response(
-        'blank.html',
-        {'printstring': printstring, 'title': title},
-        context_instance=RequestContext(request))
+    return HttpResponseRedirect(module.get_absolute_url())
+#
+# @login_required
+# @user_passes_test(is_admin)
+# def write_anonymous_marks_to_db(request, confirmation):
+#    """De-Anonymises all marks for the current year"""
+#    if confirmation == 'confirm':
+#        printstring = (
+#            'This function will write the anonymous marks ' +
+#            'entered so far into the database. After this, the marks of ' +
+#            'all students will be visible. <br><br>' +
+#            'Are you sure you want to go ahead?<br><br>' +
+#            '<a href="/write_anonymous_marks_to_db/de_anonymise" ' +
+#            'class="btn btn-primary" type="button">Go ahead</a>'
+#            )
+#        title = "Confirm De-Anonymisation"
+#        return render_to_response(
+#            'blank.html',
+#            {'printstring': printstring, 'title': title},
+#            context_instance=RequestContext(request))
+#
+#    elif confirmation == 'de_anonymise':
+#        metadata = MetaData.objects.get(id=1)
+#        year = metadata.current_year
+#        year_string = metadata.academic_year_string()
+#        modules = Module.objects.filter(year=year)
+#        for module in modules:
+#            if de_anonymise_module(module):
+#                printstring = (
+#                    'The anonymous marks for ' +
+#                    '%s ' % (year_string) +
+#                    'have been transferred to the database.'
+#                    )
+#            title = "CCCU Law DB"
+#
+#    return render_to_response(
+#        'blank.html',
+#        {'printstring': printstring, 'title': title},
+#        context_instance=RequestContext(request))

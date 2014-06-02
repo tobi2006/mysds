@@ -129,11 +129,14 @@
                         Enter / Change Marks Exam
                     </a>
                 </li>
-            {% endif %}
-            {% if module.exam_value %}
                 <li>
                     <a href="{{ module.get_anonymous_mark_url }}exam">
                         Enter / Change Anonymous Exam Marks
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ module.get_de_anonymize_url}}exam">
+                        De-Anonymise Exam
                     </a>
                 </li>
             {% endif %}
@@ -679,4 +682,4 @@
 {% endblock %}
 
 
-{% block sortorder %}[[1,0],[0,0]]{% endblock %}
+{% block sortorder %}[[2,0],[0,0]]{% endblock %}

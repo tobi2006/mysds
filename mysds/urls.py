@@ -29,6 +29,7 @@ urlpatterns += patterns('mysds.views',
     url(r'^all_tutees/$', 'na', name = 'all_tutees_year'), #Dummy to enable url method
     url(r'^attendance/(\w+)/(\d{4})/$', 'na', name = 'attendance_no'), #Dummy to enable url method
     url(r'^delete_tutee_meeting/$', 'na', name='delete_tutee_meeting_no'), #Dummy to enable url method
+    url(r'^de_anonymize/(\w+)/(\d{4})/$', 'na', name = 'de_anonymize_no'), # Dummy to enable url method
     url(r'^export_anonymous_exam_marks/$', 'na', name='export_anonymous_exam_marks_year'), #Dummy to enable url method
     url(r'^mark/(\w+)/(\d{4})/$', 'na', name = 'mark_no'), #Dummy to enable url method
     url(r'^mark_anonymously/(\w+)/(\d{4})/$', 'na', name = 'mark_anon'), #Dummy to enable url method
@@ -80,8 +81,8 @@ urlpatterns += patterns('anonymous_marking.views',
     url(r'^anonymous_marking_admin/$', 'anonymous_marking_admin', name = 'anonymous_marking_admin'),
     url(r'^edit_anon_ids/$', 'edit_anon_ids', name = 'edit_anon_ids'),
     url(r'^mark_anonymously/(\w+)/(\d{4})/(\w+)/$', 'mark_anonymously', name = 'mark_anonymously'),
+    url(r'^de_anonymize/(\w+)/(\d{4})/(\w+)/$', 'de_anonymize', name = 'de_anonymize'),
     url(r'^upload_anon_ids/$', 'upload_anon_ids', name = 'upload_anon_ids'),
-    url(r'^write_anonymous_marks_to_db/(\w+)/$', 'write_anonymous_marks_to_db', name = 'write_anonymous_marks_to_db'),
 )
 
 urlpatterns += patterns('feedback.views',
