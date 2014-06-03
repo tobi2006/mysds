@@ -1765,7 +1765,7 @@ def export_attendance_sheet(request, code, year):
      
 @login_required
 @user_passes_test(is_admin)
-def export_anonymous_exam_marks(request, year):
+def export_all_anonymous_exam_marks(request, year):
     """Gives an overview of all anonymous marks in the year"""
     modules = Module.objects.filter(year=year)
     modules_to_use = []
@@ -1820,8 +1820,8 @@ def export_anonymous_exam_marks(request, year):
 
 @login_required
 @user_passes_test(is_teacher)
-def export_anonymous_exam_marks(request, code, year, assessment):
-    """Gives an overview of all anonymous marks in the module"""
+def export_anonymous_marks(request, code, year, assessment):
+    """Gives an overview of anonymous marks for an assessment"""
     module = Module.objects.get(code=code, year=year)
     response = HttpResponse(mimetype='application/pdf')
     module_string = module.title.replace(" ", "_")
@@ -1865,6 +1865,7 @@ def export_anonymous_exam_marks(request, code, year, assessment):
                     ('BOX', (0,0), (-1,-1), 0.25, colors.black)])
             )
     elements.append(table)
+    elements.append(Spacer(1,20))
     elements.append(paragraph(datenow))
     doc.addPageTemplates([PageTemplate(id='TwoCol',frames=[frame1,frame2]), ])
     doc.build(elements)

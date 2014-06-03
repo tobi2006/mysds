@@ -30,7 +30,8 @@ urlpatterns += patterns('mysds.views',
     url(r'^attendance/(\w+)/(\d{4})/$', 'na', name = 'attendance_no'), #Dummy to enable url method
     url(r'^delete_tutee_meeting/$', 'na', name='delete_tutee_meeting_no'), #Dummy to enable url method
     url(r'^de_anonymize/(\w+)/(\d{4})/$', 'na', name = 'de_anonymize_no'), # Dummy to enable url method
-    url(r'^export_anonymous_exam_marks/$', 'na', name='export_anonymous_exam_marks_year'), #Dummy to enable url method
+    url(r'^export_all_anonymous_exam_marks/$', 'na', name='export_anonymous_exam_marks_year'), #Dummy to enable url method
+    url(r'^export_anonymous_marks/(\w+)/(\d{4})/$', 'na', name='export_anonymous_marks_no'), #Dummy to enable url method
     url(r'^mark/(\w+)/(\d{4})/$', 'na', name = 'mark_no'), #Dummy to enable url method
     url(r'^mark_anonymously/(\w+)/(\d{4})/$', 'na', name = 'mark_anon'), #Dummy to enable url method
     url(r'^toggle_assessment_availability/(\w+)/(\d{4})/$', 'na', name = 'toggle_assessment'), #Dummy to enable url method
@@ -70,11 +71,11 @@ urlpatterns += patterns('database.views',
 )
 
 urlpatterns += patterns('export.views',
-    url(r'^export_anonymous_exam_marks/(\d+)/$', 'export_anonymous_exam_marks', name = 'export_anonymous_exam_marks'),
+    url(r'^export_all_anonymous_exam_marks/(\d+)/$', 'export_all_anonymous_exam_marks', name = 'export_all_anonymous_exam_marks'),
+    url(r'^export_anonymous_marks/(\w+)/(\d+)/(\w+)$', 'export_anonymous_marks', name = 'export_anonymous_marks'),
     url(r'^export_attendance_sheet/(\w+)/(\d+)/$', 'export_attendance_sheet', name = 'export_attendance_sheet'),
     url(r'^export_feedback_sheet/(\w+)/(\d{4})/(\d{1})/(\w+)$', 'export_feedback_sheet', name = 'export_feedback_sheet'),
     url(r'^export_marks/(\w+)/(\d+)/$', 'export_marks', name = 'export_marks'),
-
 )
 
 urlpatterns += patterns('anonymous_marking.views',

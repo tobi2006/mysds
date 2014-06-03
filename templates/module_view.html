@@ -330,6 +330,13 @@
                         </a>
                     </li>
                 {% endif %}
+                {% if module.exam_value %}
+                    <li>
+                        <a href="{{ module.get_export_anonymous_marks_url }}exam">
+                            Anonymous Exam Mark Overview
+                        </a>
+                    </li>
+                {% endif %}
             </ul>
         </div>
     {% endif %}
