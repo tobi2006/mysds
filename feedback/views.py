@@ -31,6 +31,10 @@ def edit_feedback(request, module_id, year, assessment, student_id):
     if marksheet_type == 'NEGOTIATION_WRITTEN':
         categories = CATEGORIES[marksheet_type]
         group = performance.group_assessment_group
+        if group is None:
+            in_group = False
+        else:
+            in_group = True
         try:
             group_feedback = GroupMarksheet.objects.get(
                     module=module,
@@ -214,6 +218,7 @@ def edit_feedback(request, module_id, year, assessment, student_id):
                         'module': module,
                         'mark': mark,
                         'categories': categories,
+                        'in_group': in_group,
                         'student_ids': student_ids,
                         'group_no': group,
                         'assessment': assessment_title,

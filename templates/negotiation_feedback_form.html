@@ -9,9 +9,12 @@
 
 {% block content %}
 
+{% if in_group %}
+
 <h1>{{ module }}: {{ assessment }}</h1>
 <h2>Group {{ group_no }}</h2>
 <br>
+
 
 <div class="panel-group" id="accordion">
     <div class="panel panel-default">
@@ -257,6 +260,9 @@
     <input type = "submit" value="Save" class="btn btn-default">
 </form>
 
+{% else %}
+<strong>This student is not assigned to a group yet. Please go <a href="{{ module.get_absolute_url }}">back to the module page</a> and assign the student by clicking "Group Tasks" -> "Assign Groups". If this student should not be marked and is therefore not in a group, there is no need to fill out the marksheet.</strong>
+{% endif %}
 
 {% endblock %}
 
