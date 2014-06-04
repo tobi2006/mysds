@@ -573,7 +573,7 @@
             </td>
         {% endif %}
         <td>
-            {{ row.performance.average }}
+            {{ row.performance.average|default_if_none:"0" }}
         </td>
         <td>
             <a href="#" class="remove"><span class="glyphicon glyphicon-remove" id="{{ row.performance.student.student_id }}"></span></a>
