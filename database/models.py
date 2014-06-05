@@ -611,11 +611,6 @@ class Student(models.Model):
 
 
 class Performance(models.Model):
-    CONCESSION_DECISIONS = (
-        (None, 'None'),
-        ('pending', 'Concession Pending'),
-        ('sit', 'Sit / Submission')
-        )
     student = models.ForeignKey(Student)
     module = models.ForeignKey(Module)
     seminar_group = models.IntegerField(blank=True, null=True)
@@ -635,56 +630,14 @@ class Performance(models.Model):
     r_assessment_5 = models.IntegerField(blank=True, null=True)
     r_assessment_6 = models.IntegerField(blank=True, null=True)
     r_exam = models.IntegerField(blank=True, null=True)
-    # Concessions determine whether there is a cap on the module mark
-    assessment_1_concessions = models.CharField(
-        max_length = 10,
-        choices = CONCESSION_DECISIONS,
-        default = None,
-        null = True,
-        blank = True
-        )
-    assessment_2_concessions = models.CharField(
-        max_length = 10,
-        choices = CONCESSION_DECISIONS,
-        default = None,
-        null = True,
-        blank = True
-        )
-    assessment_3_concessions = models.CharField(
-        max_length = 10,
-        choices = CONCESSION_DECISIONS,
-        default = None,
-        null = True,
-        blank = True
-        )
-    assessment_4_concessions = models.CharField(
-        max_length = 10,
-        choices = CONCESSION_DECISIONS,
-        default = None,
-        null = True,
-        blank = True
-        )
-    assessment_5_concessions = models.CharField(
-        max_length = 10,
-        choices = CONCESSION_DECISIONS,
-        default = None,
-        null = True,
-        blank = True
-        )
-    assessment_6_concessions = models.CharField(
-        max_length = 10,
-        choices = CONCESSION_DECISIONS,
-        default = None,
-        null = True,
-        blank = True
-        )
-    exam_concessions = models.CharField(
-        max_length = 10,
-        choices = CONCESSION_DECISIONS,
-        default = None,
-        null = True,
-        blank = True
-        )
+    # Sit means the average is not capped
+    assessment_1_is_sit = models.BooleanField(default=False)
+    assessment_2_is_sit = models.BooleanField(default=False)
+    assessment_3_is_sit = models.BooleanField(default=False)
+    assessment_4_is_sit = models.BooleanField(default=False)
+    assessment_5_is_sit = models.BooleanField(default=False)
+    assessment_6_is_sit = models.BooleanField(default=False)
+    exam_is_sit = models.BooleanField(default=False)
     # QLD Resit Marks
     q_assessment_1 = models.IntegerField(blank=True, null=True)
     q_assessment_2 = models.IntegerField(blank=True, null=True)
