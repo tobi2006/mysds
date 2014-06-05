@@ -1901,18 +1901,59 @@ def export_marks(request, code, year):
     data = []
     header = ['Student', 'Student ID', 'QLD']
     if module.assessment_1_value:
-        header.append(module.assessment_1_title)
+        title = (
+            module.assessment_1_title +
+            ' (' +
+            str(module.assessment_1_value) +
+            '%)'
+            )
+        header.append(title)
     if module.assessment_2_value:
-        header.append(module.assessment_2_title)
+        title = (
+            module.assessment_2_title +
+            ' (' +
+            str(module.assessment_2_value) +
+            '%)'
+            )
+        header.append(title)
     if module.assessment_3_value:
-        header.append(module.assessment_3_title)
+        title = (
+            module.assessment_3_title +
+            ' (' +
+            str(module.assessment_3_value) +
+            '%)'
+            )
+        header.append(title)
     if module.assessment_4_value:
-        header.append(module.assessment_4_title)
+        title = (
+            module.assessment_4_title +
+            ' (' +
+            str(module.assessment_4_value) +
+            '%)'
+            )
+        header.append(title)
     if module.assessment_5_value:
-        header.append(module.assessment_5_title)
+        title = (
+            module.assessment_5_title +
+            ' (' +
+            str(module.assessment_5_value) +
+            '%)'
+            )
+        header.append(title)
     if module.assessment_6_value:
-        header.append(module.assessment_6_title)
+        title = (
+            module.assessment_6_title +
+            ' (' +
+            str(module.assessment_6_value) +
+            '%)'
+            )
+        header.append(title)
     if module.exam_value:
+        title = (
+            'Exam (' +
+            str(module.exam_value) +
+            '%)'
+            )
         header.append('Exam')
     header.append('Module Mark')
     data.append(header)
