@@ -159,6 +159,11 @@ urlpatterns += patterns(
         name='attendance'
         ),
     url(
+        r'^concessions/(\w+)/(\d{4})/$',
+        'concessions',
+        name='concessions'
+        ),
+    url(
         r'^delete_module/(\w+)/(\d{4})/$',
         'delete_module',
         name='delete_module'

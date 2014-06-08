@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% load custom_filters %}
+
+{% block title %}CCCU Law - {{module}}{% endblock %}
+
+{% block formstart %}
+<form action = "", method="post">
+{% endblock %}
+
+{% block content %}
+
+    <h2>{{module}} - Concessions</h2>
+
+
+<p>
+    Just tick the checkbox next to the assessment that the student has a concession for. In case the student failed the assessment, this means the module mark will not be capped (unless he or she fails another assessment), and in case the student did not fail, the teacher can enter a resit mark (again without module mark cap).
+</p>
+<p>
+    Don't forget to save your changes by clicking the button below!
+</p>
+
+<table id ="sortable_table" class="table table-striped table-sortable">
+    <thead>
+        <tr>
+            <th>
+                Student (ID)
+            </th>
+            {% if module.assessment_1_title %}
+                <th>
+                    {{ module.assessment_1_title }} ({{ module.assessment_1_value }}%)
+                </th>
+            {% endif %}
+            {% if module.assessment_2_title %}
+                <th>
+                    {{ module.assessment_2_title }} ({{ module.assessment_2_value }}%)
+                </th>
+            {% endif %}
+            {% if module.assessment_3_title %}
+                <th>
+                    {{ module.assessment_3_title }} ({{ module.assessment_3_value }}%)
+                </th>
+            {% endif %}
+            {% if module.assessment_4_title %}
+                <th>
+                    {{ module.assessment_4_title }} ({{ module.assessment_4_value }}%)
+                </th>
+            {% endif %}
+            {% if module.assessment_5_title %}
+                <th>
+                    {{ module.assessment_5_title }} ({{ module.assessment_5_value }}%)
+                </th>
+            {% endif %}
+            {% if module.assessment_6_title %}
+                <th>
+                    {{ module.assessment_6_title }} ({{ module.assessment_6_value }}%)
+                </th>
+            {% endif %}
+            {% if module.exam_value %}
+                <th>
+                    Exam ({{ module.exam_value }}%)
+                </th>
+            {% endif %}
+            <th>
+                Module Mark
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for performance in performances %}
+    <tr>
+        <td>
+            <a href="{{ performance.student.get_absolute_url }}">{{ performance.student.last_name }}, {{ performance.student.first_name|only_first_word }} ({{ performance.student.student_id }})</a>
+        </td>
+        {% if module.assessment_1_title %} 
+            <td>
+                <input type="checkbox" name="concession" value="{{ performance.student.student_id }}_1"{% if performance.assessment_1_is_sit %} checked{% endif %}>
+                ({{ performance.assessment_1|default_if_none:"No submission" }})
+            </td> 
+        {% endif %}
+        {% if module.assessment_2_title %} 
+            <td>
+                <input type="checkbox" name="concession" value="{{ performance.student.student_id }}_2"{% if performance.assessment_2_is_sit %} checked{% endif %}>
+                ({{ performance.assessment_2|default_if_none:"No submission" }})
+            </td> 
+        {% endif %}
+        {% if module.assessment_3_title %} 
+            <td>
+                <input type="checkbox" name="concession" value="{{ performance.student.student_id }}_3"{% if performance.assessment_3_is_sit %} checked{% endif %}>
+                ({{ performance.assessment_3|default_if_none:"No submission" }})
+            </td> 
+        {% endif %}
+        {% if module.assessment_4_title %} 
+            <td>
+                <input type="checkbox" name="concession" value="{{ performance.student.student_id }}_4"{% if performance.assessment_4_is_sit %} checked{% endif %}>
+                {{ performance.assessment_4|default_if_none:"No submission" }}
+            </td> 
+        {% endif %}
+        {% if module.assessment_5_title %} 
+            <td
+                <input type="checkbox" name="concession" value="{{ performance.student.student_id }}_5"{% if performance.assessment_5_is_sit %} checked{% endif %})
+                ({{ performance.assessment_5|default_if_none:"No submission" }})
+            </td> 
+        {% endif %}
+        {% if module.assessment_6_title %} 
+            <td>
+                <input type="checkbox" name="concession" value="{{ performance.student.student_id }}_6"{% if performance.assessment_6_is_sit %} checked{% endif %}>
+                ({{ performance.assessment_6|default_if_none:"No submission" }})
+            </td> 
+        {% endif %}
+        {% if module.exam_value %}
+            <td>
+                <input type="checkbox" name="concession" value="{{ performance.student.student_id }}_e"{% if performance.exam_is_sit %} checked{% endif %}>
+                ({{ performance.exam|default_if_none:"No submission" }})
+            </td>
+        {% endif %}
+        <td>
+            {% if performance.average_makes_sense %}
+            {{ performance.average }}
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table> 
+
+
+<input type="submit" value="Save" class="btn btn-default">
+
+{% endblock %}
+
+{% block formend %}
+    {% csrf_token %}
+    </form>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

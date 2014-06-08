@@ -1721,6 +1721,185 @@ def import_success(request):
         )
 
 
+# Exam board mode
+
+
+@login_required
+def concessions(request, module_id, year):
+    """
+    A relatively simple function that lets the admin (or instructor)
+    choose a box if a failed part shouldn't be a resit (which would
+    mean that the module mark would be capped at a pass.
+    """
+    module = Module.objects.get(code=module_id, year=year)
+    if request.user in module.instructors.all() or is_admin(request.user):
+        students = module.student_set.all()
+        if request.method == 'POST':
+            raw_concessions = request.POST.getlist('concession')
+            concessions = {}
+            for concession in raw_concessions:
+                tmp = concession.split("_")
+                student_id = tmp[0]
+                assessment = tmp[1]
+                if student_id in concessions:
+                    concessions[student_id].append(assessment)
+                else:
+                    concessions[student_id] = [assessment]
+            for student in students:
+                performance = Performance.objects.get(
+                    student=student,
+                    module=module
+                    )
+                if student.student_id in concessions:
+                    student_concessions = concessions[student.student_id]
+                    if '1' in student_concessions:
+                        performance.assessment_1_is_sit = True
+                    else:
+                        performance.assessment_1_is_sit = False
+                    if '2' in student_concessions:
+                        performance.assessment_2_is_sit = True
+                    else:
+                        performance.assessment_2_is_sit = False
+                    if '3' in student_concessions:
+                        performance.assessment_3_is_sit = True
+                    else:
+                        performance.assessment_3_is_sit = False
+                    if '4' in student_concessions:
+                        performance.assessment_4_is_sit = True
+                    else:
+                        performance.assessment_4_is_sit = False
+                    if '5' in student_concessions:
+                        performance.assessment_5_is_sit = True
+                    else:
+                        performance.assessment_5_is_sit = False
+                    if '6' in student_concessions:
+                        performance.assessment_6_is_sit = True
+                    else:
+                        performance.assessment_6_is_sit = False
+                    if 'e' in student_concessions:
+                        performance.exam_is_sit = True
+                    else:
+                        performance.exam_is_sit = False
+                else:
+                    performance.assessment_1_is_sit = False
+                    performance.assessment_2_is_sit = False
+                    performance.assessment_3_is_sit = False
+                    performance.assessment_4_is_sit = False
+                    performance.assessment_5_is_sit = False
+                    performance.assessment_6_is_sit = False
+                    performance.exam_is_sit = False
+                performance.save()
+
+#            for concession in concessions:
+#                tmp = concession.split("_")
+#                student_id = tmp[0]
+#                assessment = tmp[1]
+#                student = Student.objects.get(student_id = student_id)
+#                performance = Performance.objects.get(
+#                   student = student, module = module)
+#                if assessment == '1':
+#                    performance.assessment_1_is_sit = True
+#                if assessment == '2':
+#                    performance.assessment_2_is_sit = True
+#                if assessment == '3':
+#                    performance.assessment_3_is_sit = True
+#                if assessment == '4':
+#                    performance.assessment_4_is_sit = True
+#                if assessment == '5':
+#                    performance.assessment_5_is_sit = True
+#                if assessment == '6':
+#                    performance.assessment_6_is_sit = True
+#                if assessment == 'e':
+#                    performance.exam_is_sit = True
+#                performance.save()
+            return HttpResponseRedirect(module.get_absolute_url())
+        else:
+            performances = []
+            for student in students:
+                performance = Performance.objects.get(
+                    student=student,
+                    module=module)
+                performances.append(performance)
+
+            return render_to_response(
+                'concessions.html',
+                {'module': module, 'performances': performances},
+                context_instance=RequestContext(request)
+                )
+    else:
+        printstring = (
+            'Only the module instructors or an admin can allow concessions')
+        title = 'CCCU Law DB: Not allowed'
+        return render_to_response(
+            'blank.html',
+            {'printstring': printstring, 'title': title},
+            context_instance=RequestContext(request))
+
+
+@login_required
+@user_passes_test(is_admin)
+def end_of_year_decision(request, year):
+    meta_stuff = MetaData.objects.get(data_id=1)
+    current_year = meta_stuff.current_year
+    students = Student.objects.filter(active=True, year=year)
+    all_problem_performances = []
+    problem_students = {}
+    for student in students:
+        performances = Performance.objects.filter(student=student)
+        for performance in performances:
+            if performance.module.year == current_year:
+                bad_performance = False
+                if performance.real_average < PASSMARK:
+                    bad_performance = True
+                else:
+                    if student.qld and performance.module.is_foundational:
+                        assessments = [1, 2, 3, 4, 5, 6, 'exam']
+                        for a in assessments:
+                            if performance.module.get_assessment_value(a):
+                                if (performance.get_assessment_result(a)
+                                        < PASSMARK):
+                                    bad_performance = True
+                if bad_performance:
+                    if student in problem_students:
+                        problem_students[student][
+                            'bad_performances'].append(performance)
+                    else:
+                        problem_students[student] = {}
+                        problem_students[student][
+                            'bad_performances'] = [performance]
+    for student in problem_students:
+        performances = Performance.objects.filter(student=student)
+        problem_students[student]['good_performances'] = []
+        problem_students[student]['credits'] = 0
+        for performance in performances:
+            if performance.module.year == current_year:
+                if (performance not in
+                        problem_students[student]['bad_performances']):
+                    problem_students[student][
+                        'good_performances'].append(performance)
+                    problem_students[student]['credits'] += (
+                        performance.module.credits)
+                elif performance.average > PASSMARK:
+                    problem_students[student]['credits'] += (
+                        performance.module.credits)
+
+    return render_to_response(
+        'exam_board_overview.html',
+        {'year': year, 'dictionary': problem_students},
+        context_instance=RequestContext(request)
+        )
+
+# Remember for progression:
+#
+# if student.is_part_time:
+#   if student.second_part_time_year:
+#       student.year += 1
+#   else:
+#       student.second_part_time_year = True
+#
+# Also think about deleting anonymous mark entries
+
+
 # Student Accessible Functions
 
 

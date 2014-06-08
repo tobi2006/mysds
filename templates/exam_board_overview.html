@@ -1,0 +1,242 @@
+{% extends "base.html" %}
+{% load custom_filters %}
+{% load markup %}
+
+{% block title %}CCCU Law - Exam Board Overview Year {{ year }}{% endblock %}
+
+{% block content %}
+
+<div class="panel-group" id="accordion">
+    {% for student, information in dictionary.items|sort_students %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#{{ student.student_id }}">
+                    {{ student.first_name }} {{ student.last_name }}
+                    <span class="badge pull-right" id="badge_{{ student.student_id }}">Decision Pending</span>
+                </a>
+            </h4>
+        </div>
+        <div id="{{ student.student_id }}" class="panel-collapse collapse">
+            <div class="panel-body">
+                <h3>Overview</h3>
+
+                <table cellpadding="10">
+                    <tr>
+                        <td>
+                            Student ID
+                        </td>
+                        <td>
+                            {{ student.student_id }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Programme
+                        </td>
+                        <td>
+                            {{ student.course }}{% if student.qld %} (QLD){% else %} (No QLD){% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Credits achieved this Year
+                        </td>
+                        <td>
+                            {{ information.credits }}
+                        </td>
+                    </tr>
+                </table>
+
+                <h3>Problematic Modules</h3>
+
+                {% for performance in information.bad_performances|sort %}
+
+                <h4>{{ performance.module.title }}</h4>
+
+                <table class="table table-bordered">
+                    <tr>
+                        <td>
+                            Attendance
+                        </td>
+                        <td>
+                            {{ performance.attendance | count_attendance }} / {{ performance.module.sessions_recorded }}
+                        </td>
+                    </tr>
+                    {% if performance.module.assessment_1_title %}
+                        <tr>
+                            <td>
+                                {{ performance.module.assessment_1_title }} ({{ performance.module.assessment_1_value }} %)
+                            </td>
+                            <td>
+                                {% if performance.q_assessment_1 != None %}
+                                    {{ performance.q_assessment_1|default_if_none:"" }} (QLD Resit, resit: {{ performance.r_assessment_1|default_if_none:"" }}, first attempt: {{ performance.assessment_1|default_if_none:"" }})
+                                {% elif performance.r_assessment_1 != None %}
+                                    {{ performance.r_assessment_1|default_if_none:"" }} (Resit, first attempt: {{ performance.assessment_1|default_if_none:"" }})
+                                {% else %}
+                                    {{ performance.assessment_1|default_if_none:"" }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endif %}
+                    {% if performance.module.assessment_2_title %}
+                        <tr>
+                            <td>
+                                {{ performance.module.assessment_2_title }} ({{ performance.module.assessment_2_value }} %)
+                            </td>
+                            <td>
+                                {% if performance.q_assessment_2 != None %}
+                                    {{ performance.q_assessment_2|default_if_none:"" }} (QLD Resit, resit: {{ performance.r_assessment_2|default_if_none:"" }}, first attempt: {{ performance.assessment_2|default_if_none:"" }})
+                                {% elif performance.r_assessment_2 != None %}
+                                    {{ performance.r_assessment_2|default_if_none:"" }} (Resit, first attempt: {{ performance.assessment_2|default_if_none:"" }})
+                                {% else %}
+                                    {{ performance.assessment_2|default_if_none:"" }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endif %}
+                    {% if performance.module.assessment_3_title %}
+                        <tr>
+                            <td>
+                                {{ performance.module.assessment_3_title }} ({{ performance.module.assessment_3_value }} %)
+                            </td>
+                            <td>
+                                {% if performance.q_assessment_3 != None %}
+                                    {{ performance.q_assessment_3|default_if_none:"" }} (QLD Resit, resit: {{ performance.r_assessment_3|default_if_none:"" }}, first attempt: {{ performance.assessment_3|default_if_none:"" }})
+                                {% elif performance.r_assessment_3 != None %}
+                                    {{ performance.r_assessment_3|default_if_none:"" }} (Resit, first: {{ performance.assessment_3|default_if_none:"" }})
+                                {% else %}
+                                    {{ performance.assessment_3|default_if_none:"" }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endif %}
+                    {% if performance.module.assessment_4_title %}
+                        <tr>
+                            <td>
+                                {{ performance.module.assessment_4_title }} ({{ performance.module.assessment_4_value }} %)
+                            </td>
+                            <td>
+                                {% if performance.q_assessment_4 != None %}
+                                    {{ performance.q_assessment_4|default_if_none:"" }} (QLD Resit, resit: {{ performance.r_assessment_4|default_if_none:"" }}, first attempt: {{ performance.assessment_4|default_if_none:"" }})
+                                {% elif performance.r_assessment_4 != None %}
+                                    {{ performance.r_assessment_4|default_if_none:"" }} (Resit, first: {{ performance.assessment_4|default_if_none:"" }})
+                                {% else %}
+                                    {{ performance.assessment_4|default_if_none:"" }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endif %}
+                    {% if performance.module.assessment_5_title %}
+                        <tr>
+                            <td>
+                                {{ performance.module.assessment_5_title }} ({{ performance.module.assessment_5_value }} %)
+                            </td>
+                            <td>
+                                {% if performance.q_assessment_5 != None %}
+                                    {{ performance.q_assessment_5|default_if_none:"" }} (QLD Resit, resit: {{ performance.r_assessment_5|default_if_none:"" }}, first attempt: {{ performance.assessment_5|default_if_none:"" }})
+                                {% elif performance.r_assessment_5 != None %}
+                                    {{ performance.r_assessment_5|default_if_none:"" }} (Resit, first attempt: {{ performance.assessment_5|default_if_none:"" }})
+                                {% else %}
+                                    {{ performance.assessment_5|default_if_none:"" }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endif %}
+                    {% if performance.module.assessment_6_title %}
+                        <tr>
+                            <td>
+                                {{ performance.module.assessment_6_title }} ({{ performance.module.assessment_6_value }} %)
+                            </td>
+                            <td>
+                                {% if performance.q_assessment_6 != None %}
+                                    {{ performance.q_assessment_6|default_if_none:"" }} (QLD Resit, resit: {{ performance.r_assessment_6|default_if_none:"" }}, first attempt: {{ performance.assessment_6|default_if_none:"" }})
+                                {% elif performance.r_assessment_6 != None%}
+                                    {{ performance.r_assessment_6|default_if_none:"" }} (Resit, first attempt: {{ performance.assessment_6|default_if_none:"" }})
+                                {% else %}
+                                    {{ performance.assessment_6|default_if_none:"" }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endif %}
+                    {% if performance.module.exam_value %}
+                        <tr>
+                            <td>
+                                Exam ({{ performance.module.exam_value }} %)
+                            </td>
+                            <td>
+                                {% if performance.q_exam != None %}
+                                    {{ performance.q_exam|default_if_none:"" }} (QLD Resit, resit: {{ performance.r_exam|default_if_none:"" }}, first attempt: {{ performance.exam|default_if_none:"" }})
+                                {% elif performance.r_exam != None %}
+                                    {{ performance.r_exam|default_if_none:"" }} (Resit, first: {{ performance.exam|default_if_none:"" }})
+                                {% else %}
+                                    {{ performance.exam|default_if_none:"" }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endif %}
+                    <tr>
+                        <td>
+                            <strong>Module Mark</strong>
+                        </td>
+                            <td>
+                            {% if performance.average_makes_sense %}
+                                {{ performance.average }}
+                            {% else %}
+                                Not available yet
+                            {% endif %}
+                            </td>
+                        </tr>
+                </table>
+                {% endfor %}
+            </div>
+
+
+
+            <div class="btn-group pull-right" data-toggle="buttons">
+                <label class="btn btn-primary">
+                    <input type="radio" id="allow_{{ student.student_id }}" class="decision" name="{{ student.student_id }}" value="allow">Allow Resits
+                </label>
+                <label class="btn btn-primary">
+                    <input type="radio" id="repeat_{{ student.student_id }}" class="decision" name="{{ student.student_id }}" value="repeat">Repeat Year
+                </label>
+                <label class="btn btn-primary">
+                    <input type="radio" id="withdraw_{{ student.student_id }}" class="decision" name="{{ student.student_id }}_{{ session }}" value="withdraw" checked>Withdraw from Programme
+                </label>
+            </div>
+            <br><br><br>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+
+    $(".decision").change(function(){
+        var id = $(this).attr('id');
+        var arr = id.split("_");
+        var destination = "#badge_" + arr[1];
+        if (arr[0] == "allow"){
+            var content = "Allow Resits";
+        }
+        else if (arr[0] == "repeat"){
+            var content = "Repeat Year";
+        }
+        else if (arr[0] == "withdraw"){
+            var content = "Withdraw from Programme";
+        };
+        $(destination).text(content);
+    });
+
+
+});
+
+</script>
+
+{% endblock %}

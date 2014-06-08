@@ -53,19 +53,29 @@ class MetaData(models.Model):
 
 
 class Course(models.Model):
-    """Just the course, so far only one option"""
+    """Just the courses (LLB / LLB with Sociology / etc"""
     title = models.CharField(
         max_length=100,
         unique=True,
         verbose_name="Official Course Title")
+
+
+###########################################################COMMENT
+
 #    short_title = models.CharField(max_length = 30,
-#           blank = True, verbose_name = "Short Title")
-#    is_pg = models.BooleanField(verbose_name="Postgraduate Course")
-#    all_years = models.BooleanField(verbose_name=
-#           "Course extends over all years (for example Erasmus)")
+#           blank=True, null=True, verbose_name="Short Title", default="")
+#    is_pg = models.BooleanField(
+#       verbose_name="Postgraduate Course",
+#       default=False
+#       )
+
+#ENDCOMMENT#########################################################
 
     def __unicode__(self):
         return u'%s' % (self.title)
+#    all_years = models.BooleanField(verbose_name=
+#           "Course extends over all years (for example Erasmus)")
+
 
 
 class Module(models.Model):
@@ -329,6 +339,26 @@ class Module(models.Model):
         elif number == 6:
             returnvalue = self.assessment_6_title
         return returnvalue
+
+    def get_assessment_value(self, assessment):
+        if assessment == 'exam':
+            returnvalue = self.exam_value
+        else:
+            number = int(assessment)
+            if number == 1:
+                returnvalue = self.assessment_1_value
+            elif number == 2:
+                returnvalue = self.assessment_2_value
+            elif number == 3:
+                returnvalue = self.assessment_3_value
+            elif number == 4:
+                returnvalue = self.assessment_4_value
+            elif number == 5:
+                returnvalue = self.assessment_5_value
+            elif number == 6:
+                returnvalue = self.assessment_6_value
+        return returnvalue
+
 
     def get_assessment_type(self, assessment):
         number = int(assessment)
@@ -611,6 +641,14 @@ class Student(models.Model):
 
 
 class Performance(models.Model):
+    NO_CONCESSIONS='N'
+    PENDING='P'
+    GRANTED='G'
+    CONCESSIONS = (
+        (NO_CONCESSIONS, 'No concession'),
+        (PENDING, 'Concession pending'),
+        (GRANTED, 'Concession granted')
+        )
     student = models.ForeignKey(Student)
     module = models.ForeignKey(Module)
     seminar_group = models.IntegerField(blank=True, null=True)
@@ -630,6 +668,61 @@ class Performance(models.Model):
     r_assessment_5 = models.IntegerField(blank=True, null=True)
     r_assessment_6 = models.IntegerField(blank=True, null=True)
     r_exam = models.IntegerField(blank=True, null=True)
+
+###########################################################COMMENT
+
+#    assessment_1_concessions = models.CharField(
+#        choices=CONCESSIONS,
+#        max_length=1, 
+#        blank=True,
+#        null=True,
+#        default=NO_CONCESSIONS
+#        )
+#    assessment_2_concessions = models.CharField(
+#        choices=CONCESSIONS,
+#        max_length=2, 
+#        blank=True,
+#        null=True,
+#        default=NO_CONCESSIONS
+#        )
+#    assessment_3_concessions = models.CharField(
+#        choices=CONCESSIONS,
+#        max_length=2, 
+#        blank=True,
+#        null=True,
+#        default=NO_CONCESSIONS
+#        )
+#    assessment_4_concessions = models.CharField(
+#        choices=CONCESSIONS,
+#        max_length=2, 
+#        blank=True,
+#        null=True,
+#        default=NO_CONCESSIONS
+#        )
+#    assessment_5_concessions = models.CharField(
+#        choices=CONCESSIONS,
+#        max_length=2, 
+#        blank=True,
+#        null=True,
+#        default=NO_CONCESSIONS
+#        )
+#    assessment_6_concessions = models.CharField(
+#        choices=CONCESSIONS,
+#        max_length=2, 
+#        blank=True,
+#        null=True,
+#        default=NO_CONCESSIONS
+#        )
+#    exam_concessions = models.CharField(
+#        choices=CONCESSIONS,
+#        max_length=2, 
+#        blank=True,
+#        null=True,
+#        default=NO_CONCESSIONS
+#        )
+
+#ENDCOMMENT##################################################
+
     # Sit means the average is not capped
     assessment_1_is_sit = models.BooleanField(default=False)
     assessment_2_is_sit = models.BooleanField(default=False)
