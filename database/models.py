@@ -62,12 +62,12 @@ class Course(models.Model):
 
 ###########################################################COMMENT
 
-#    short_title = models.CharField(max_length = 30,
-#           blank=True, null=True, verbose_name="Short Title", default="")
-#    is_pg = models.BooleanField(
-#       verbose_name="Postgraduate Course",
-#       default=False
-#       )
+    short_title = models.CharField(max_length = 30,
+           blank=True, null=True, verbose_name="Short Title", default="")
+    is_pg = models.BooleanField(
+       verbose_name="Postgraduate Course",
+       default=False
+       )
 
 #ENDCOMMENT#########################################################
 
@@ -359,7 +359,6 @@ class Module(models.Model):
                 returnvalue = self.assessment_6_value
         return returnvalue
 
-
     def get_assessment_type(self, assessment):
         number = int(assessment)
         if number == 1:
@@ -423,6 +422,25 @@ class Module(models.Model):
         elif number == 6:
             returnvalue = self.assessment_6_submission_date
         return returnvalue
+
+    def get_assessment_range(self):
+        """Returns a list of all assessments"""
+        assessment_range = []
+        if self.assessment_1_title:
+            assessment_range.append('1')
+        if self.assessment_2_title:
+            assessment_range.append('2')
+        if self.assessment_3_title:
+            assessment_range.append('3')
+        if self.assessment_4_title:
+            assessment_range.append('4')
+        if self.assessment_5_title:
+            assessment_range.append('5')
+        if self.assessment_6_title:
+            assessment_range.append('6')
+        if self.exam_value:
+            assessment_range.append('exam')
+        return assessment_range
 
     def get_number_of_assessments(self):
         number = 0
@@ -671,55 +689,55 @@ class Performance(models.Model):
 
 ###########################################################COMMENT
 
-#    assessment_1_concessions = models.CharField(
-#        choices=CONCESSIONS,
-#        max_length=1, 
-#        blank=True,
-#        null=True,
-#        default=NO_CONCESSIONS
-#        )
-#    assessment_2_concessions = models.CharField(
-#        choices=CONCESSIONS,
-#        max_length=2, 
-#        blank=True,
-#        null=True,
-#        default=NO_CONCESSIONS
-#        )
-#    assessment_3_concessions = models.CharField(
-#        choices=CONCESSIONS,
-#        max_length=2, 
-#        blank=True,
-#        null=True,
-#        default=NO_CONCESSIONS
-#        )
-#    assessment_4_concessions = models.CharField(
-#        choices=CONCESSIONS,
-#        max_length=2, 
-#        blank=True,
-#        null=True,
-#        default=NO_CONCESSIONS
-#        )
-#    assessment_5_concessions = models.CharField(
-#        choices=CONCESSIONS,
-#        max_length=2, 
-#        blank=True,
-#        null=True,
-#        default=NO_CONCESSIONS
-#        )
-#    assessment_6_concessions = models.CharField(
-#        choices=CONCESSIONS,
-#        max_length=2, 
-#        blank=True,
-#        null=True,
-#        default=NO_CONCESSIONS
-#        )
-#    exam_concessions = models.CharField(
-#        choices=CONCESSIONS,
-#        max_length=2, 
-#        blank=True,
-#        null=True,
-#        default=NO_CONCESSIONS
-#        )
+    assessment_1_concessions = models.CharField(
+        choices=CONCESSIONS,
+        max_length=1, 
+        blank=True,
+        null=True,
+        default=NO_CONCESSIONS
+        )
+    assessment_2_concessions = models.CharField(
+        choices=CONCESSIONS,
+        max_length=2, 
+        blank=True,
+        null=True,
+        default=NO_CONCESSIONS
+        )
+    assessment_3_concessions = models.CharField(
+        choices=CONCESSIONS,
+        max_length=2, 
+        blank=True,
+        null=True,
+        default=NO_CONCESSIONS
+        )
+    assessment_4_concessions = models.CharField(
+        choices=CONCESSIONS,
+        max_length=2, 
+        blank=True,
+        null=True,
+        default=NO_CONCESSIONS
+        )
+    assessment_5_concessions = models.CharField(
+        choices=CONCESSIONS,
+        max_length=2, 
+        blank=True,
+        null=True,
+        default=NO_CONCESSIONS
+        )
+    assessment_6_concessions = models.CharField(
+        choices=CONCESSIONS,
+        max_length=2, 
+        blank=True,
+        null=True,
+        default=NO_CONCESSIONS
+        )
+    exam_concessions = models.CharField(
+        choices=CONCESSIONS,
+        max_length=2, 
+        blank=True,
+        null=True,
+        default=NO_CONCESSIONS
+        )
 
 #ENDCOMMENT##################################################
 
@@ -995,6 +1013,23 @@ class Performance(models.Model):
             elif number == 'exam':
                 returnvalue = self.exam_modified
         return returnvalue
+
+    def set_concession(self, assessment, concession):
+        if assessment == '1':
+            self.assessment_1_concessions = concession
+        if assessment == '2':
+            self.assessment_2_concessions = concession
+        if assessment == '3':
+            self.assessment_3_concessions = concession
+        if assessment == '4':
+            self.assessment_4_concessions = concession
+        if assessment == '5':
+            self.assessment_5_concessions = concession
+        if assessment == '6':
+            self.assessment_6_concessions = concession
+        if assessment == 'exam':
+            self.exam_concessions = concession
+        self.save()
 
     def set_assessment_result(
             self, assessment, mark, timestamp=False, r=False, q=False):

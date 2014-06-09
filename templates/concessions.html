@@ -73,50 +73,76 @@
         </td>
         {% if module.assessment_1_title %} 
             <td>
-                <input type="checkbox" name="concession" value="{{ performance.student.student_id }}_1"{% if performance.assessment_1_is_sit %} checked{% endif %}>
-                ({{ performance.assessment_1|default_if_none:"No submission" }})
+                <select class="form-control" name='{{ performance.student.student_id}}_1'>
+                    <option value="N"{% if performance.assessment_1_concessions == "N" %} selected{% endif %}>None</options>
+                    <option value="P"{% if performance.assessment_1_concessions == "P" %} selected{% endif %}>Pending</options>
+                    <option value="G"{% if performance.assessment_1_concessions == "G" %} selected{% endif %}>Granted</options>
+                </select>
+                ({{ performance.assessment_1|default_if_none:"DNS" }})
             </td> 
         {% endif %}
         {% if module.assessment_2_title %} 
             <td>
-                <input type="checkbox" name="concession" value="{{ performance.student.student_id }}_2"{% if performance.assessment_2_is_sit %} checked{% endif %}>
-                ({{ performance.assessment_2|default_if_none:"No submission" }})
+                <select class="form-control" name='{{ performance.student.student_id}}_2'>
+                    <option value="N"{% if performance.assessment_2_concessions == "N" %} selected{% endif %}>None</options>
+                    <option value="P"{% if performance.assessment_2_concessions == "P" %} selected{% endif %}>Pending</options>
+                    <option value="G"{% if performance.assessment_2_concessions == "G" %} selected{% endif %}>Granted</options>
+                </select>
+                ({{ performance.assessment_2|default_if_none:"DNS" }})
             </td> 
         {% endif %}
         {% if module.assessment_3_title %} 
             <td>
-                <input type="checkbox" name="concession" value="{{ performance.student.student_id }}_3"{% if performance.assessment_3_is_sit %} checked{% endif %}>
-                ({{ performance.assessment_3|default_if_none:"No submission" }})
+                <select class="form-control" name='{{ performance.student.student_id}}_3'>
+                    <option value="N"{% if performance.assessment_3_concessions == "N" %} selected{% endif %}>None</options>
+                    <option value="P"{% if performance.assessment_3_concessions == "P" %} selected{% endif %}>Pending</options>
+                    <option value="G"{% if performance.assessment_3_concessions == "G" %} selected{% endif %}>Granted</options>
+                </select>
+                ({{ performance.assessment_3|default_if_none:"DNS" }})
             </td> 
         {% endif %}
         {% if module.assessment_4_title %} 
             <td>
-                <input type="checkbox" name="concession" value="{{ performance.student.student_id }}_4"{% if performance.assessment_4_is_sit %} checked{% endif %}>
-                {{ performance.assessment_4|default_if_none:"No submission" }}
+                <select class="form-control" name='{{ performance.student.student_id}}_4'>
+                    <option value="N"{% if performance.assessment_4_concessions == "N" %} selected{% endif %}>None</options>
+                    <option value="P"{% if performance.assessment_4_concessions == "P" %} selected{% endif %}>Pending</options>
+                    <option value="G"{% if performance.assessment_4_concessions == "G" %} selected{% endif %}>Granted</options>
+                </select>
+                ({{ performance.assessment_4|default_if_none:"DNS" }})
             </td> 
         {% endif %}
         {% if module.assessment_5_title %} 
-            <td
-                <input type="checkbox" name="concession" value="{{ performance.student.student_id }}_5"{% if performance.assessment_5_is_sit %} checked{% endif %})
-                ({{ performance.assessment_5|default_if_none:"No submission" }})
+            <td>
+                <select class="form-control" name='{{ performance.student.student_id}}_5'>
+                    <option value="N"{% if performance.assessment_5_concessions == "N" %} selected{% endif %}>None</options>
+                    <option value="P"{% if performance.assessment_5_concessions == "P" %} selected{% endif %}>Pending</options>
+                    <option value="G"{% if performance.assessment_5_concessions == "G" %} selected{% endif %}>Granted</options>
+                </select>
+                ({{ performance.assessment_5|default_if_none:"DNS" }})
             </td> 
         {% endif %}
         {% if module.assessment_6_title %} 
             <td>
-                <input type="checkbox" name="concession" value="{{ performance.student.student_id }}_6"{% if performance.assessment_6_is_sit %} checked{% endif %}>
-                ({{ performance.assessment_6|default_if_none:"No submission" }})
+                <select class="form-control" name='{{ performance.student.student_id}}_6'>
+                    <option value="N"{% if performance.assessment_6_concessions == "N" %} selected{% endif %}>None</options>
+                    <option value="P"{% if performance.assessment_6_concessions == "P" %} selected{% endif %}>Pending</options>
+                    <option value="G"{% if performance.assessment_6_concessions == "G" %} selected{% endif %}>Granted</options>
+                </select>
+                ({{ performance.assessment_6|default_if_none:"DNS" }})
             </td> 
         {% endif %}
-        {% if module.exam_value %}
+        {% if module.exam_value %} 
             <td>
-                <input type="checkbox" name="concession" value="{{ performance.student.student_id }}_e"{% if performance.exam_is_sit %} checked{% endif %}>
-                ({{ performance.exam|default_if_none:"No submission" }})
-            </td>
+                <select class="form-control" name='{{ performance.student.student_id}}_exam'>
+                    <option value="N"{% if performance.exam_concessions == "N" %} selected{% endif %}>None</options>
+                    <option value="P"{% if performance.exam_concessions == "P" %} selected{% endif %}>Pending</options>
+                    <option value="G"{% if performance.exam_concessions == "G" %} selected{% endif %}>Granted</options>
+                </select>
+                ({{ performance.exam|default_if_none:"DNS" }})
+            </td> 
         {% endif %}
         <td>
-            {% if performance.average_makes_sense %}
             {{ performance.average }}
-            {% endif %}
         </td>
     </tr>
     {% endfor %}
