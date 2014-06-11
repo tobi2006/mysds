@@ -204,6 +204,11 @@ urlpatterns += patterns(
         name='mark'
         ),
     url(
+        r'^mark/(\w+)/(\d{4})/(\w+)/(\w+)$',
+        'mark',
+        name='resit_mark'
+        ),
+    url(
         r'^module/(\w+)/(\d{4})/$',
         'module_view',
         name='module_view'

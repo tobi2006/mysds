@@ -1,7 +1,16 @@
 {% extends "base.html" %}
 {% load custom_filters %}
 
-{% block title %}CCCU Law - {{current_module}}{% endblock %}
+{% block title %}CCCU Law - {{module}}{% endblock %}
+
+{% block style %}
+
+.mark
+{
+    width: 120px;
+}
+
+{% endblock %}
 
 {% block formstart %}
 {% url "mark" as action_url%}
@@ -13,7 +22,7 @@
 
 
 <h2>
-    Marks for {{ current_module.title }} ({{ current_module.year }})
+    {% if resit == "resit" %}Resit {% endif %}Marks for {{ module.title }} ({{ module.year }})
 </h2>
 
 <table id ="sortable_table" class="table table-striped table-sortable">
@@ -22,142 +31,159 @@
             <th>
                 Student
             </th>
-            {% if current_module.assessment_1_title %}
+            {% if module.assessment_1_title %}
                 <th>
-                    {{ current_module.assessment_1_title }} ({{ current_module.assessment_1_value }}%)
+                    {{ module.assessment_1_title }} ({{ module.assessment_1_value }}%)
                 </th>
             {% endif %}
-            {% if current_module.assessment_2_title %}
+            {% if module.assessment_2_title %}
                 <th>
-                    {{ current_module.assessment_2_title }} ({{ current_module.assessment_2_value }}%)
+                    {{ module.assessment_2_title }} ({{ module.assessment_2_value }}%)
                 </th>
             {% endif %}
-            {% if current_module.assessment_3_title %}
+            {% if module.assessment_3_title %}
                 <th>
-                    {{ current_module.assessment_3_title }} ({{ current_module.assessment_3_value }}%)
+                    {{ module.assessment_3_title }} ({{ module.assessment_3_value }}%)
                 </th>
             {% endif %}
-            {% if current_module.assessment_4_title %}
+            {% if module.assessment_4_title %}
                 <th>
-                    {{ current_module.assessment_4_title }} ({{ current_module.assessment_4_value }}%)
+                    {{ module.assessment_4_title }} ({{ module.assessment_4_value }}%)
                 </th>
             {% endif %}
-            {% if current_module.assessment_5_title %}
+            {% if module.assessment_5_title %}
                 <th>
-                    {{ current_module.assessment_5_title }} ({{ current_module.assessment_5_value }}%)
+                    {{ module.assessment_5_title }} ({{ module.assessment_5_value }}%)
                 </th>
             {% endif %}
-            {% if current_module.assessment_6_title %}
+            {% if module.assessment_6_title %}
                 <th>
-                    {{ current_module.assessment_6_title }} ({{ current_module.assessment_6_value }}%)
+                    {{ module.assessment_6_title }} ({{ module.assessment_6_value }}%)
                 </th>
             {% endif %}
-            {% if current_module.exam_value %}
+            {% if module.exam_value %}
                 <th>
-                    Exam ({{ current_module.exam_value }}%)
+                    Exam ({{ module.exam_value }}%)
                 </th>
             {% endif %}
             <th>
                 Module Mark
             </th>
+            <th>
+                &nbsp;
+            </th>
         </tr>
     </thead>
     <tbody>
-    {% for student, performance in performances.items|sort %}
+    {% for performance in performances %}
         <tr>
             <td class="col-md-3">
-                <label>{{ student }}</label>
+                <label>{{ performance.student.last_name }}, {{ performance.student.short_first_name }}</label>
             </td>
-            {% if current_module.assessment_1_title %}
-                <td id="{{ performance.student.student_id }}_1" class="col-md-1">
-                    {% if to_mark == '1' %}
-                        {% if performance.assessment_1 %}
-                        <input type="text" class="form-control" minlenght="5" name="{{ performance.student.student_id }}" value="{{ performance.assessment_1 }}" onchange="process(this, '{{ performance.student.student_id }}')">
-                        {% else %}
-                            <input type="text" class="form-control" name="{{ performance.student.student_id }}" onchange="process(this, '{{ performance.student.student_id }}')">
-                        {% endif %}
+            {% if module.assessment_1_title %}
+            <td>
+                {% if to_mark == '1' %}
+                    {% if resit == 'resit' %}
+                    <input type="text" class="form-control mark" name="{{ performance.student.student_id }}" {% if performance.r_assessment_1 %}value="{{ performance.r_assessment_1 }}" {% endif %}id="{{ performance.student.student_id }}_1"> ({{ performance.assessment_1|default_if_none:"No submission" }})
+                    {% elif resit == 'qld' %}
+                    <input type="text" class="form-control mark" name="{{ performance.student.student_id }}" {% if performance.q_assessment_1 %}value="{{ performance.q_assessment_1 }}" {% endif %}id="{{ performance.student.student_id }}_1"> ({{ performance.assessment_1|default_if_none:"No submission" }}, resit: {{ performance.r_assessment_1|default_if_none:"No submission" }})
                     {% else %}
-                        {{ performance.assessment_1 }}
+                    <input type="text" class="form-control mark" name="{{ performance.student.student_id }}" {% if performance.assessment_1 %}value="{{ performance.assessment_1 }}" {% endif %}id="{{ performance.student.student_id }}_1">
                     {% endif %}
-                </td>
+                {% else %}
+                {% if performance.r_assessment_1 %}{% if performance.assessment_1_concessions == "G" %}Sit: {% else %}Resit: {% endif %}<div id="{{ performance.student.student_id }}_1">{{ performance.r_assessment_1 }}</div>, first attempt: {% else %}<div id="{{ performance.student.student_id }}">{% endif %}{{ performance.assessment_1|default_if_none:"No submission" }}{% if not performance.r_assessment_1 %}<div>{% endif %}
+                {% endif %}
+            </td>
             {% endif %}
-            {% if current_module.assessment_2_title %}
-                <td id="{{ performance.student.student_id }}_2" class="col-md-1">
-                    {% if to_mark == '2' %}
-                        {% if performance.assessment_2 %}
-                        <input type="text" class="form-control" name="{{ performance.student.student_id }}" value="{{ performance.assessment_2 }}" onchange="process(this, '{{ performance.student.student_id }}')">
-                        {% else %}
-                            <input type="text" class="form-control" name="{{ performance.student.student_id }}" onchange="process(this, '{{ performance.student.student_id }}')">
-                        {% endif %}
+            {% if module.assessment_2_title %}
+            <td>
+                {% if to_mark == '2' %}
+                    {% if resit == 'resit' %}
+                    <input type="text" class="form-control mark" name="{{ performance.student.student_id }}" {% if performance.r_assessment_2 %}value="{{ performance.r_assessment_2 }}" {% endif %}id="{{ performance.student.student_id }}_2"> ({{ performance.assessment_2|default_if_none:"No submission" }})
+                    {% elif resit == 'qld' %}
+                    <input type="text" class="form-control mark" name="{{ performance.student.student_id }}" {% if performance.q_assessment_2 %}value="{{ performance.q_assessment_2 }}" {% endif %}id="{{ performance.student.student_id }}_2"> ({{ performance.assessment_2|default_if_none:"No submission" }}, resit: {{ performance.r_assessment_2|default_if_none:"No submission" }})
                     {% else %}
-                        {{ performance.assessment_2 }}
+                    <input type="text" class="form-control mark" name="{{ performance.student.student_id }}" {% if performance.assessment_2 %}value="{{ performance.assessment_2 }}" {% endif %}id="{{ performance.student.student_id }}_2">
                     {% endif %}
-                </td>
+                {% else %}
+                {% if performance.r_assessment_2 %}{% if performance.assessment_2_concessions == "G" %}Sit: {% else %}Resit: {% endif %}<div id="{{ performance.student.student_id }}_2">{{ performance.r_assessment_2 }}</div>, first attempt: {% else %}<div id="{{ performance.student.student_id }}">{% endif %}{{ performance.assessment_2|default_if_none:"No submission" }}{% if not performance.r_assessment_2 %}<div>{% endif %}
+                {% endif %}
+            </td>
             {% endif %}
-            {% if current_module.assessment_3_title %}
-                <td id="{{ performance.student.student_id }}_3" class="col-md-1">
-                    {% if to_mark == '3' %}
-                        {% if performance.assessment_3 %}
-                            <input type="text" class="form-control" name="{{ performance.student.student_id }}" value="{{ performance.assessment_3 }}" onchange="process(this, '{{ performance.student.student_id }}')">
-                        {% else %}
-                            <input type="text" class="form-control" name="{{ performance.student.student_id }}" onchange="process(this, '{{ performance.student.student_id }}')">
-                        {% endif %}
+            {% if module.assessment_3_title %}
+            <td>
+                {% if to_mark == '3' %}
+                    {% if resit == 'resit' %}
+                    <input type="text" class="form-control mark" name="{{ performance.student.student_id }}" {% if performance.r_assessment_3 %}value="{{ performance.r_assessment_3 }}" {% endif %}id="{{ performance.student.student_id }}_3"> ({{ performance.assessment_3|default_if_none:"No submission" }})
+                    {% elif resit == 'qld' %}
+                    <input type="text" class="form-control mark" name="{{ performance.student.student_id }}" {% if performance.q_assessment_3 %}value="{{ performance.q_assessment_3 }}" {% endif %}id="{{ performance.student.student_id }}_3"> ({{ performance.assessment_3|default_if_none:"No submission" }}, resit: {{ performance.r_assessment_3|default_if_none:"No submission" }})
                     {% else %}
-                        {{ performance.assessment_3 }}
+                    <input type="text" class="form-control mark" name="{{ performance.student.student_id }}" {% if performance.assessment_3 %}value="{{ performance.assessment_3 }}" {% endif %}id="{{ performance.student.student_id }}_3">
                     {% endif %}
-                </td>
+                {% else %}
+                {% if performance.r_assessment_3 %}{% if performance.assessment_3_concessions == "G" %}Sit: {% else %}Resit: {% endif %}<div id="{{ performance.student.student_id }}_3">{{ performance.r_assessment_3 }}</div>, first attempt: {% else %}<div id="{{ performance.student.student_id }}">{% endif %}{{ performance.assessment_3|default_if_none:"No submission" }}{% if not performance.r_assessment_3 %}<div>{% endif %}
+                {% endif %}
+            </td>
             {% endif %}
-            {% if current_module.assessment_4_title %}
-                <td id="{{ performance.student.student_id }}_4" class="col-md-1">
-                    {% if to_mark == '4' %}
-                        {% if performance.assessment_4 %}
-                            <input type="text" class="form-control" name="{{ performance.student.student_id }}" value="{{ performance.assessment_4 }}" onchange="process(this, '{{ performance.student.student_id }}')">
-                        {% else %}
-                            <input type="text" class="form-control" name="{{ performance.student.student_id }}" onchange="process(this, '{{ performance.student.student_id }}')">
-                        {% endif %}
+            {% if module.assessment_4_title %}
+            <td>
+                {% if to_mark == '4' %}
+                    {% if resit == 'resit' %}
+                    <input type="text" class="form-control mark" name="{{ performance.student.student_id }}" {% if performance.r_assessment_4 %}value="{{ performance.r_assessment_4 }}" {% endif %}id="{{ performance.student.student_id }}_4"> ({{ performance.assessment_4|default_if_none:"No submission" }})
+                    {% elif resit == 'qld' %}
+                    <input type="text" class="form-control mark" name="{{ performance.student.student_id }}" {% if performance.q_assessment_4 %}value="{{ performance.q_assessment_4 }}" {% endif %}id="{{ performance.student.student_id }}_4"> ({{ performance.assessment_4|default_if_none:"No submission" }}, resit: {{ performance.r_assessment_4|default_if_none:"No submission" }})
                     {% else %}
-                        {{ performance.assessment_4 }}
+                    <input type="text" class="form-control mark" name="{{ performance.student.student_id }}" {% if performance.assessment_4 %}value="{{ performance.assessment_4 }}" {% endif %}id="{{ performance.student.student_id }}_4">
                     {% endif %}
-                </td>
+                {% else %}
+                {% if performance.r_assessment_4 %}{% if performance.assessment_4_concessions == "G" %}Sit: {% else %}Resit: {% endif %}<div id="{{ performance.student.student_id }}_4">{{ performance.r_assessment_4 }}</div>, first attempt: {% else %}<div id="{{ performance.student.student_id }}">{% endif %}{{ performance.assessment_4|default_if_none:"No submission" }}{% if not performance.r_assessment_4 %}<div>{% endif %}
+                {% endif %}
+            </td>
             {% endif %}
-            {% if current_module.assessment_5_title %}
-                <td id="{{ performance.student.student_id }}_5" class="col-md-1">
-                    {% if to_mark == '5' %}
-                        {% if performance.assessment_5 %}
-                            <input type="text" class="form-control" name="{{ performance.student.student_id }}" value="{{ performance.assessment_5 }}" onchange="process(this, '{{ performance.student.student_id }}')">
-                        {% else %}
-                            <input type="text" class="form-control" name="{{ performance.student.student_id }}" onchange="process(this, '{{ performance.student.student_id }}')">
-                        {% endif %}
+            {% if module.assessment_5_title %}
+            <td>
+                {% if to_mark == '5' %}
+                    {% if resit == 'resit' %}
+                    <input type="text" class="form-control mark" name="{{ performance.student.student_id }}" {% if performance.r_assessment_5 %}value="{{ performance.r_assessment_5 }}" {% endif %}id="{{ performance.student.student_id }}_5"> ({{ performance.assessment_5|default_if_none:"No submission" }})
+                    {% elif resit == 'qld' %}
+                    <input type="text" class="form-control mark" name="{{ performance.student.student_id }}" {% if performance.q_assessment_5 %}value="{{ performance.q_assessment_5 }}" {% endif %}id="{{ performance.student.student_id }}_5"> ({{ performance.assessment_5|default_if_none:"No submission" }}, resit: {{ performance.r_assessment_5|default_if_none:"No submission" }})
                     {% else %}
-                        {{ performance.assessment_5 }}
+                    <input type="text" class="form-control mark" name="{{ performance.student.student_id }}" {% if performance.assessment_5 %}value="{{ performance.assessment_5 }}" {% endif %}id="{{ performance.student.student_id }}_5">
                     {% endif %}
-                </td>
+                {% else %}
+                {% if performance.r_assessment_5 %}{% if performance.assessment_5_concessions == "G" %}Sit: {% else %}Resit: {% endif %}<div id="{{ performance.student.student_id }}_5">{{ performance.r_assessment_5 }}</div>, first attempt: {% else %}<div id="{{ performance.student.student_id }}">{% endif %}{{ performance.assessment_5|default_if_none:"No submission" }}{% if not performance.r_assessment_5 %}<div>{% endif %}
+                {% endif %}
+            </td>
             {% endif %}
-            {% if current_module.assessment_6_title %}
-                <td id="{{ performance.student.student_id }}_6" class="col-md-1">
-                    {% if to_mark == '6' %}
-                        {% if performance.assessment_6 %}
-                            <input type="text" class="form-control" name="{{ performance.student.student_id }}" value="{{ performance.assessment_6 }}" onchange="process(this, '{{ performance.student.student_id }}')">
-                        {% else %}
-                            <input type="text" class="form-control" name="{{ performance.student.student_id }}" onchange="process(this, '{{ performance.student.student_id }}')">
-                        {% endif %}
+            {% if module.assessment_6_title %}
+            <td>
+                {% if to_mark == '6' %}
+                    {% if resit == 'resit' %}
+                    <input type="text" class="form-control mark" name="{{ performance.student.student_id }}" {% if performance.r_assessment_6 %}value="{{ performance.r_assessment_6 }}" {% endif %}id="{{ performance.student.student_id }}_6"> ({{ performance.assessment_6|default_if_none:"No submission" }})
+                    {% elif resit == 'qld' %}
+                    <input type="text" class="form-control mark" name="{{ performance.student.student_id }}" {% if performance.q_assessment_6 %}value="{{ performance.q_assessment_6 }}" {% endif %}id="{{ performance.student.student_id }}_6"> ({{ performance.assessment_6|default_if_none:"No submission" }}, resit: {{ performance.r_assessment_6|default_if_none:"No submission" }})
                     {% else %}
-                        {{ performance.assessment_6 }}
+                    <input type="text" class="form-control mark" name="{{ performance.student.student_id }}" {% if performance.assessment_6 %}value="{{ performance.assessment_6 }}" {% endif %}id="{{ performance.student.student_id }}_6">
                     {% endif %}
-                </td>
+                {% else %}
+                {% if performance.r_assessment_6 %}{% if performance.assessment_6_concessions == "G" %}Sit: {% else %}Resit: {% endif %}<div id="{{ performance.student.student_id }}_6">{{ performance.r_assessment_6 }}</div>, first attempt: {% else %}<div id="{{ performance.student.student_id }}">{% endif %}{{ performance.assessment_6|default_if_none:"No submission" }}{% if not performance.r_assessment_6 %}<div>{% endif %}
+                {% endif %}
+            </td>
             {% endif %}
-            {% if current_module.exam_value %}
-                <td id="{{ performance.student.student_id }}_e" class="col-md-1">
-                    {% if to_mark == 'exam' %}
-                        {% if performance.exam %}
-                            <input type="text" class="form-control" name="{{ performance.student.student_id }}" value="{{ performance.exam }}" onchange="process(this, '{{ performance.student.student_id }}')">
-                        {% else %}
-                            <input type="text" class="form-control" name="{{ performance.student.student_id }}" onchange="process(this, '{{ performance.student.student_id }}')">
-                        {% endif %}
+            {% if module.exam_value %}
+            <td>
+                {% if to_mark == 'exam' %}
+                    {% if resit == 'resit' %}
+                    <input type="text" class="form-control mark" name="{{ performance.student.student_id }}" {% if performance.r_exam %}value="{{ performance.r_exam }}" {% endif %}id="{{ performance.student.student_id }}_6"> ({{ performance.exam|default_if_none:"No submission" }})
+                    {% elif resit == 'qld' %}
+                    <input type="text" class="form-control mark" name="{{ performance.student.student_id }}" {% if performance.q_exam %}value="{{ performance.q_exam }}" {% endif %}id="{{ performance.student.student_id }}_6"> ({{ performance.exam|default_if_none:"No submission" }}, resit: {{ performance.r_exam|default_if_none:"No submission" }})
                     {% else %}
-                        {{ performance.exam }}
+                    <input type="text" class="form-control mark" name="{{ performance.student.student_id }}" {% if performance.exam %}value="{{ performance.exam }}" {% endif %}id="{{ performance.student.student_id }}_6">
                     {% endif %}
-                </td>
+                {% else %}
+                {% if performance.r_exam %}{% if performance.exam_concessions == "G" %}Sit: {% else %}Resit: {% endif %}<div id="{{ performance.student.student_id }}_6">{{ performance.r_exam }}</div>, first attempt: {% else %}<div id="{{ performance.student.student_id }}">{% endif %}{{ performance.exam|default_if_none:"No submission" }}{% if not performance.r_exam %}<div>{% endif %}
+                {% endif %}
+            </td>
             {% endif %}
             <td id="{{ performance.student.student_id }}_average" class="col-md-1">
                 {{ performance.average }}
@@ -171,6 +197,7 @@
 
 <input type="submit" value="Save Marks" class="btn btn-default" align=right>
 
+
 {% endblock %}
 
 {% block formend %}
@@ -181,147 +208,117 @@
 
 <script type="text/javascript">
 
-function process(elem, student_id){
-    var errortag = student_id + "_error"
-	var numericExpression = /^[0-9]+$/;
-	if(elem.value.match(numericExpression) && Number(elem.value) >= 0 && Number(elem.value) <= 100){
-                document.getElementById(errortag).innerHTML="";
-                var sum = 0;
-                {% if current_module.assessment_1_title %}
-                    {% if to_mark == 1 %}
-                        entry = Number(elem.value);
-                    {% else %}
-                        marktag = student_id + "_1";
-                        raw_entry = document.getElementById(marktag).innerHTML;
-                        if (raw_entry.indexOf("None") != -1)
-                            {
-                                entry = 0;
-                            }
-                        else
-                            {
-                                entry = Number(raw_entry);
-                            };
-                    {% endif %}
-                    value = entry * {{ current_module.assessment_1_value }};
-                    sum = sum + value;
-                {% endif %}
-                {% if current_module.assessment_2_title %}
-                    {% if to_mark == 2 %}
-                        entry = Number(elem.value);
-                    {% else %}
-                        marktag = student_id + "_2";
-                        raw_entry = document.getElementById(marktag).innerHTML;
-                        if (raw_entry.indexOf("None") != -1)
-                            {
-                                entry = 0;
-                            }
-                        else
-                            {
-                                entry = Number(raw_entry);
-                            };
-                    {% endif %}
-                    value = entry * {{ current_module.assessment_2_value }};
-                    sum = sum + value;
-                {% endif %}
-                {% if current_module.assessment_3_title %}
-                    {% if to_mark == 3 %}
-                        entry = Number(elem.value);
-                    {% else %}
-                        marktag = student_id + "_3";
-                        raw_entry = document.getElementById(marktag).innerHTML;
-                        if (raw_entry.indexOf("None") != -1)
-                            {
-                                entry = 0;
-                            }
-                        else
-                            {
-                                entry = Number(raw_entry);
-                            };
-                    {% endif %}
-                    value = entry * {{ current_module.assessment_3_value }};
-                    sum = sum + value;
-                {% endif %}
-                {% if current_module.assessment_4_title %}
-                    {% if to_mark == 4 %}
-                        entry = Number(elem.value);
-                    {% else %}
-                        marktag = student_id + "_4";
-                        raw_entry = document.getElementById(marktag).innerHTML;
-                        if (raw_entry.indexOf("None") != -1)
-                            {
-                                entry = 0;
-                            }
-                        else
-                            {
-                                entry = Number(raw_entry);
-                            };
-                    {% endif %}
-                    value = entry * {{ current_module.assessment_4_value }};
-                    sum = sum + value;
-                {% endif %}
-                {% if current_module.assessment_5_title %}
-                    {% if to_mark == 5 %}
-                        entry = Number(elem.value);
-                    {% else %}
-                        marktag = student_id + "_5";
-                        raw_entry = document.getElementById(marktag).innerHTML;
-                        if (raw_entry.indexOf("None") != -1)
-                            {
-                                entry = 0;
-                            }
-                        else
-                            {
-                                entry = Number(raw_entry);
-                            };
-                    {% endif %}
-                    value = entry * {{ current_module.assessment_5_value }};
-                    sum = sum + value;
-                {% endif %}
-                {% if current_module.assessment_6_title %}
-                    {% if to_mark == 6 %}
-                        entry = Number(elem.value);
-                    {% else %}
-                        marktag = student_id + "_6";
-                        raw_entry = document.getElementById(marktag).innerHTML;
-                        if (raw_entry.indexOf("None") != -1)
-                            {
-                                entry = 0;
-                            }
-                        else
-                            {
-                                entry = Number(raw_entry);
-                            };
-                    {% endif %}
-                    value = entry * {{ current_module.assessment_6_value }};
-                    sum = sum + value;
-                {% endif %}
-                {% if current_module.exam_value %}
-                    {% if to_mark == 9 %}
-                        entry = Number(elem.value);
-                    {% else %}
-                        marktag = student_id + "_e";
-                        raw_entry = document.getElementById(marktag).innerHTML;
-                        if (raw_entry.indexOf("None") != -1)
-                            {
-                                entry = 0;
-                            }
-                        else
-                            {
-                                entry = Number(raw_entry);
-                            };
-                    {% endif %}
-                    value = entry * {{ current_module.exam_value }};
-                    sum = sum + value;
-                {% endif %}
-                average = sum / 100;
-                rounded_average = Math.round(average)
-                averagetag = student_id + '_average'
-                document.getElementById(averagetag).innerHTML=rounded_average;
-	}else{
-        document.getElementById(errortag).innerHTML="Enter a mark between 0 and 100";
-		elem.focus();
-	}
-}
+$(document).ready(function () {
+
+    function value(assessment) {
+        {% if module.assessment_1_title %}
+            var value_1 = parseInt({{ module.assessment_1_value }});
+        {% else %}
+            var value_1 = 0;
+        {% endif %}
+        {% if module.assessment_2_title %}
+            var value_2 = parseInt({{ module.assessment_2_value }});
+        {% else %}
+            var value_2 = 0;
+        {% endif %}
+        {% if module.assessment_3_title %}
+            var value_3 = parseInt({{ module.assessment_3_value }});
+        {% else %}
+            var value_3 = 0;
+        {% endif %}
+        {% if module.assessment_4_title %}
+            var value_4 = parseInt({{ module.assessment_4_value }});
+        {% else %}
+            var value_4 = 0;
+        {% endif %}
+        {% if module.assessment_5_title %}
+            var value_5 = parseInt({{ module.assessment_5_value }});
+        {% else %}
+            var value_5 = 0;
+        {% endif %}
+        {% if module.assessment_6_title %}
+            var value_6 = parseInt({{ module.assessment_6_value }});
+        {% else %}
+            var value_6 = 0;
+        {% endif %}
+        {% if module.exam_value %}
+            var value_exam = parseInt({{ module.exam_value }});
+        {% else %}
+            var value_exam = 0;
+        {% endif %}
+        switch(assessment) {
+            case '1':
+                returnvalue = value_1;
+                break;
+            case '2':
+                returnvalue = value_2;
+                break;
+            case '3':
+                returnvalue = value_3;
+                break;
+            case '4':
+                returnvalue = value_4;
+                break;
+            case '5':
+                returnvalue = value_5;
+                break;
+            case '6':
+                returnvalue = value_6;
+                break;
+            case 'exam':
+                returnvalue = value_exam;
+                break;
+        };
+        return returnvalue;
+    };
+
+    function validate(student_id) {
+        var valid = true;
+        $('.' + student_id + '_input').each(function () { 
+            var mark = parseInt($(this).val());
+            var assessment = $(this).attr('id').split('_').pop();
+            var error_element = '#' + student_id + '_error';
+            if (isNaN(mark)) {
+                var errortext = 'Please enter a number';
+                valid = false;
+            }
+            else if (mark > 99) {
+                var errortext = 'The mark should not exceed 100';
+                valid = false;
+            }
+            else {
+                var errortext = '';
+            };
+            $(error_element).text(errortext);
+        });
+        return valid;
+    };
+
+    function calculate_average(student_id) {
+
+        var sum = 0;
+        $('.' + student_id + '_input').each(function () { 
+            var mark = parseInt($(this).val());
+            var assessment = $(this).attr('id').split('_').pop()
+            var weighted = mark * value(assessment);
+            sum = sum + weighted;
+        });
+        var average = sum / 100;
+        rounded_average = Math.round(average)
+        insert = '<b>' + rounded_average + '</b>';
+        $('#' + student_id + '_average').html(insert);
+    }; 
+
+    $('.mark').change(function () {
+        var student_id = $(this).attr('id').split('_').shift()
+        console.log(student_id)
+//        if (validate(student_id)) {
+//            calculate_average(student_id);
+//        };
+    });
+
+}); 
+
 </script>
 
 {% endblock %}

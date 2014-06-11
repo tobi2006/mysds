@@ -1088,15 +1088,24 @@ def edit_student(request, student_id):
 
 @login_required
 @user_passes_test(is_teacher)
-def mark(request, module_id, year, assessment):
+def mark(request, module_id, year, assessment, resit=False):
     """Simple mark form (only marks, no feedback)"""
     module = Module.objects.get(code=module_id, year=year)
-    students = module.student_set.all()
-    performances = {}
-    for student in students:
+    all_students = module.student_set.all()
+    performances = []
+    for student in all_students:
         performance = Performance.objects.get(student=student, module=module)
-        student_name = student.last_name + ", " + student.first_name
-        performances[student_name] = performance
+        if resit == 'resit':
+            if performance.average < 40:
+                performances.append(performance)
+            elif module.is_foundational and student.qld:
+                if performance.get_assessment_result(assessment) < 40:
+                    performances.append(performance)
+        elif resit == 'qld':
+            pass
+        else:
+            print "Huhu"
+            performances.append(performance)
     if request.method == 'POST':
         students = module.student_set.all()
         for student in students:
@@ -1107,18 +1116,33 @@ def mark(request, module_id, year, assessment):
                     if mark in range(0, 100):
                         performance = Performance.objects.get(
                             student=student, module=module)
-                        if (mark !=
-                                performance.get_assessment_result(assessment)):
-                            performance.set_assessment_result(assessment, mark)
+                        if resit:
+                            if resit == 'resit':
+                                if (mark != 
+                                        performance.get_assessment_result(
+                                            assessment, mark, r=True)):
+                                    performance.set_assessment_result(
+                                            assessment, mark, r=True)
+                            if resit == 'qld':
+                                if (mark != 
+                                        performance.get_assessment_result(
+                                            assessment, mark, q=True)):
+                                    performance.set_assessment_result(
+                                            assessment, mark, q=True)
+                        else:
+                            if (mark !=
+                                    performance.get_assessment_result(assessment)):
+                                performance.set_assessment_result(assessment, mark)
                 except ValueError:
                     pass
         return HttpResponseRedirect(module.get_absolute_url())
     return render_to_response(
         'mark.html',
         {
-            'current_module': module,
+            'module': module,
             'performances': performances,
-            'to_mark': assessment
+            'to_mark': assessment,
+            'resit': resit
         },
         context_instance=RequestContext(request)
         )
