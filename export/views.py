@@ -1900,70 +1900,78 @@ def export_marks(request, code, year):
     elements.append(Spacer(1,20))
     data = []
     header = ['ID', 'Student', ' Programme', 'QLD']
-    assessment_range = []
-    if module.assessment_1_value:
-        title = (
-            module.assessment_1_title +
-            ' (' +
-            str(module.assessment_1_value) +
-            '%)'
-            )
-        assessment_range.append('1')
-        header.append(title)
-    if module.assessment_2_value:
-        title = (
-            module.assessment_2_title +
-            ' (' +
-            str(module.assessment_2_value) +
-            '%)'
-            )
-        assessment_range.append('2')
-        header.append(title)
-    if module.assessment_3_value:
-        title = (
-            module.assessment_3_title +
-            ' (' +
-            str(module.assessment_3_value) +
-            '%)'
-            )
-        assessment_range.append('3')
-        header.append(title)
-    if module.assessment_4_value:
-        title = (
-            module.assessment_4_title +
-            ' (' +
-            str(module.assessment_4_value) +
-            '%)'
-            )
-        assessment_range.append('4')
-        header.append(title)
-    if module.assessment_5_value:
-        title = (
-            module.assessment_5_title +
-            ' (' +
-            str(module.assessment_5_value) +
-            '%)'
-            )
-        assessment_range.append('5')
-        header.append(title)
-    if module.assessment_6_value:
-        title = (
-            module.assessment_6_title +
-            ' (' +
-            str(module.assessment_6_value) +
-            '%)'
-            )
-        assessment_range.append('6')
-        header.append(title)
-    if module.exam_value:
-        title = (
-            'Exam (' +
-            str(module.exam_value) +
-            '%)'
-            )
-        assessment_range.append('exam')
-        header.append(title)
-    header.append('Module Mark')
+    # Ugly workaround to accommodate overassessing colleague...!
+    if module.code == 'MDSS1ELSM':
+        assessment_range = ['1', '2', '3', '4']
+        header.append('Online Test (25 %)')
+        header.append('Reading Law (20 %)')
+        header.append('Essay (25 %)')
+        header.append('Negotiation (30 %)')
+    else:
+        assessment_range = []
+        if module.assessment_1_value:
+            title = (
+                module.assessment_1_title +
+                ' (' +
+                str(module.assessment_1_value) +
+                '%)'
+                )
+            assessment_range.append('1')
+            header.append(title)
+        if module.assessment_2_value:
+            title = (
+                module.assessment_2_title +
+                ' (' +
+                str(module.assessment_2_value) +
+                '%)'
+                )
+            assessment_range.append('2')
+            header.append(title)
+        if module.assessment_3_value:
+            title = (
+                module.assessment_3_title +
+                ' (' +
+                str(module.assessment_3_value) +
+                '%)'
+                )
+            assessment_range.append('3')
+            header.append(title)
+        if module.assessment_4_value:
+            title = (
+                module.assessment_4_title +
+                ' (' +
+                str(module.assessment_4_value) +
+                '%)'
+                )
+            assessment_range.append('4')
+            header.append(title)
+        if module.assessment_5_value:
+            title = (
+                module.assessment_5_title +
+                ' (' +
+                str(module.assessment_5_value) +
+                '%)'
+                )
+            assessment_range.append('5')
+            header.append(title)
+        if module.assessment_6_value:
+            title = (
+                module.assessment_6_title +
+                ' (' +
+                str(module.assessment_6_value) +
+                '%)'
+                )
+            assessment_range.append('6')
+            header.append(title)
+        if module.exam_value:
+            title = (
+                'Exam (' +
+                str(module.exam_value) +
+                '%)'
+                )
+            assessment_range.append('exam')
+            header.append(title)
+    header.append('Total')
     data.append(header)
     performances = Performance.objects.filter(module = module)
     counter = 0
@@ -1988,7 +1996,7 @@ def export_marks(request, code, year):
         counter += 1
         student = (
                 performance.student.last_name + ", " + 
-                performance.student.first_name
+                performance.student.short_first_name()
                 )
         row = [performance.student.student_id, student]
         # This needs to be replaced once model changes
