@@ -325,53 +325,54 @@ class Module(models.Model):
         return number_of_sessions
 
     def get_assessment_title(self, assessment):
-        number = int(assessment)
-        if number == 1:
+        assessment = str(assessment)
+        if assessment == '1':
             returnvalue = self.assessment_1_title
-        elif number == 2:
+        elif assessment == '2':
             returnvalue = self.assessment_2_title
-        elif number == 3:
+        elif assessment == '3':
             returnvalue = self.assessment_3_title
-        elif number == 4:
+        elif assessment == '4':
             returnvalue = self.assessment_4_title
-        elif number == 5:
+        elif assessment == '5':
             returnvalue = self.assessment_5_title
-        elif number == 6:
+        elif assessment == '6':
             returnvalue = self.assessment_6_title
+        elif assessment == 'exam':
+            returnvalue = 'Exam'
         return returnvalue
 
     def get_assessment_value(self, assessment):
-        if assessment == 'exam':
+        assessment = str(assessment)
+        if assessment == '1':
+            returnvalue = self.assessment_1_value
+        elif assessment == '2':
+            returnvalue = self.assessment_2_value
+        elif assessment == '3':
+            returnvalue = self.assessment_3_value
+        elif assessment == '4':
+            returnvalue = self.assessment_4_value
+        elif assessment == '5':
+            returnvalue = self.assessment_5_value
+        elif assessment == '6':
+            returnvalue = self.assessment_6_value
+        elif assessment == 'exam':
             returnvalue = self.exam_value
-        else:
-            number = int(assessment)
-            if number == 1:
-                returnvalue = self.assessment_1_value
-            elif number == 2:
-                returnvalue = self.assessment_2_value
-            elif number == 3:
-                returnvalue = self.assessment_3_value
-            elif number == 4:
-                returnvalue = self.assessment_4_value
-            elif number == 5:
-                returnvalue = self.assessment_5_value
-            elif number == 6:
-                returnvalue = self.assessment_6_value
         return returnvalue
 
     def get_assessment_type(self, assessment):
-        number = int(assessment)
-        if number == 1:
+        assessment = str(assessment)
+        if assessment == '1':
             returnvalue = self.assessment_1_type
-        elif number == 2:
+        elif assessment == '2':
             returnvalue = self.assessment_2_type
-        elif number == 3:
+        elif assessment == '3':
             returnvalue = self.assessment_3_type
-        elif number == 4:
+        elif assessment == '4':
             returnvalue = self.assessment_4_type
-        elif number == 5:
+        elif assessment == '5':
             returnvalue = self.assessment_5_type
-        elif number == 6:
+        elif assessment == '6':
             returnvalue = self.assessment_6_type
         return returnvalue
 
@@ -490,6 +491,9 @@ class Module(models.Model):
 
     def get_address_nines_url(self):
         return reverse('address_nines', args=[self.code, str(self.year)])
+
+    def get_concessions_url(self):
+        return reverse('concessions', args=[self.code, str(self.year)])
 
     def get_attendance_sheet_url(self):
         return reverse(
