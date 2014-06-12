@@ -1,17 +1,17 @@
 from datetime import date
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import (
-        HttpResponse, HttpResponseRedirect, HttpResponseForbidden)
+    HttpResponse, HttpResponseRedirect, HttpResponseForbidden)
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext
 from django.templatetags.static import static
 from reportlab.lib import colors
-from reportlab.lib.pagesizes import A4, LETTER, landscape, portrait 
+from reportlab.lib.pagesizes import A4, LETTER, landscape, portrait
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from reportlab.platypus import (
-        SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer,
-        BaseDocTemplate, Frame, PageTemplate, Image)
+    SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer,
+    BaseDocTemplate, Frame, PageTemplate, Image)
 from reportlab.platypus.flowables import PageBreak
 
 from database.views import is_teacher, is_admin, is_student
@@ -24,6 +24,7 @@ from anonymous_marking.models import *
 
 # Helper Functions
 
+
 def logo():
     """Returns the university logo, unless it is not available"""
     styles = getSampleStyleSheet()
@@ -32,24 +33,27 @@ def logo():
         image = Image(url, 2.45*inch, 1*inch)
     except IOError:
         image = Paragraph(
-                "Canterbury Christ Church University", styles['Heading1'])
+            "Canterbury Christ Church University", styles['Heading1'])
     return image
+
 
 def bold(string):
     """Adds <b> tags around a string"""
     bold_string = '<b>' + string + '</b>'
     return bold_string
 
-def heading(string, headingstyle = 'Heading2'):
+
+def heading(string, headingstyle='Heading2'):
     """Returns a proper paragraph for the header line"""
     styles = getSampleStyleSheet()
     tmp = '<para alignment = "center">' + string + '</para>'
     result = Paragraph(tmp, styles[headingstyle])
     return result
 
+
 def formatted_date(raw_date):
     """Returns a proper date string
-    
+
     This returns a string of the date in British Format.
     If the date field was left blank, an empty string is returned.
     """
@@ -57,9 +61,10 @@ def formatted_date(raw_date):
         result = ''
     else:
         result = (
-                str(raw_date.day) + '/' + str(raw_date.month) + '/' +
-                str(raw_date.year))
+            str(raw_date.day) + '/' + str(raw_date.month) + '/' +
+            str(raw_date.year))
     return result
+
 
 def two_markers(marker1, marker2):
     """Returns a string containing two markers, sorted alphabetically"""
@@ -74,16 +79,19 @@ def two_markers(marker1, marker2):
     result = marker_1_return + ' / ' + marker_2_return
     return result
 
+
 def paragraph(string):
     """Returns a paragraph with normal style"""
     styles = getSampleStyleSheet()
     return Paragraph(string, styles['Normal'])
+
 
 def bold_paragraph(string):
     """Returns a paragraph with bold formatting"""
     styles = getSampleStyleSheet()
     tmp = bold(string)
     return Paragraph(tmp, styles['Normal'])
+
 
 def get_title(module, assessment):
     assessment_title_string = module.get_assessment_title(assessment)
@@ -92,7 +100,8 @@ def get_title(module, assessment):
 
 # Different marksheets
 
-def essay_sheet(student, module, assessment):                    
+
+def essay_sheet(student, module, assessment):
     """Marksheet for Essays
 
     This is the standard marksheet for CCCU Law, including a marking grid
@@ -102,59 +111,59 @@ def essay_sheet(student, module, assessment):
     elements = []
     performance = Performance.objects.get(student=student, module=module)
     marksheet = Marksheet.objects.get(
-            student=student, module=module, assessment=assessment)
+        student=student, module=module, assessment=assessment)
     assessment_title = bold(module.get_assessment_title(assessment))
     mark = str(performance.get_assessment_result(assessment))
     elements.append(logo())
-    elements.append(Spacer(1,5))
+    elements.append(Spacer(1, 5))
     title = heading('Law Undergraduate Assessment Sheet: Essay')
     elements.append(title)
-    elements.append(Spacer(1,5))
+    elements.append(Spacer(1, 5))
     last_name = [
-            bold_paragraph('Student family name'),
-            Spacer(1,3),
-            bold_paragraph(student.last_name)]
+        bold_paragraph('Student family name'),
+        Spacer(1, 3),
+        bold_paragraph(student.last_name)]
     first_name = [
-            paragraph('First name'),
-            Spacer(1,3),
-            bold_paragraph(student.first_name)]
+        paragraph('First name'),
+        Spacer(1, 3),
+        bold_paragraph(student.first_name)]
     module_title = [
-            paragraph('Module Title'),
-            Spacer(1,3),
-            bold_paragraph(module.title)]
+        paragraph('Module Title'),
+        Spacer(1, 3),
+        bold_paragraph(module.title)]
     module_code = [
-            paragraph('Module Code'),
-            Spacer(1,3),
-            bold_paragraph(module.code)]
+        paragraph('Module Code'),
+        Spacer(1, 3),
+        bold_paragraph(module.code)]
     tmp = formatted_date(marksheet.submission_date)
     submission_date = [
-            paragraph('Submission Date'),
-            Spacer(1,3),
-            bold_paragraph(tmp)]
+        paragraph('Submission Date'),
+        Spacer(1, 3),
+        bold_paragraph(tmp)]
     assessment_title = [
-            paragraph('Assessment Title'),
-            Spacer(1,3),
-            paragraph(assessment_title)]
+        paragraph('Assessment Title'),
+        Spacer(1, 3),
+        paragraph(assessment_title)]
     if module.get_assessment_max_wordcount(assessment):
         tmp = (
-                str(module.get_assessment_max_wordcount(assessment)) + 
-                ' Words max.')
+            str(module.get_assessment_max_wordcount(assessment)) +
+            ' Words max.')
     else:
         tmp = ''
     word_count = [
-            paragraph('Word Count'),
-            Spacer(1,3),
-            bold_paragraph(tmp)]
+        paragraph('Word Count'),
+        Spacer(1, 3),
+        bold_paragraph(tmp)]
     criteria = paragraph('Criteria')
     category_1 = paragraph(CATEGORIES['ESSAY']['i_1'])
     category_2 = paragraph(CATEGORIES['ESSAY']['i_2'])
     category_3 = paragraph(CATEGORIES['ESSAY']['i_3'])
     category_4 = paragraph(CATEGORIES['ESSAY']['i_4'])
     data = [
-            [last_name, '', first_name, ''],
-            [module_title, '', module_code, submission_date, ''],
-            [assessment_title, '', word_count, '', ''],
-            [criteria, category_1, category_2, category_3, category_4]]
+        [last_name, '', first_name, ''],
+        [module_title, '', module_code, submission_date, ''],
+        [assessment_title, '', word_count, '', ''],
+        [criteria, category_1, category_2, category_3, category_4]]
     row = ['80 +']
     if marksheet.category_mark_1 == 80:
         row.append('X')
@@ -263,31 +272,31 @@ def essay_sheet(student, module, assessment):
     else:
         row.append(' ')
     data.append(row)
-    t = Table(data) 
+    t = Table(data)
     t.setStyle(
         TableStyle([
-                ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
-                ('SPAN', (0,0), (1,0)),
-                ('SPAN', (2,0), (-1,0)),
-                ('SPAN', (0,1), (1,1)),
-                ('SPAN', (3,1), (-1,1)),
-                ('SPAN', (0,2), (1,2)),
-                ('SPAN', (2,2), (-1,2)),
-                ('BACKGROUND', (0,3), (-1,3), colors.lightgrey),
-                ('BACKGROUND', (0,4), (0,9), colors.lightgrey),
-                ('ALIGN', (1,4), (-1,-1), 'CENTER'),
-                ('BOX', (0,0), (-1,-1), 0.25, colors.black)])
+            ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+            ('SPAN', (0, 0), (1, 0)),
+            ('SPAN', (2, 0), (-1, 0)),
+            ('SPAN', (0, 1), (1, 1)),
+            ('SPAN', (3, 1), (-1, 1)),
+            ('SPAN', (0, 2), (1, 2)),
+            ('SPAN', (2, 2), (-1, 2)),
+            ('BACKGROUND', (0, 3), (-1, 3), colors.lightgrey),
+            ('BACKGROUND', (0, 4), (0, 9), colors.lightgrey),
+            ('ALIGN', (1, 4), (-1, -1), 'CENTER'),
+            ('BOX', (0, 0), (-1, -1), 0.25, colors.black)])
         )
     elements.append(t)
     comments = [
-            bold_paragraph('General Comments'),
-            Spacer(1,4)]
+        bold_paragraph('General Comments'),
+        Spacer(1, 4)]
     feedbacklist = marksheet.comments.split('\n')
     for line in feedbacklist:
         if line != "":
             p = paragraph(line)
             comments.append(p)
-            comments.append(Spacer(1,4))
+            comments.append(Spacer(1, 4))
     for comment in comments:
         elements.append(comment)
     marker = marksheet.marker
@@ -298,28 +307,30 @@ def essay_sheet(student, module, assessment):
         tmp = marker.first_name + ' ' + marker.last_name
     marking_date = formatted_date(marksheet.marking_date)
     marked_by = [
-            [paragraph('Marked by'), bold_paragraph(tmp)],
-            [paragraph('Date'), bold_paragraph(marking_date)]]
+        [paragraph('Marked by'), bold_paragraph(tmp)],
+        [paragraph('Date'), bold_paragraph(marking_date)]]
     marked_by_table = Table(marked_by)
     mark = [
-            [paragraph('Mark'), 
+        [
+            paragraph('Mark'),
             Paragraph(mark, styles['Heading1'])],
-            ['', '']]
+        ['', '']]
     mark_table = Table(mark)
-    mark_table.setStyle(TableStyle([('SPAN', (1,0), (1,1))]))
+    mark_table.setStyle(TableStyle([('SPAN', (1, 0), (1, 1))]))
     last_data = [[marked_by_table, '', '', mark_table, '']]
     last_table = Table(last_data)
     last_table.setStyle(
         TableStyle([
-                ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
-                ('BOX', (0,0), (-1,-1), 0.25, colors.black),
-                ('SPAN', (0,0), (2,0)),
-                ('SPAN', (3,-1), (-1,-1))])
+            ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+            ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+            ('SPAN', (0, 0), (2, 0)),
+            ('SPAN', (3, -1), (-1, -1))])
         )
     elements.append(last_table)
     return elements
 
-def legal_problem_sheet(student, module, assessment):                    
+
+def legal_problem_sheet(student, module, assessment):
     """Marksheet for Legal Problem Questions
 
     This is the standard marksheet for CCCU Law, including a marking grid
@@ -329,59 +340,59 @@ def legal_problem_sheet(student, module, assessment):
     elements = []
     performance = Performance.objects.get(student=student, module=module)
     marksheet = Marksheet.objects.get(
-            student=student, module=module, assessment=assessment)
+        student=student, module=module, assessment=assessment)
     assessment_title = bold(module.get_assessment_title(assessment))
     mark = str(performance.get_assessment_result(assessment))
     elements.append(logo())
-    elements.append(Spacer(1,5))
+    elements.append(Spacer(1, 5))
     title = heading('Law Undergraduate Assessment Sheet: Legal Problem')
     elements.append(title)
-    elements.append(Spacer(1,5))
+    elements.append(Spacer(1, 5))
     last_name = [
-            bold_paragraph('Student family name'),
-            Spacer(1,3),
-            bold_paragraph(student.last_name)]
+        bold_paragraph('Student family name'),
+        Spacer(1, 3),
+        bold_paragraph(student.last_name)]
     first_name = [
-            paragraph('First name'),
-            Spacer(1,3),
-            bold_paragraph(student.first_name)]
+        paragraph('First name'),
+        Spacer(1, 3),
+        bold_paragraph(student.first_name)]
     module_title = [
-            paragraph('Module Title'),
-            Spacer(1,3),
-            bold_paragraph(module.title)]
+        paragraph('Module Title'),
+        Spacer(1, 3),
+        bold_paragraph(module.title)]
     module_code = [
-            paragraph('Module Code'),
-            Spacer(1,3),
-            bold_paragraph(module.code)]
+        paragraph('Module Code'),
+        Spacer(1, 3),
+        bold_paragraph(module.code)]
     tmp = formatted_date(marksheet.submission_date)
     submission_date = [
-            paragraph('Submission Date'),
-            Spacer(1,3),
-            bold_paragraph(tmp)]
+        paragraph('Submission Date'),
+        Spacer(1, 3),
+        bold_paragraph(tmp)]
     assessment_title = [
-            paragraph('Assessment Title'),
-            Spacer(1,3),
-            paragraph(assessment_title)]
+        paragraph('Assessment Title'),
+        Spacer(1, 3),
+        paragraph(assessment_title)]
     if module.get_assessment_max_wordcount(assessment):
         tmp = (
-                str(module.get_assessment_max_wordcount(assessment)) + 
-                ' Words max.')
+            str(module.get_assessment_max_wordcount(assessment)) +
+            ' Words max.')
     else:
         tmp = ''
     word_count = [
-            paragraph('Word Count'),
-            Spacer(1,3),
-            bold_paragraph(tmp)]
+        paragraph('Word Count'),
+        Spacer(1, 3),
+        bold_paragraph(tmp)]
     criteria = paragraph('Criteria')
     category_1 = paragraph(CATEGORIES['LEGAL_PROBLEM']['i_1'])
     category_2 = paragraph(CATEGORIES['LEGAL_PROBLEM']['i_2'])
     category_3 = paragraph(CATEGORIES['LEGAL_PROBLEM']['i_3'])
     category_4 = paragraph(CATEGORIES['LEGAL_PROBLEM']['i_4'])
     data = [
-            [last_name, '', first_name, ''],
-            [module_title, '', module_code, submission_date, ''],
-            [assessment_title, '', word_count, '', ''],
-            [criteria, category_1, category_2, category_3, category_4]]
+        [last_name, '', first_name, ''],
+        [module_title, '', module_code, submission_date, ''],
+        [assessment_title, '', word_count, '', ''],
+        [criteria, category_1, category_2, category_3, category_4]]
     row = ['80 +']
     if marksheet.category_mark_1 == 80:
         row.append('X')
@@ -490,31 +501,31 @@ def legal_problem_sheet(student, module, assessment):
     else:
         row.append(' ')
     data.append(row)
-    t = Table(data) 
+    t = Table(data)
     t.setStyle(
-            TableStyle([
-                    ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
-                    ('SPAN', (0,0), (1,0)),
-                    ('SPAN', (2,0), (-1,0)),
-                    ('SPAN', (0,1), (1,1)),
-                    ('SPAN', (3,1), (-1,1)),
-                    ('SPAN', (0,2), (1,2)),
-                    ('SPAN', (2,2), (-1,2)),
-                    ('BACKGROUND', (0,3), (-1,3), colors.lightgrey),
-                    ('BACKGROUND', (0,4), (0,9), colors.lightgrey),
-                    ('ALIGN', (1,4), (-1,-1), 'CENTER'),
-                    ('BOX', (0,0), (-1,-1), 0.25, colors.black)])
-            )
+        TableStyle([
+            ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+            ('SPAN', (0, 0), (1, 0)),
+            ('SPAN', (2, 0), (-1, 0)),
+            ('SPAN', (0, 1), (1, 1)),
+            ('SPAN', (3, 1), (-1, 1)),
+            ('SPAN', (0, 2), (1, 2)),
+            ('SPAN', (2, 2), (-1, 2)),
+            ('BACKGROUND', (0, 3), (-1, 3), colors.lightgrey),
+            ('BACKGROUND', (0, 4), (0, 9), colors.lightgrey),
+            ('ALIGN', (1, 4), (-1, -1), 'CENTER'),
+            ('BOX', (0, 0), (-1, -1), 0.25, colors.black)])
+        )
     elements.append(t)
     comments = [
-            bold_paragraph('General Comments'),
-            Spacer(1,4)]
+        bold_paragraph('General Comments'),
+        Spacer(1, 4)]
     feedbacklist = marksheet.comments.split('\n')
     for line in feedbacklist:
         if line != "":
             p = paragraph(line)
             comments.append(p)
-            comments.append(Spacer(1,4))
+            comments.append(Spacer(1, 4))
     for comment in comments:
         elements.append(comment)
     marker = marksheet.marker
@@ -525,28 +536,30 @@ def legal_problem_sheet(student, module, assessment):
         tmp = marker.first_name + ' ' + marker.last_name
     marking_date = formatted_date(marksheet.marking_date)
     marked_by = [
-            [paragraph('Marked by'), bold_paragraph(tmp)],
-            [paragraph('Date'), bold_paragraph(marking_date)]]
+        [paragraph('Marked by'), bold_paragraph(tmp)],
+        [paragraph('Date'), bold_paragraph(marking_date)]]
     marked_by_table = Table(marked_by)
     mark = [
-            [paragraph('Mark'), 
+        [
+            paragraph('Mark'),
             Paragraph(mark, styles['Heading1'])],
-            ['', '']]
+        ['', '']]
     mark_table = Table(mark)
-    mark_table.setStyle(TableStyle([('SPAN', (1,0), (1,1))]))
+    mark_table.setStyle(TableStyle([('SPAN', (1, 0), (1, 1))]))
     last_data = [[marked_by_table, '', '', mark_table, '']]
     last_table = Table(last_data)
     last_table.setStyle(
-            TableStyle([
-                    ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
-                    ('BOX', (0,0), (-1,-1), 0.25, colors.black),
-                    ('SPAN', (0,0), (2,0)),
-                    ('SPAN', (3,-1), (-1,-1))])
-            )
+        TableStyle([
+            ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+            ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+            ('SPAN', (0, 0), (2, 0)),
+            ('SPAN', (3, -1), (-1, -1))])
+        )
     elements.append(last_table)
     return elements
 
-def presentation_sheet(student, module, assessment):                    
+
+def presentation_sheet(student, module, assessment):
     """Marksheet for Oral Presentations
 
     This is the standard marksheet for individual presentations at
@@ -556,48 +569,48 @@ def presentation_sheet(student, module, assessment):
     elements = []
     performance = Performance.objects.get(student=student, module=module)
     marksheet = Marksheet.objects.get(
-            student=student, module=module, assessment=assessment)
+        student=student, module=module, assessment=assessment)
     assessment_title = bold(module.get_assessment_title(assessment))
     mark = str(performance.get_assessment_result(assessment))
     elements.append(logo())
-    elements.append(Spacer(1,5))
+    elements.append(Spacer(1, 5))
     title = heading('Law Undergraduate Assessment Sheet: Oral Presentation')
     elements.append(title)
-    elements.append(Spacer(1,5))
+    elements.append(Spacer(1, 5))
     last_name = [
-            bold_paragraph('Student family name'),
-            Spacer(1,3),
-            bold_paragraph(student.last_name)]
+        bold_paragraph('Student family name'),
+        Spacer(1, 3),
+        bold_paragraph(student.last_name)]
     first_name = [
-            paragraph('First name'),
-            Spacer(1,3),
-            bold_paragraph(student.first_name)]
+        paragraph('First name'),
+        Spacer(1, 3),
+        bold_paragraph(student.first_name)]
     module_title = [
-            paragraph('Module Title'),
-            Spacer(1,3),
-            bold_paragraph(module.title)]
+        paragraph('Module Title'),
+        Spacer(1, 3),
+        bold_paragraph(module.title)]
     module_code = [
-            paragraph('Module Code'),
-            Spacer(1,3),
-            bold_paragraph(module.code)]
+        paragraph('Module Code'),
+        Spacer(1, 3),
+        bold_paragraph(module.code)]
     tmp = formatted_date(marksheet.submission_date)
     submission_date = [
-            paragraph('Presentation Date'),
-            Spacer(1,3),
-            bold_paragraph(tmp)]
+        paragraph('Presentation Date'),
+        Spacer(1, 3),
+        bold_paragraph(tmp)]
     assessment_title = [
-            paragraph('Assessment Title'),
-            Spacer(1,3),
-            paragraph(assessment_title)]
+        paragraph('Assessment Title'),
+        Spacer(1, 3),
+        paragraph(assessment_title)]
     criteria = paragraph('Criteria')
     category_1 = paragraph(CATEGORIES['PRESENTATION']['i_1'])
     category_2 = paragraph(CATEGORIES['PRESENTATION']['i_2'])
     category_3 = paragraph(CATEGORIES['PRESENTATION']['i_3'])
     data = [
-            [last_name, '', first_name, ''],
-            [module_title, '', module_code, submission_date],
-            [assessment_title, '', '', ''],
-            [criteria, category_1, category_2, category_3]]
+        [last_name, '', first_name, ''],
+        [module_title, '', module_code, submission_date],
+        [assessment_title, '', '', ''],
+        [criteria, category_1, category_2, category_3]]
     row = ['80 +']
     if marksheet.category_mark_1 == 80:
         row.append('X')
@@ -682,29 +695,29 @@ def presentation_sheet(student, module, assessment):
     else:
         row.append(' ')
     data.append(row)
-    t = Table(data) 
+    t = Table(data)
     t.setStyle(
-            TableStyle([
-                    ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
-                    ('SPAN', (0,0), (1,0)),
-                    ('SPAN', (2,0), (-1,0)),
-                    ('SPAN', (0,1), (1,1)),
-                    ('SPAN', (0,2), (-1,2)),
-                    ('BACKGROUND', (0,3), (-1,3), colors.lightgrey),
-                    ('BACKGROUND', (0,4), (0,9), colors.lightgrey),
-                    ('ALIGN', (1,4), (-1,-1), 'CENTER'),
-                    ('BOX', (0,0), (-1,-1), 0.25, colors.black)])
-            )
+        TableStyle([
+            ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+            ('SPAN', (0, 0), (1, 0)),
+            ('SPAN', (2, 0), (-1, 0)),
+            ('SPAN', (0, 1), (1, 1)),
+            ('SPAN', (0, 2), (-1, 2)),
+            ('BACKGROUND', (0, 3), (-1, 3), colors.lightgrey),
+            ('BACKGROUND', (0, 4), (0, 9), colors.lightgrey),
+            ('ALIGN', (1, 4), (-1, -1), 'CENTER'),
+            ('BOX', (0, 0), (-1, -1), 0.25, colors.black)])
+        )
     elements.append(t)
     comments = [
-            bold_paragraph('General Comments'),
-            Spacer(1,4)]
+        bold_paragraph('General Comments'),
+        Spacer(1, 4)]
     feedbacklist = marksheet.comments.split('\n')
     for line in feedbacklist:
         if line != "":
             p = paragraph(line)
             comments.append(p)
-            comments.append(Spacer(1,4))
+            comments.append(Spacer(1, 4))
     for comment in comments:
         elements.append(comment)
     marker = marksheet.marker
@@ -715,26 +728,29 @@ def presentation_sheet(student, module, assessment):
         tmp = marker.first_name + ' ' + marker.last_name
     marking_date = formatted_date(marksheet.marking_date)
     marked_by = [
-            [paragraph('Marked by'), bold_paragraph(tmp)],
-            [paragraph('Date'), bold_paragraph(marking_date)]]
+        [paragraph('Marked by'), bold_paragraph(tmp)],
+        [paragraph('Date'), bold_paragraph(marking_date)]]
     marked_by_table = Table(marked_by)
     mark = [
-            [paragraph('Mark'), 
-            Paragraph(mark, styles['Heading1'])],
-            ['', '']]
+        [
+            paragraph('Mark'),
+            Paragraph(mark, styles['Heading1'])
+        ],
+        ['', '']]
     mark_table = Table(mark)
-    mark_table.setStyle(TableStyle([('SPAN', (1,0), (1,1))]))
+    mark_table.setStyle(TableStyle([('SPAN', (1, 0), (1, 1))]))
     last_data = [[marked_by_table, '', '', mark_table, '']]
     last_table = Table(last_data)
     last_table.setStyle(
-            TableStyle([
-                    ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
-                    ('BOX', (0,0), (-1,-1), 0.25, colors.black),
-                    ('SPAN', (0,0), (2,0)),
-                    ('SPAN', (3,-1), (-1,-1))])
-            )
+        TableStyle([
+            ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+            ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+            ('SPAN', (0, 0), (2, 0)),
+            ('SPAN', (3, -1), (-1, -1))])
+        )
     elements.append(last_table)
     return elements
+
 
 def essay_legal_problem_sheet(student, module, assessment):
     """Marksheet for a cross between Essay and legal problem
@@ -746,50 +762,50 @@ def essay_legal_problem_sheet(student, module, assessment):
     elements = []
     performance = Performance.objects.get(student=student, module=module)
     marksheet = Marksheet.objects.get(
-            student=student, module=module, assessment=assessment)
+        student=student, module=module, assessment=assessment)
     assessment_title = bold(module.get_assessment_title(assessment))
     mark = str(performance.get_assessment_result(assessment))
     elements.append(logo())
-    elements.append(Spacer(1,5))
+    elements.append(Spacer(1, 5))
     title = heading(
-            'Law Undergraduate Assessment Sheet: Essay / Legal Problem')
+        'Law Undergraduate Assessment Sheet: Essay / Legal Problem')
     elements.append(title)
-    elements.append(Spacer(1,5))
+    elements.append(Spacer(1, 5))
     last_name = [
-            bold_paragraph('Student family name'),
-            Spacer(1,3),
-            bold_paragraph(student.last_name)]
+        bold_paragraph('Student family name'),
+        Spacer(1, 3),
+        bold_paragraph(student.last_name)]
     first_name = [
-            paragraph('First name'),
-            Spacer(1,3),
-            bold_paragraph(student.first_name)]
+        paragraph('First name'),
+        Spacer(1, 3),
+        bold_paragraph(student.first_name)]
     module_title = [
-            paragraph('Module Title'),
-            Spacer(1,3),
-            bold_paragraph(module.title)]
+        paragraph('Module Title'),
+        Spacer(1, 3),
+        bold_paragraph(module.title)]
     module_code = [
-            paragraph('Module Code'),
-            Spacer(1,3),
-            bold_paragraph(module.code)]
+        paragraph('Module Code'),
+        Spacer(1, 3),
+        bold_paragraph(module.code)]
     tmp = formatted_date(marksheet.submission_date)
     submission_date = [
-            paragraph('Submission Date'),
-            Spacer(1,3),
-            bold_paragraph(tmp)]
+        paragraph('Submission Date'),
+        Spacer(1, 3),
+        bold_paragraph(tmp)]
     assessment_title = [
-            paragraph('Assessment Title'),
-            Spacer(1,3),
-            paragraph(assessment_title)]
+        paragraph('Assessment Title'),
+        Spacer(1, 3),
+        paragraph(assessment_title)]
     if module.get_assessment_max_wordcount(assessment):
         tmp = (
-                str(module.get_assessment_max_wordcount(assessment)) + 
-                ' Words max.')
+            str(module.get_assessment_max_wordcount(assessment)) +
+            ' Words max.')
     else:
         tmp = ''
     word_count = [
-            paragraph('Word Count'),
-            Spacer(1,3),
-            bold_paragraph(tmp)]
+        paragraph('Word Count'),
+        Spacer(1, 3),
+        bold_paragraph(tmp)]
     criteria = paragraph('Criteria')
     category_1 = paragraph(CATEGORIES['ESSAY']['i_1'])
     category_2 = paragraph(CATEGORIES['ESSAY']['i_2'])
@@ -800,27 +816,27 @@ def essay_legal_problem_sheet(student, module, assessment):
     category_7 = paragraph(CATEGORIES['LEGAL_PROBLEM']['i_3'])
     category_8 = paragraph(CATEGORIES['LEGAL_PROBLEM']['i_4'])
     data = [
-            [last_name, '', first_name, ''],
-            [module_title, '', module_code, submission_date, ''],
-            [assessment_title, '', word_count, '', '']]
-    t = Table(data) 
+        [last_name, '', first_name, ''],
+        [module_title, '', module_code, submission_date, ''],
+        [assessment_title, '', word_count, '', '']]
+    t = Table(data)
     t.setStyle(
-            TableStyle([
-                    ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
-                    ('SPAN', (0,0), (1,0)),
-                    ('SPAN', (2,0), (-1,0)),
-                    ('SPAN', (0,1), (1,1)),
-                    ('SPAN', (3,1), (-1,1)),
-                    ('SPAN', (0,2), (1,2)),
-                    ('SPAN', (2,2), (-1,2)),
-                    ('BOX', (0,0), (-1,-1), 0.25, colors.black)])
-            )
+        TableStyle([
+            ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+            ('SPAN', (0, 0), (1, 0)),
+            ('SPAN', (2, 0), (-1, 0)),
+            ('SPAN', (0, 1), (1, 1)),
+            ('SPAN', (3, 1), (-1, 1)),
+            ('SPAN', (0, 2), (1, 2)),
+            ('SPAN', (2, 2), (-1, 2)),
+            ('BOX', (0, 0), (-1, -1), 0.25, colors.black)])
+        )
     elements.append(t)
-    elements.append(Spacer(1,5))
+    elements.append(Spacer(1, 5))
     subtitle = Paragraph('Feedback for Part (a): Essay', styles['Heading3'])
     elements.append(subtitle)
-    elements.append(Spacer(1,5))
-    data=[[criteria, category_1, category_2, category_3, category_4]]
+    elements.append(Spacer(1, 5))
+    data = [[criteria, category_1, category_2, category_3, category_4]]
     row = ['80 +']
     if marksheet.category_mark_1 == 80:
         row.append('X')
@@ -929,42 +945,42 @@ def essay_legal_problem_sheet(student, module, assessment):
     else:
         row.append(' ')
     data.append(row)
-    t = Table(data) 
+    t = Table(data)
     t.setStyle(
-            TableStyle([
-                    ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
-                    ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
-                    ('BACKGROUND', (0,1), (0,-1), colors.lightgrey),
-                    ('ALIGN', (1,1), (-1,-1), 'CENTER'),
-                    ('BOX', (0,0), (-1,-1), 0.25, colors.black)])
-            )
+        TableStyle([
+            ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+            ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+            ('BACKGROUND', (0, 1), (0, -1), colors.lightgrey),
+            ('ALIGN', (1, 1), (-1, -1), 'CENTER'),
+            ('BOX', (0, 0), (-1, -1), 0.25, colors.black)])
+        )
     elements.append(t)
-    elements.append(Spacer(1,5))
+    elements.append(Spacer(1, 5))
     comments = [
-            bold_paragraph('General Comments'),
-            Spacer(1,4)]
+        bold_paragraph('General Comments'),
+        Spacer(1, 4)]
     feedbacklist = marksheet.comments.split('\n')
     for line in feedbacklist:
         if line != "":
             p = paragraph(line)
             comments.append(p)
-            comments.append(Spacer(1,4))
+            comments.append(Spacer(1, 4))
     for comment in comments:
         elements.append(comment)
     part_1_mark_data = [[
-            Paragraph('Mark for part(a)', styles['Heading4']),
-            Paragraph(str(marksheet.part_1_mark), styles['Heading4'])]]
+        Paragraph('Mark for part(a)', styles['Heading4']),
+        Paragraph(str(marksheet.part_1_mark), styles['Heading4'])]]
     part_1_mark_table = Table(part_1_mark_data)
     part_1_mark_table.setStyle(
-            TableStyle([
-                    ('BOX', (0,0), (-1,-1), 0.25, colors.black)])
-            )
+        TableStyle([
+            ('BOX', (0, 0), (-1, -1), 0.25, colors.black)])
+        )
     elements.append(part_1_mark_table)
     elements.append(PageBreak())
     heading_2 = Paragraph(
-            'Feedback for Part (b): Legal Problem', styles['Heading3'])
+        'Feedback for Part (b): Legal Problem', styles['Heading3'])
     elements.append(heading_2)
-    elements.append(Spacer(1,4))
+    elements.append(Spacer(1, 4))
     data_2 = [[criteria, category_5, category_6, category_7, category_8]]
     row = ['80 +']
     if marksheet.category_mark_5 == 80:
@@ -1074,39 +1090,39 @@ def essay_legal_problem_sheet(student, module, assessment):
     else:
         row.append(' ')
     data_2.append(row)
-    t_2 = Table(data_2) 
+    t_2 = Table(data_2)
     t_2.setStyle(
-            TableStyle([
-                    ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
-                    ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
-                    ('BACKGROUND', (0,1), (0,-1), colors.lightgrey),
-                    ('ALIGN', (1,4), (-1,-1), 'CENTER'),
-                    ('BOX', (0,0), (-1,-1), 0.25, colors.black)])
-            )
+        TableStyle([
+            ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+            ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+            ('BACKGROUND', (0, 1), (0, -1), colors.lightgrey),
+            ('ALIGN', (1, 4), (-1, -1), 'CENTER'),
+            ('BOX', (0, 0), (-1, -1), 0.25, colors.black)])
+        )
     elements.append(t_2)
-    elements.append(Spacer(1,5))
+    elements.append(Spacer(1, 5))
     comments_2 = [
-            bold_paragraph('General Comments'),
-            Spacer(1,4)]
+        bold_paragraph('General Comments'),
+        Spacer(1, 4)]
     feedbacklist_2 = marksheet.comments_2.split('\n')
     for line in feedbacklist_2:
         if line != "":
             p = paragraph(line)
             comments_2.append(p)
-            comments_2.append(Spacer(1,4))
+            comments_2.append(Spacer(1, 4))
     for comment in comments_2:
         elements.append(comment)
     part_2_mark_data = [[
-            Paragraph('Mark for part(b)', styles['Heading4']),
-            Paragraph(str(marksheet.part_2_mark), styles['Heading4'])
-            ]]
+        Paragraph('Mark for part(b)', styles['Heading4']),
+        Paragraph(str(marksheet.part_2_mark), styles['Heading4'])
+        ]]
     part_2_mark_table = Table(part_2_mark_data)
     part_2_mark_table.setStyle(
-            TableStyle([
-                    ('BOX', (0,0), (-1,-1), 0.25, colors.black)])
-            )
+        TableStyle([
+            ('BOX', (0, 0), (-1, -1), 0.25, colors.black)])
+        )
     elements.append(part_2_mark_table)
-    elements.append(Spacer(1,10))
+    elements.append(Spacer(1, 10))
     marker = marksheet.marker
     if marksheet.second_first_marker:
         marker2 = marksheet.second_first_marker
@@ -1115,28 +1131,31 @@ def essay_legal_problem_sheet(student, module, assessment):
         tmp = marker.first_name + ' ' + marker.last_name
     marking_date = formatted_date(marksheet.marking_date)
     marked_by = [
-            [paragraph('Marked by'), bold_paragraph(tmp)],
-            [paragraph('Date'), bold_paragraph(marking_date)]]
+        [paragraph('Marked by'), bold_paragraph(tmp)],
+        [paragraph('Date'), bold_paragraph(marking_date)]]
     marked_by_table = Table(marked_by)
     mark = [
-            [paragraph('Final Mark for (a) and (b)'), 
-            Paragraph(mark, styles['Heading1'])],
-            ['', '']]
+        [
+            paragraph('Final Mark for (a) and (b)'),
+            Paragraph(mark, styles['Heading1'])
+        ],
+        ['', '']]
     mark_table = Table(mark)
-    mark_table.setStyle(TableStyle([('SPAN', (1,0), (1,1))]))
+    mark_table.setStyle(TableStyle([('SPAN', (1, 0), (1, 1))]))
     last_data = [[marked_by_table, '', '', mark_table, '']]
     last_table = Table(last_data)
     last_table.setStyle(
-            TableStyle([
-                    ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
-                    ('BOX', (0,0), (-1,-1), 0.25, colors.black),
-                    ('SPAN', (0,0), (2,0)),
-                    ('SPAN', (3,-1), (-1,-1))])
-            )
+        TableStyle([
+            ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+            ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+            ('SPAN', (0, 0), (2, 0)),
+            ('SPAN', (3, -1), (-1, -1))])
+        )
     elements.append(last_table)
     return elements
 
-def online_test_court_report_sheet(student, module, assessment):                    
+
+def online_test_court_report_sheet(student, module, assessment):
     """Marksheet for Online Test / Court Report
 
     This is a custom marksheet that allows to combine a mark for an online
@@ -1147,61 +1166,61 @@ def online_test_court_report_sheet(student, module, assessment):
     elements = []
     performance = Performance.objects.get(student=student, module=module)
     marksheet = Marksheet.objects.get(
-            student=student, module=module, assessment=assessment)
+        student=student, module=module, assessment=assessment)
     assessment_title = bold(module.get_assessment_title(assessment))
     mark = str(performance.get_assessment_result(assessment))
     elements.append(logo())
-    elements.append(Spacer(1,5))
+    elements.append(Spacer(1, 5))
     title = heading(
-            'Law Undergraduate Assessment Sheet: Online Test / Court Report')
+        'Law Undergraduate Assessment Sheet: Online Test / Court Report')
     elements.append(title)
-    elements.append(Spacer(1,5))
+    elements.append(Spacer(1, 5))
     last_name = [
-            bold_paragraph('Student family name'),
-            Spacer(1,3),
-            bold_paragraph(student.last_name)]
+        bold_paragraph('Student family name'),
+        Spacer(1, 3),
+        bold_paragraph(student.last_name)]
     first_name = [
-            paragraph('First name'),
-            Spacer(1,3),
-            bold_paragraph(student.first_name)]
+        paragraph('First name'),
+        Spacer(1, 3),
+        bold_paragraph(student.first_name)]
     module_title = [
-            paragraph('Module Title'),
-            Spacer(1,3),
-            bold_paragraph(module.title)]
+        paragraph('Module Title'),
+        Spacer(1, 3),
+        bold_paragraph(module.title)]
     module_code = [
-            paragraph('Module Code'),
-            Spacer(1,3),
-            bold_paragraph(module.code)]
+        paragraph('Module Code'),
+        Spacer(1, 3),
+        bold_paragraph(module.code)]
     tmp = formatted_date(marksheet.submission_date)
     submission_date = [
-            paragraph('Submission Date'),
-            Spacer(1,3),
-            bold_paragraph(tmp)]
+        paragraph('Submission Date'),
+        Spacer(1, 3),
+        bold_paragraph(tmp)]
     assessment_title = [
-            paragraph('Assessment Title'),
-            Spacer(1,3),
-            paragraph(assessment_title)]
+        paragraph('Assessment Title'),
+        Spacer(1, 3),
+        paragraph(assessment_title)]
     if module.get_assessment_max_wordcount(assessment):
         tmp = (
-                str(module.get_assessment_max_wordcount(assessment)) + 
-                ' Words max.')
+            str(module.get_assessment_max_wordcount(assessment)) +
+            ' Words max.')
     else:
         tmp = ''
     word_count = [
-            paragraph('Word Count'),
-            Spacer(1,3),
-            bold_paragraph(tmp)]
+        paragraph('Word Count'),
+        Spacer(1, 3),
+        bold_paragraph(tmp)]
     criteria = paragraph('Criteria')
     category_1 = paragraph(CATEGORIES['ESSAY']['i_1'])
     category_2 = paragraph(CATEGORIES['ESSAY']['i_2'])
     category_3 = paragraph(CATEGORIES['ESSAY']['i_3'])
     category_4 = paragraph(CATEGORIES['ESSAY']['i_4'])
     data = [
-            [last_name, '', first_name, ''],
-            [module_title, '', module_code, submission_date, ''],
-            [assessment_title, '', word_count, '', ''],
-            [criteria, category_1, category_2, category_3, category_4]
-            ]
+        [last_name, '', first_name, ''],
+        [module_title, '', module_code, submission_date, ''],
+        [assessment_title, '', word_count, '', ''],
+        [criteria, category_1, category_2, category_3, category_4]
+        ]
     row = ['80 +']
     if marksheet.category_mark_1 == 80:
         row.append('X')
@@ -1310,32 +1329,32 @@ def online_test_court_report_sheet(student, module, assessment):
     else:
         row.append(' ')
     data.append(row)
-    t = Table(data) 
+    t = Table(data)
     t.setStyle(
-            TableStyle([
-                    ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
-                    ('SPAN', (0,0), (1,0)),
-                    ('SPAN', (2,0), (-1,0)),
-                    ('SPAN', (0,1), (1,1)),
-                    ('SPAN', (3,1), (-1,1)),
-                    ('SPAN', (0,2), (1,2)),
-                    ('SPAN', (2,2), (-1,2)),
-                    ('BACKGROUND', (0,3), (-1,3), colors.lightgrey),
-                    ('BACKGROUND', (0,4), (0,9), colors.lightgrey),
-                    ('ALIGN', (1,4), (-1,-1), 'CENTER'),
-                    ('BOX', (0,0), (-1,-1), 0.25, colors.black)
-                    ])
-            )
+        TableStyle([
+            ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+            ('SPAN', (0, 0), (1, 0)),
+            ('SPAN', (2, 0), (-1, 0)),
+            ('SPAN', (0, 1), (1, 1)),
+            ('SPAN', (3, 1), (-1, 1)),
+            ('SPAN', (0, 2), (1, 2)),
+            ('SPAN', (2, 2), (-1, 2)),
+            ('BACKGROUND', (0, 3), (-1, 3), colors.lightgrey),
+            ('BACKGROUND', (0, 4), (0, 9), colors.lightgrey),
+            ('ALIGN', (1, 4), (-1, -1), 'CENTER'),
+            ('BOX', (0, 0), (-1, -1), 0.25, colors.black)
+            ])
+        )
     elements.append(t)
     comments = [
-            bold_paragraph('General Comments'),
-            Spacer(1,4)]
+        bold_paragraph('General Comments'),
+        Spacer(1, 4)]
     feedbacklist = marksheet.comments.split('\n')
     for line in feedbacklist:
         if line != "":
             p = paragraph(line)
             comments.append(p)
-            comments.append(Spacer(1,4))
+            comments.append(Spacer(1, 4))
     for comment in comments:
         elements.append(comment)
     marker = marksheet.marker
@@ -1346,39 +1365,40 @@ def online_test_court_report_sheet(student, module, assessment):
         tmp = marker.first_name + ' ' + marker.last_name
     marking_date = formatted_date(marksheet.marking_date)
     marked_by = [
-            [paragraph('Marked by'), bold_paragraph(tmp)],
-            [paragraph('Date'), bold_paragraph(marking_date)]]
+        [paragraph('Marked by'), bold_paragraph(tmp)],
+        [paragraph('Date'), bold_paragraph(marking_date)]]
     marked_by_table = Table(marked_by)
     mark = [
-            [
-                    paragraph('Combined Mark'),
-                    Paragraph(mark, styles['Heading1'])
-            ],
-            ['', '']
-            ]
+        [
+            paragraph('Combined Mark'),
+            Paragraph(mark, styles['Heading1'])
+        ],
+        ['', '']
+        ]
     mark_table = Table(mark)
-    mark_table.setStyle(TableStyle([('SPAN', (1,0), (1,1))]))
+    mark_table.setStyle(TableStyle([('SPAN', (1, 0), (1, 1))]))
     court = 'Mark for Court Report: ' + str(marksheet.part_1_mark)
     online = 'Mark for On Line Test: ' + str(marksheet.part_2_mark)
     last_data = [
-            ['', '', paragraph(court)],
-            ['', '', paragraph(online)],
-            [marked_by_table, '', '', mark_table]]
+        ['', '', paragraph(court)],
+        ['', '', paragraph(online)],
+        [marked_by_table, '', '', mark_table]]
     last_table = Table(last_data)
     last_table.setStyle(
-            TableStyle([
-                    ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
-                    ('BOX', (0,0), (-1,-1), 0.25, colors.black),
-                    ('SPAN', (0,0), (1,1)),
-                    ('SPAN', (2,0), (3,0)),
-                    ('SPAN', (2,1), (3,1)),
-                    ('SPAN', (0,-1), (2,-1))
-                    ])
-            )
+        TableStyle([
+            ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+            ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+            ('SPAN', (0, 0), (1, 1)),
+            ('SPAN', (2, 0), (3, 0)),
+            ('SPAN', (2, 1), (3, 1)),
+            ('SPAN', (0, -1), (2, -1))
+            ])
+        )
     elements.append(last_table)
     return elements
 
-def negotiation_written_sheet(student, module, assessment):                    
+
+def negotiation_written_sheet(student, module, assessment):
     """Marksheet for the assessment 'Negotiation / Written Submission'
 
     This is an assessment that includes a group component and is therefore
@@ -1388,59 +1408,60 @@ def negotiation_written_sheet(student, module, assessment):
     styles = getSampleStyleSheet()
     performance = Performance.objects.get(student=student, module=module)
     marksheet = Marksheet.objects.get(
-            student=student, module=module, assessment=assessment
+        student=student, module=module, assessment=assessment
     )
     group_no = performance.group_assessment_group
     group_feedback = GroupMarksheet.objects.get(
-            module=module, assessment=assessment, group_no=group_no
+        module=module, assessment=assessment, group_no=group_no
     )
     mark = str(performance.get_assessment_result(assessment))
     elements.append(logo())
-    elements.append(Spacer(1,3))
+    elements.append(Spacer(1, 3))
     title = heading(
-            'Law Undergraduate Assessment Sheet: Negotiation Study', 'Heading3'
+        'Law Undergraduate Assessment Sheet: Negotiation Study', 'Heading3'
     )
     elements.append(title)
-    elements.append(Spacer(1,3))
+    elements.append(Spacer(1, 3))
     last_name = [
-            bold_paragraph('Student family name'),
-            Spacer(1,3),
-            bold_paragraph(student.last_name)]
+        bold_paragraph('Student family name'),
+        Spacer(1, 3),
+        bold_paragraph(student.last_name)]
     first_name = [
-            paragraph('First name'),
-            Spacer(1,3),
-            bold_paragraph(student.first_name)]
+        paragraph('First name'),
+        Spacer(1, 3),
+        bold_paragraph(student.first_name)]
     module_title = [
-            paragraph('Module Title'),
-            Spacer(1,3),
-            bold_paragraph('ELIM')]
+        paragraph('Module Title'),
+        Spacer(1, 3),
+        bold_paragraph('ELIM')]
     module_code = [
-            paragraph('Module Code'),
-            Spacer(1,3),
-            bold_paragraph(module.code)]
+        paragraph('Module Code'),
+        Spacer(1, 3),
+        bold_paragraph(module.code)]
     tmp = formatted_date(group_feedback.submission_date)
     submission_date = [
-            paragraph('Presentation Date'),
-            Spacer(1,3),
-            bold_paragraph(tmp)]
+        paragraph('Presentation Date'),
+        Spacer(1, 3),
+        bold_paragraph(tmp)]
     tmp = str(performance.seminar_group) + '/' + str(group_no)
     group_number = [
-            paragraph('Seminar/LAU Group'),
-            Spacer(1,3),
-            bold_paragraph(tmp)]
+        paragraph('Seminar/LAU Group'),
+        Spacer(1, 3),
+        bold_paragraph(tmp)]
     individual_category_1 = bold_paragraph(
-            CATEGORIES['NEGOTIATION_WRITTEN']['i_1'])
+        CATEGORIES['NEGOTIATION_WRITTEN']['i_1'])
     individual_category_2 = bold_paragraph(
-            CATEGORIES['NEGOTIATION_WRITTEN']['i_2'])
+        CATEGORIES['NEGOTIATION_WRITTEN']['i_2'])
     individual_category_3 = bold_paragraph(
-            CATEGORIES['NEGOTIATION_WRITTEN']['i_3'])
+        CATEGORIES['NEGOTIATION_WRITTEN']['i_3'])
     individual_category_4 = bold_paragraph(
-            CATEGORIES['NEGOTIATION_WRITTEN']['i_4'])
+        CATEGORIES['NEGOTIATION_WRITTEN']['i_4'])
     group_category_1 = bold_paragraph(CATEGORIES['NEGOTIATION_WRITTEN']['g_1'])
     group_category_2 = bold_paragraph(CATEGORIES['NEGOTIATION_WRITTEN']['g_2'])
     group_category_3 = bold_paragraph(CATEGORIES['NEGOTIATION_WRITTEN']['g_3'])
     group_category_4 = bold_paragraph(CATEGORIES['NEGOTIATION_WRITTEN']['g_4'])
-    deduction_explanation = paragraph(CATEGORIES['NEGOTIATION_WRITTEN']['i_4_helptext'])
+    deduction_explanation = (
+        paragraph(CATEGORIES['NEGOTIATION_WRITTEN']['i_4_helptext']))
     marker = marksheet.marker
     if marksheet.second_first_marker:
         marker2 = marksheet.second_first_marker
@@ -1449,15 +1470,17 @@ def negotiation_written_sheet(student, module, assessment):
         tmp = marker.first_name + ' ' + marker.last_name
     marking_date = formatted_date(marksheet.marking_date)
     marked_by = [
-            [paragraph('Marked by'), bold_paragraph(tmp)],
-            [paragraph('Date'), bold_paragraph(marking_date)]]
+        [paragraph('Marked by'), bold_paragraph(tmp)],
+        [paragraph('Date'), bold_paragraph(marking_date)]]
     marked_by_table = Table(marked_by)
     mark = [
-            [paragraph('Mark'), 
-            Paragraph(mark, styles['Heading1'])],
-            ['', '']]
+        [
+            paragraph('Mark'),
+            Paragraph(mark, styles['Heading1'])
+        ],
+        ['', '']]
     mark_table = Table(mark)
-    mark_table.setStyle(TableStyle([('SPAN', (1,0), (1,1))]))
+    mark_table.setStyle(TableStyle([('SPAN', (1, 0), (1, 1))]))
     table_header_1 = bold_paragraph('Part 1: Assessed Negotiation')
     table_header_2 = bold_paragraph('Marks Available')
     table_header_3 = bold_paragraph('Marks Awarded')
@@ -1472,8 +1495,8 @@ def negotiation_written_sheet(student, module, assessment):
     if group_feedback.category_mark_2_free is not None:
         sub_total_1 += group_feedback.category_mark_2_free
     table_header_4 = bold_paragraph(
-            'Part 2: Individual and Written Submission'
-            )
+        'Part 2: Individual and Written Submission'
+        )
     sub_total_2_string = paragraph('Sub-Total Part 2')
     sub_total_2 = 0
     if marksheet.category_mark_2_free is not None:
@@ -1516,79 +1539,80 @@ def negotiation_written_sheet(student, module, assessment):
             [individual_category_4, '', deductions_h_1, deductions_h_2],
             [deduction_explanation, '', '12', i_mark_4]
             ]
-    t = Table(data) 
+    t = Table(data)
     t.setStyle(
-            TableStyle([
-                    ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
-                    ('SPAN', (-2,0), (-1,0)),
-                    ('SPAN', (-2,1), (-1,1)),
-                    ('SPAN', (0,2), (-1,2)),
-                    ('BOX', (0,0), (-1,1), 0.25, colors.black),
-                    ('SPAN', (0,3), (1,3)),
-                    ('SPAN', (0,4), (1,4)),
-                    ('SPAN', (0,5), (1,5)),
-                    ('SPAN', (0,6), (1,6)),
-                    ('SPAN', (0,7), (1,7)),
-                    ('SPAN', (0,8), (1,8)),
-                    ('SPAN', (0,9), (1,9)),
-                    ('BACKGROUND', (0,10), (-1,10), colors.lightgrey),
-                    ('SPAN', (0,10), (1,10)),
-                    ('SPAN', (0,11), (1,11)),
-                    ('SPAN', (0,12), (1,12)),
-                    ('SPAN', (0,13), (1,13)),
-                    ('SPAN', (0,14), (1,14)),
-                    ('SPAN', (0,15), (1,15)),
-                    ('SPAN', (0,16), (1,16)),
-                    ('SPAN', (0,17), (1,17)),
-                    ('SPAN', (0,18), (1,18)),
-                    ('SPAN', (0,19), (1,19)),
-                    ('SPAN', (0,20), (1,20)),
-                    ('BACKGROUND', (0,18), (-1,18), colors.lightgrey),
-                    ('BOX', (0,3), (-1,-1), 0.25, colors.black)])
-            )
+        TableStyle([
+            ('INNERGRID', (0, 0),  (-1, -1), 0.25, colors.black),
+            ('SPAN', (-2, 0), (-1, 0)),
+            ('SPAN', (-2, 1), (-1, 1)),
+            ('SPAN', (0, 2), (-1, 2)),
+            ('BOX', (0, 0), (-1, 1), 0.25, colors.black),
+            ('SPAN', (0, 3), (1, 3)),
+            ('SPAN', (0, 4), (1, 4)),
+            ('SPAN', (0, 5), (1, 5)),
+            ('SPAN', (0, 6), (1, 6)),
+            ('SPAN', (0, 7), (1, 7)),
+            ('SPAN', (0, 8), (1, 8)),
+            ('SPAN', (0, 9), (1, 9)),
+            ('BACKGROUND', (0, 10), (-1, 10), colors.lightgrey),
+            ('SPAN', (0, 10), (1, 10)),
+            ('SPAN', (0, 11), (1, 11)),
+            ('SPAN', (0, 12), (1, 12)),
+            ('SPAN', (0, 13), (1, 13)),
+            ('SPAN', (0, 14), (1, 14)),
+            ('SPAN', (0, 15), (1, 15)),
+            ('SPAN', (0, 16), (1, 16)),
+            ('SPAN', (0, 17), (1, 17)),
+            ('SPAN', (0, 18), (1, 18)),
+            ('SPAN', (0, 19), (1, 19)),
+            ('SPAN', (0, 20), (1, 20)),
+            ('BACKGROUND', (0, 18), (-1, 18), colors.lightgrey),
+            ('BOX', (0, 3), (-1, -1), 0.25, colors.black)])
+        )
     elements.append(t)
     elements.append(PageBreak())
     # Individual Comments
     individual_comments = [
-            bold_paragraph('Comment on <u>Individual</u> Work for part 1 and 2'),
-            Spacer(1,4)]
+        bold_paragraph('Comment on <u>Individual</u> Work for part 1 and 2'),
+        Spacer(1, 4)]
     feedbacklist = marksheet.comments.split('\n')
     for line in feedbacklist:
         if line != "":
             p = paragraph(line)
             individual_comments.append(p)
-            individual_comments.append(Spacer(1,4))
+            individual_comments.append(Spacer(1, 4))
     # Group Comments
     group_comments = [
-            bold_paragraph('Comment on <u>Group</u> Work for part 1 and 2'),
-            Spacer(1,4)]
+        bold_paragraph('Comment on <u>Group</u> Work for part 1 and 2'),
+        Spacer(1, 4)]
     feedbacklist = group_feedback.group_comments.split('\n')
     for line in feedbacklist:
         if line != "":
             p = paragraph(line)
             group_comments.append(p)
-            group_comments.append(Spacer(1,4))
+            group_comments.append(Spacer(1, 4))
     # Final table
     last_data = [
-            [individual_comments, '', '', ''],
-            [group_comments, '', '', ''],
-            [marked_by_table, '', mark_table, '']
-            ]
+        [individual_comments, '', '', ''],
+        [group_comments, '', '', ''],
+        [marked_by_table, '', mark_table, '']
+        ]
     last_table = Table(last_data)
     last_table.setStyle(
-            TableStyle([
-                ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
-                ('BOX', (0,0), (-1,-1), 0.25, colors.black),
-                ('SPAN', (0,0), (-1,0)),
-                ('SPAN', (0,1), (-1,1)),
-                ('SPAN', (0,2), (1,2)),
-                ('SPAN', (2,2), (-1,2)),
-                ('BACKGROUND', (0,-1), (-1,-1), colors.lightgrey)])
-            )
+        TableStyle([
+            ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+            ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+            ('SPAN', (0, 0), (-1, 0)),
+            ('SPAN', (0, 1), (-1, 1)),
+            ('SPAN', (0, 2), (1, 2)),
+            ('SPAN', (2, 2), (-1, 2)),
+            ('BACKGROUND', (0, -1), (-1, -1), colors.lightgrey)])
+        )
     elements.append(last_table)
     return elements
 
 # Functions called from website
+
 
 @login_required
 def export_feedback_sheet(request, code, year, assessment, student_id):
@@ -1607,37 +1631,38 @@ def export_feedback_sheet(request, code, year, assessment, student_id):
             response = HttpResponse(mimetype='application/pdf')
             first_part = module.title.replace(' ', '_')
             second_part = assessment_title.replace(' ', '_')
-            filename_string = ('attachment; filename=' + first_part +
-                    '_' + second_part + '_-_all_marksheets.pdf')
+            filename_string = (
+                'attachment; filename=' + first_part +
+                '_' + second_part + '_-_all_marksheets.pdf')
             all_students = module.student_set.all()
             documentlist = []
-            students = [] # Only the students where feedback has been entered
+            students = []  # Only the students where feedback has been entered
             for student in all_students:
                 try:
                     performance = Marksheet.objects.get(
-                            student=student, module=module,
-                            assessment=assessment)
+                        student=student, module=module,
+                        assessment=assessment)
                     students.append(student)
                 except Marksheet.DoesNotExist:
                     pass
             for student in students:
-                #This needs to be changed to take the database out
+                # This needs to be changed to take the database out
                 if assessment_type == 'ESSAY':
                     elements = essay_sheet(student, module, assessment)
                 elif assessment_type == 'LEGAL_PROBLEM':
                     elements = legal_problem_sheet(
-                            student, module, assessment)
+                        student, module, assessment)
                 elif assessment_type == 'PRESENTATION':
                     elements = presentation_sheet(student, module, assessment)
                 elif assessment_type == 'ESSAY_LEGAL_PROBLEM':
                     elements = essay_legal_problem_sheet(
-                            student, module, assessment)
+                        student, module, assessment)
                 elif assessment_type == 'ONLINE_TEST_COURT_REPORT':
                     elements = online_test_court_report_sheet(
-                            student, module, assessment)
+                        student, module, assessment)
                 elif assessment_type == 'NEGOTIATION_WRITTEN':
                     elements = negotiation_written_sheet(
-                            student, module, assessment)
+                        student, module, assessment)
                 for element in elements:
                     documentlist.append(element)
                 documentlist.append(PageBreak())
@@ -1649,8 +1674,8 @@ def export_feedback_sheet(request, code, year, assessment, student_id):
         else:
             return HttpResponseForbidden()
     else:
-        student = Student.objects.get(student_id = student_id)
-        own_marksheet = False # Just for the filename
+        student = Student.objects.get(student_id=student_id)
+        own_marksheet = False  # Just for the filename
         allowed = False
         if is_teacher(request.user) or is_admin(request.user):
             allowed = True
@@ -1659,14 +1684,14 @@ def export_feedback_sheet(request, code, year, assessment, student_id):
                 own_marksheet = True
                 allowed = True
         if allowed:
-            module = Module.objects.get(code = code, year = year)
+            module = Module.objects.get(code=code, year=year)
             response = HttpResponse(mimetype='application/pdf')
             assessment_title_string = get_title(module, assessment)
             if own_marksheet:
                 first_part = module.title.replace(' ', '_')
                 second_part = assessment_title_string.replace(' ', '_')
                 filename_string = (
-                    'attachment; filename=' + first_part + '_' + 
+                    'attachment; filename=' + first_part + '_' +
                     second_part + '_Marksheet.pdf'
                 )
             else:
@@ -1682,24 +1707,25 @@ def export_feedback_sheet(request, code, year, assessment, student_id):
                 elements = essay_sheet(student, module, assessment)
             elif assessment_type == 'LEGAL_PROBLEM':
                 elements = legal_problem_sheet(
-                        student, module, assessment
-                        )
+                    student, module, assessment
+                    )
             elif assessment_type == 'PRESENTATION':
                 elements = presentation_sheet(student, module, assessment)
             elif assessment_type == 'ESSAY_LEGAL_PROBLEM':
                 elements = essay_legal_problem_sheet(
-                        student, module, assessment)
+                    student, module, assessment)
             elif assessment_type == 'ONLINE_TEST_COURT_REPORT':
                 elements = online_test_court_report_sheet(
-                        student, module, assessment)
+                    student, module, assessment)
             elif assessment_type == 'NEGOTIATION_WRITTEN':
                 elements = negotiation_written_sheet(
-                        student, module, assessment)
+                    student, module, assessment)
 
             document.build(elements)
             return response
         else:
             return HttpResponseForbidden()
+
 
 @login_required
 @user_passes_test(is_teacher)
@@ -1707,15 +1733,15 @@ def export_attendance_sheet(request, code, year):
     """Returns attendance sheets for a module."""
     response = HttpResponse(mimetype='application/pdf')
     response['Content-Disposition'] = (
-            'attachment; filename=attendance_sheet.pdf')
+        'attachment; filename=attendance_sheet.pdf')
     document = SimpleDocTemplate(response)
     elements = []
     module = Module.objects.get(code=code, year=year)
     styles = getSampleStyleSheet()
     next_year = str(module.year + 1)
     heading = (
-            module.title + " (" + module.code + ") " + str(module.year) +
-            "/" + next_year)
+        module.title + " (" + module.code + ") " + str(module.year) +
+        "/" + next_year)
     performances = Performance.objects.filter(module=module)
     no_of_seminar_groups = 0
     for performance in performances:
@@ -1727,9 +1753,9 @@ def export_attendance_sheet(request, code, year):
         subheading = "Seminar Group " + str(counter)
         elements.append(Paragraph(heading, styles['Heading1']))
         elements.append(Paragraph(subheading, styles['Heading2']))
-        elements.append(Spacer(1,20))
+        elements.append(Spacer(1, 20))
         data = []
-        header = ['Name',]
+        header = ['Name']
         column = 0
         last_week = module.last_session + 1
         no_teaching = module.no_teaching_in.split(",")
@@ -1739,9 +1765,9 @@ def export_attendance_sheet(request, code, year):
                 header.append(strweek)
         data.append(header)
         performances = Performance.objects.filter(
-                module=module, seminar_group=counter)
+            module=module, seminar_group=counter)
         for performance in performances:
-            row = [performance.student,]
+            row = [performance.student]
             for week in performance.attendance:
                 if week == '1':
                     row.append(u'\u2713')
@@ -1752,17 +1778,18 @@ def export_attendance_sheet(request, code, year):
             data.append(row)
         table = Table(data)
         table.setStyle(
-                TableStyle([
-                        ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
-                        ('BACKGROUND',(0,0),(-1,0),colors.lightgrey),
-                        ('BACKGROUND',(0,0),(0,-1),colors.lightgrey),
-                        ('BOX', (0,0), (-1,-1), 0.25, colors.black)])
-                )
+            TableStyle([
+                ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+                ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+                ('BACKGROUND', (0, 0), (0, -1), colors.lightgrey),
+                ('BOX', (0, 0), (-1, -1), 0.25, colors.black)])
+            )
         elements.append(table)
         elements.append(PageBreak())
     document.build(elements)
     return response
-     
+
+
 @login_required
 @user_passes_test(is_admin)
 def export_all_anonymous_exam_marks(request, year):
@@ -1771,49 +1798,49 @@ def export_all_anonymous_exam_marks(request, year):
     modules_to_use = []
     for module in modules:
         if module.exam_value:
-            marks = AnonymousMarks.objects.filter(module = module)
+            marks = AnonymousMarks.objects.filter(module=module)
             for mark in marks:
                 if mark.exam:
                     modules_to_use.append(module)
                     break
     response = HttpResponse(mimetype='application/pdf')
     response['Content-Disposition'] = (
-            'attachment; filename=anonymous_exam_marks.pdf')
+        'attachment; filename=anonymous_exam_marks.pdf')
     doc = BaseDocTemplate(response)
     elements = []
     styles = getSampleStyleSheet()
     frame1 = Frame(
-            doc.leftMargin, doc.bottomMargin, doc.width/2-6,
-            doc.height, id='col1')
+        doc.leftMargin, doc.bottomMargin, doc.width/2-6,
+        doc.height, id='col1')
     frame2 = Frame(
-            doc.leftMargin+doc.width/2+6, doc.bottomMargin, doc.width/2-6,
-            doc.height, id='col2')
+        doc.leftMargin+doc.width/2+6, doc.bottomMargin, doc.width/2-6,
+        doc.height, id='col2')
     d = formatted_date(date.today())
-    datenow = "Exported from MySDS, the CCCU Law DB on " + d 
-    for module in modules_to_use:        
+    datenow = "Exported from MySDS, the CCCU Law DB on " + d
+    for module in modules_to_use:
         heading = (
-                "Anonymous Marks for " + module.title + " (" +
-                str(module.year) + "/" + str(module.year + 1) + ")")
+            "Anonymous Marks for " + module.title + " (" +
+            str(module.year) + "/" + str(module.year + 1) + ")")
         elements.append(Paragraph(heading, styles['Heading2']))
-        elements.append(Spacer(1,20))
+        elements.append(Spacer(1, 20))
         data = []
         header = ['Exam ID', 'Exam Mark']
         data.append(header)
-        marks = AnonymousMarks.objects.filter(module = module)
+        marks = AnonymousMarks.objects.filter(module=module)
         for mark in marks:
             row = [mark.exam_id, mark.exam]
             data.append(row)
         table = Table(data, repeatRows=1)
         table.setStyle(
-                TableStyle([
-                        ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
-                        ('BACKGROUND',(0,0),(-1,0),colors.lightgrey),
-                        ('BOX', (0,0), (-1,-1), 0.25, colors.black)])
-                )
+            TableStyle([
+                ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+                ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+                ('BOX', (0, 0), (-1, -1), 0.25, colors.black)])
+            )
         elements.append(table)
         elements.append(paragraph(datenow))
         elements.append(PageBreak())
-    doc.addPageTemplates([PageTemplate(id='TwoCol',frames=[frame1,frame2]), ])
+    doc.addPageTemplates([PageTemplate(id='TwoCol', frames=[frame1, frame2])])
     doc.build(elements)
     return response
 
@@ -1833,23 +1860,23 @@ def export_anonymous_marks(request, code, year, assessment):
     elements = []
     styles = getSampleStyleSheet()
     frame1 = Frame(
-            doc.leftMargin, doc.bottomMargin, doc.width/2-6,
-            doc.height, id='col1')
+        doc.leftMargin, doc.bottomMargin, doc.width/2-6,
+        doc.height, id='col1')
     frame2 = Frame(
-            doc.leftMargin+doc.width/2+6, doc.bottomMargin, doc.width/2-6,
-            doc.height, id='col2')
+        doc.leftMargin+doc.width/2+6, doc.bottomMargin, doc.width/2-6,
+        doc.height, id='col2')
     d = formatted_date(date.today())
-    datenow = "Exported from MySDS, the CCCU Law DB on " + d 
+    datenow = "Exported from MySDS, the CCCU Law DB on " + d
     heading = (
-            "Anonymous Marks for " + module.title + " (" +
-            str(module.year) + "/" + str(module.year + 1) +") - ")
+        "Anonymous Marks for " + module.title + " (" +
+        str(module.year) + "/" + str(module.year + 1) + ") - ")
     if assessment == 'exam':
         heading += "Exam"
     else:
         assessment = int(assessment)
         heading += module.get_assessment_title(assessment)
     elements.append(Paragraph(heading, styles['Heading2']))
-    elements.append(Spacer(1,20))
+    elements.append(Spacer(1, 20))
     data = []
     header = ['Exam ID', 'Mark']
     data.append(header)
@@ -1859,22 +1886,23 @@ def export_anonymous_marks(request, code, year, assessment):
         data.append(row)
     table = Table(data, repeatRows=1)
     table.setStyle(
-            TableStyle([
-                    ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
-                    ('BACKGROUND',(0,0),(-1,0),colors.lightgrey),
-                    ('BOX', (0,0), (-1,-1), 0.25, colors.black)])
-            )
+        TableStyle([
+            ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+            ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+            ('BOX', (0, 0), (-1, -1), 0.25, colors.black)])
+        )
     elements.append(table)
-    elements.append(Spacer(1,20))
+    elements.append(Spacer(1, 20))
     elements.append(paragraph(datenow))
-    doc.addPageTemplates([PageTemplate(id='TwoCol',frames=[frame1,frame2]), ])
+    doc.addPageTemplates([PageTemplate(id='TwoCol', frames=[frame1, frame2])])
     doc.build(elements)
     return response
+
 
 @login_required
 @user_passes_test(is_teacher)
 def export_marks(request, code, year):
-    """Gives a useful sheet of all marks for the module.  
+    """Gives a useful sheet of all marks for the module.
 
     Students will be highlighted if they failed the module, or if a QLD
     student failed a component in a Foundational module
@@ -1884,7 +1912,7 @@ def export_marks(request, code, year):
     filename = module.title.replace(" ", "_")
     filename += "_Marks_" + str(module.year) + ".pdf"
     responsestring = 'attachment; filename=' + filename
-    response['Content-Disposition'] = responsestring 
+    response['Content-Disposition'] = responsestring
     doc = SimpleDocTemplate(response)
     doc.pagesize = landscape(A4)
     elements = []
@@ -1892,18 +1920,18 @@ def export_marks(request, code, year):
     d = formatted_date(date.today())
     datenow = "Exported from MySDS, the CCCU Law DB on " + d
     modulestring = (
-            module.title + ' (' + module.code + ') ' + str(module.year) + '/' +
-            str(module.year + 1)
-            )
+        module.title + ' (' + module.code + ') ' + str(module.year) + '/' +
+        str(module.year + 1)
+        )
     heading = "Marks for " + modulestring
     elements.append(Paragraph(heading, styles['Heading2']))
-    elements.append(Spacer(1,20))
+    elements.append(Spacer(1, 20))
     data = []
     header = ['ID', 'Student', ' Programme', 'QLD']
     assessment_range = []
     if module.assessment_1_value:
         title = (
-            module.assessment_1_title +
+            module.assessment_1_title.strip() +
             ' (' +
             str(module.assessment_1_value) +
             '%)'
@@ -1912,7 +1940,7 @@ def export_marks(request, code, year):
         header.append(paragraph(title))
     if module.assessment_2_value:
         title = (
-            module.assessment_2_title +
+            module.assessment_2_title.strip() +
             ' (' +
             str(module.assessment_2_value) +
             '%)'
@@ -1921,7 +1949,7 @@ def export_marks(request, code, year):
         header.append(paragraph(title))
     if module.assessment_3_value:
         title = (
-            module.assessment_3_title +
+            module.assessment_3_title.strip() +
             ' (' +
             str(module.assessment_3_value) +
             '%)'
@@ -1930,7 +1958,7 @@ def export_marks(request, code, year):
         header.append(paragraph(title))
     if module.assessment_4_value:
         title = (
-            module.assessment_4_title +
+            module.assessment_4_title.strip() +
             ' (' +
             str(module.assessment_4_value) +
             '%)'
@@ -1939,7 +1967,7 @@ def export_marks(request, code, year):
         header.append(paragraph(title))
     if module.assessment_5_value:
         title = (
-            module.assessment_5_title +
+            module.assessment_5_title.strip() +
             ' (' +
             str(module.assessment_5_value) +
             '%)'
@@ -1948,7 +1976,7 @@ def export_marks(request, code, year):
         header.append(paragraph(title))
     if module.assessment_6_value:
         title = (
-            module.assessment_6_title +
+            module.assessment_6_title.strip() +
             ' (' +
             str(module.assessment_6_value) +
             '%)'
@@ -1966,31 +1994,31 @@ def export_marks(request, code, year):
     header.append('Total')
     header.append('Notes')
     data.append(header)
-    performances = Performance.objects.filter(module = module)
+    performances = Performance.objects.filter(module=module)
     counter = 0
     highlight = []
     # This needs to be replaced once model changes
     ls = Course.objects.get(
-            title='BSc (Hons) Legal Studies / Sport And Exercise Science')
+        title='BSc (Hons) Legal Studies / Sport And Exercise Science')
     llb = Course.objects.get(
-            title='LLB (Hons) Bachelor Of Law')
+        title='LLB (Hons) Bachelor Of Law')
     business = Course.objects.get(
-            title='LLB (Hons) Bachelor Of Law With Business Studies')
+        title='LLB (Hons) Bachelor Of Law With Business Studies')
     ac = Course.objects.get(
-            title='LLB (Hons) Bachelor Of Law With Criminology')
+        title='LLB (Hons) Bachelor Of Law With Criminology')
     fi = Course.objects.get(
-            title='LLB (Hons) Bachelor Of Law With Forensic Investigation')
+        title='LLB (Hons) Bachelor Of Law With Forensic Investigation')
     ir = Course.objects.get(
-            title='LLB (Hons) Bachelor Of Law With International Relations')
+        title='LLB (Hons) Bachelor Of Law With International Relations')
     soc = Course.objects.get(
-            title='LLB (Hons) Bachelor Of Law With Sociology')
+        title='LLB (Hons) Bachelor Of Law With Sociology')
     # <<<
     for performance in performances:
         counter += 1
         student = (
-                performance.student.last_name + ", " + 
-                performance.student.short_first_name()
-                )
+            performance.student.last_name + ", " +
+            performance.student.short_first_name()
+            )
         row = [performance.student.student_id, paragraph(student)]
         # This needs to be replaced once model changes
         if performance.student.course == llb:
@@ -2023,6 +2051,8 @@ def export_marks(request, code, year):
         highlight_red = False
         for assessment in assessment_range:
             concession = performance.get_concession(assessment)
+            assessment_title = module.get_assessment_title(assessment)
+            assessment_title = assessment_title.strip()
             granted_or_pending = False
             if concession == 'G':
                 granted_or_pending = True
@@ -2033,11 +2063,9 @@ def export_marks(request, code, year):
                         notes += ', sit exam'
                 else:
                     if len(notes) == 0:
-                        notes = ('Submit ' +
-                            module.get_assessment_title(assessment))
+                        notes = 'Submit ' + assessment_title
                     else:
-                        notes += (', submit ' +
-                            module.get_assessment_title(assessment))
+                        notes += ', submit ' + assessment_title
             if concession == 'P':
                 granted_or_pending = True
                 if assessment == 'exam':
@@ -2047,12 +2075,14 @@ def export_marks(request, code, year):
                         notes += ', concession for exam pending'
                 else:
                     if len(notes) == 0:
-                        notes = ('Concession for ' +
-                            module.get_assessment_title(assessment)+
+                        notes = (
+                            'Concession for ' +
+                            assessment_title +
                             ' pending')
                     else:
-                        notes += (', concession for ' +
-                            module.get_assessment_title(assessment) +
+                        notes += (
+                            ', concession for ' +
+                            assessment_title +
                             ' pending')
             if performance.get_assessment_result(assessment):
                 row.append(performance.get_assessment_result(assessment))
@@ -2066,13 +2096,9 @@ def export_marks(request, code, year):
                                     notes += ', resit exam'
                             else:
                                 if len(notes) == 0:
-                                    notes = ('Resubmit ' +
-                                        module.get_assessment_title(
-                                            assessment))
+                                    notes = 'Resubmit ' + assessment_title
                                 else:
-                                    notes += (', resubmit ' +
-                                        module.get_assessment_title(
-                                            assessment))
+                                    notes += ', resubmit ' + assessment_title
                         if not highlight_yellow:
                             highlight_red = True
                 elif performance.average < 40:
@@ -2085,13 +2111,9 @@ def export_marks(request, code, year):
                                     notes += ', resit exam'
                             else:
                                 if len(notes) == 0:
-                                    notes = ('Reubmit ' +
-                                        module.get_assessment_title(
-                                            assessment))
+                                    notes = 'Reubmit ' + assessment_title
                                 else:
-                                    notes += (', resubmit ' +
-                                        module.get_assessment_title(
-                                            assessment))
+                                    notes += ', resubmit ' + assessment_title
             else:
                 row.append('-')
                 if module.is_foundational and performance.student.qld:
@@ -2104,13 +2126,9 @@ def export_marks(request, code, year):
                                     notes += ', resit exam'
                             else:
                                 if len(notes) == 0:
-                                    notes = ('Resubmit ' +
-                                        module.get_assessment_title(
-                                            assessment))
+                                    notes = 'Resubmit ' + assessment_title
                                 else:
-                                    notes += (', resubmit ' +
-                                        module.get_assessment_title(
-                                            assessment))
+                                    notes += ', resubmit ' + assessment_title
                     if not highlight_yellow:
                         highlight_red = True
                 elif performance.average < 40:
@@ -2123,11 +2141,9 @@ def export_marks(request, code, year):
                                     notes += ', resit exam'
                             else:
                                 if len(notes) == 0:
-                                    notes = ('Reubmit ' +
-                                        module.get_assessment_title(assessment))
+                                    notes = 'Reubmit ' + assessment_title
                                 else:
-                                    notes += (', resubmit ' +
-                                        module.get_assessment_title(assessment))
+                                    notes += ', resubmit ' + assessment_title
         if performance.average:
             row.append(performance.average)
         else:
@@ -2137,27 +2153,27 @@ def export_marks(request, code, year):
         row.append(notes_paragraph)
         data.append(row)
         if highlight_yellow:
-            highlight.append((counter,'y'))
+            highlight.append((counter, 'y'))
         if highlight_red:
             highlight.append((counter, 'r'))
     table = Table(data, repeatRows=1)
     tablestyle = [
-            ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
-            ('BACKGROUND',(0,0),(-1,0),colors.grey),
-            ('BOX', (0,0), (-1,-1), 0.25, colors.black)
-            ]
+        ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('BOX', (0, 0), (-1, -1), 0.25, colors.black)
+        ]
     for item in highlight:
         if item[1] == 'r':
             tablestyle.append(
-                    ('BACKGROUND', (0,item[0]), (-1,item[0]), colors.red)
-                    )
+                ('BACKGROUND', (0, item[0]), (-1, item[0]), colors.red)
+                )
         if item[1] == 'y':
             tablestyle.append(
-                    ('BACKGROUND', (0,item[0]), (-1,item[0]), colors.yellow)
-                    )
+                ('BACKGROUND', (0, item[0]), (-1, item[0]), colors.yellow)
+                )
     table.setStyle(TableStyle(tablestyle))
     elements.append(table)
-    elements.append(Spacer(1,20))
+    elements.append(Spacer(1, 20))
     elements.append(paragraph(datenow))
     elements.append(PageBreak())
     doc.build(elements)
