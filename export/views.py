@@ -1892,159 +1892,179 @@ def export_marks(request, code, year):
     d = formatted_date(date.today())
     datenow = "Exported from MySDS, the CCCU Law DB on " + d
     modulestring = (
-            module.title + ' (' + str(module.year) + '/' +
-            str(module.year + 1) + ')'
+            module.title + ' (' + module.code + ') ' + str(module.year) + '/' +
+            str(module.year + 1)
             )
     heading = "Marks for " + modulestring
     elements.append(Paragraph(heading, styles['Heading2']))
     elements.append(Spacer(1,20))
     data = []
-    header = ['Student', 'Student ID', 'QLD']
-    if module.assessment_1_value:
-        title = (
-            module.assessment_1_title +
-            ' (' +
-            str(module.assessment_1_value) +
-            '%)'
-            )
-        header.append(title)
-    if module.assessment_2_value:
-        title = (
-            module.assessment_2_title +
-            ' (' +
-            str(module.assessment_2_value) +
-            '%)'
-            )
-        header.append(title)
-    if module.assessment_3_value:
-        title = (
-            module.assessment_3_title +
-            ' (' +
-            str(module.assessment_3_value) +
-            '%)'
-            )
-        header.append(title)
-    if module.assessment_4_value:
-        title = (
-            module.assessment_4_title +
-            ' (' +
-            str(module.assessment_4_value) +
-            '%)'
-            )
-        header.append(title)
-    if module.assessment_5_value:
-        title = (
-            module.assessment_5_title +
-            ' (' +
-            str(module.assessment_5_value) +
-            '%)'
-            )
-        header.append(title)
-    if module.assessment_6_value:
-        title = (
-            module.assessment_6_title +
-            ' (' +
-            str(module.assessment_6_value) +
-            '%)'
-            )
-        header.append(title)
-    if module.exam_value:
-        title = (
-            'Exam (' +
-            str(module.exam_value) +
-            '%)'
-            )
-        header.append('Exam')
-    header.append('Module Mark')
+    header = ['ID', 'Student', ' Programme', 'QLD']
+    # Ugly workaround to accommodate overassessing colleague...!
+    if module.code == 'MDSS1ELSM':
+        assessment_range = ['1', '2', '3', '4']
+        header.append('Online Test (25 %)')
+        header.append('Reading Law (20 %)')
+        header.append('Essay (25 %)')
+        header.append('Negotiation (30 %)')
+    else:
+        assessment_range = []
+        if module.assessment_1_value:
+            title = (
+                module.assessment_1_title +
+                ' (' +
+                str(module.assessment_1_value) +
+                '%)'
+                )
+            assessment_range.append('1')
+            header.append(title)
+        if module.assessment_2_value:
+            title = (
+                module.assessment_2_title +
+                ' (' +
+                str(module.assessment_2_value) +
+                '%)'
+                )
+            assessment_range.append('2')
+            header.append(title)
+        if module.assessment_3_value:
+            title = (
+                module.assessment_3_title +
+                ' (' +
+                str(module.assessment_3_value) +
+                '%)'
+                )
+            assessment_range.append('3')
+            header.append(title)
+        if module.assessment_4_value:
+            title = (
+                module.assessment_4_title +
+                ' (' +
+                str(module.assessment_4_value) +
+                '%)'
+                )
+            assessment_range.append('4')
+            header.append(title)
+        if module.assessment_5_value:
+            title = (
+                module.assessment_5_title +
+                ' (' +
+                str(module.assessment_5_value) +
+                '%)'
+                )
+            assessment_range.append('5')
+            header.append(title)
+        if module.assessment_6_value:
+            title = (
+                module.assessment_6_title +
+                ' (' +
+                str(module.assessment_6_value) +
+                '%)'
+                )
+            assessment_range.append('6')
+            header.append(title)
+        if module.exam_value:
+            title = (
+                'Exam (' +
+                str(module.exam_value) +
+                '%)'
+                )
+            assessment_range.append('exam')
+            header.append(title)
+    header.append('Total')
     data.append(header)
     performances = Performance.objects.filter(module = module)
     counter = 0
     highlight = []
+    # This needs to be replaced once model changes
+    ls = Course.objects.get(
+            title='BSc (Hons) Legal Studies / Sport And Exercise Science')
+    llb = Course.objects.get(
+            title='LLB (Hons) Bachelor Of Law')
+    business = Course.objects.get(
+            title='LLB (Hons) Bachelor Of Law With Business Studies')
+    ac = Course.objects.get(
+            title='LLB (Hons) Bachelor Of Law With Criminology')
+    fi = Course.objects.get(
+            title='LLB (Hons) Bachelor Of Law With Forensic Investigation')
+    ir = Course.objects.get(
+            title='LLB (Hons) Bachelor Of Law With International Relations')
+    soc = Course.objects.get(
+            title='LLB (Hons) Bachelor Of Law With Sociology')
+    # <<<
     for performance in performances:
         counter += 1
         student = (
                 performance.student.last_name + ", " + 
-                performance.student.first_name
+                performance.student.short_first_name()
                 )
-        row = [student, performance.student.student_id]
+        row = [performance.student.student_id, student]
+        # This needs to be replaced once model changes
+        if performance.student.course == llb:
+            course = 'LLB'
+        elif performance.student.course == business:
+            course = 'LLB/Business'
+        elif performance.student.course == ac:
+            course = 'LLB/AC'
+        elif performance.student.course == fi:
+            course = 'LLB/FI'
+        elif performance.student.course == ir:
+            course = 'LLB/IR'
+        elif performance.student.course == soc:
+            course = 'LLB/Sociology'
+        elif performance.student.course == ls:
+            course = 'LS/Sport'
+        else:
+            course = ''
+        row.append(course)
+        # <<<
         if performance.student.qld:
             row.append(u'\u2713')
         else:
             row.append(' ')
         pay_attention = False
-        if module.assessment_1_value:
-            if performance.assessment_1:
-                if performance.assessment_1 < 40:
-                    pay_attention = True
-                row.append(performance.assessment_1)
+        if performance.average < 40:
+            highlight_yellow = True
+        else:
+            highlight_yellow = False
+        highlight_red = False
+        for assessment in assessment_range:
+            if performance.get_assessment_result(assessment):
+                row.append(performance.get_assessment_result(assessment))
+                if not highlight_yellow:
+                    if module.is_foundational and performance.student.qld:
+                        if performance.get_assessment_result(assessment) < 40:
+                            highlight_red = True
             else:
                 row.append('-')
-        if module.assessment_2_value:
-            if performance.assessment_2:
-                if performance.assessment_1 < 40:
-                    pay_attention = True
-                row.append(performance.assessment_2)
-            else:
-                row.append('-')
-        if module.assessment_3_value:
-            if performance.assessment_3:
-                row.append(performance.assessment_3)
-                if performance.assessment_1 < 40:
-                    pay_attention = True
-            else:
-                row.append('-')
-        if module.assessment_4_value:
-            if performance.assessment_4:
-                row.append(performance.assessment_4)
-                if performance.assessment_1 < 40:
-                    pay_attention = True
-            else:
-                row.append('-')
-        if module.assessment_5_value:
-            if performance.assessment_5:
-                row.append(performance.assessment_5)
-                if performance.assessment_1 < 40:
-                    pay_attention = True
-            else:
-                row.append('-')
-        if module.assessment_6_value:
-            if performance.assessment_6:
-                row.append(performance.assessment_6)
-                if performance.assessment_1 < 40:
-                    pay_attention = True
-            else:
-                row.append('-')
-        if module.exam_value:
-            if performance.exam:
-                row.append(performance.exam)
-                if performance.exam < 40:
-                    pay_attention = True
-            else:
-                row.append('-')
-        if not module.is_foundational:
-            pay_attention = False
-        if not performance.student.qld:
-            pay_attention = False
+                if not highlight_yellow:
+                    if module.is_foundational and student.qld:
+                        highlight_red = True
         if performance.average:
             row.append(performance.average)
-            if performance.average < 40:
-                pay_attention = True
         else:
             row.append('-')
-            pay_attention = True
+            highlight_yellow = True
         data.append(row)
-        if pay_attention:
-            highlight.append(counter)
+        if highlight_yellow:
+            highlight.append((counter,'y'))
+        if highlight_red:
+            highlight.append((counter, 'r'))
     table = Table(data, repeatRows=1)
     tablestyle = [
             ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
             ('BACKGROUND',(0,0),(-1,0),colors.grey),
             ('BOX', (0,0), (-1,-1), 0.25, colors.black)
             ]
-    for number in highlight:
-        tablestyle.append(
-                ('BACKGROUND', (0,number), (-1,number), colors.lightgrey)
-                )
+    for item in highlight:
+        if item[1] == 'r':
+            tablestyle.append(
+                    ('BACKGROUND', (0,item[0]), (-1,item[0]), colors.red)
+                    )
+        if item[1] == 'y':
+            tablestyle.append(
+                    ('BACKGROUND', (0,item[0]), (-1,item[0]), colors.yellow)
+                    )
     table.setStyle(TableStyle(tablestyle))
     elements.append(table)
     elements.append(Spacer(1,20))
