@@ -1014,6 +1014,23 @@ class Performance(models.Model):
                 returnvalue = self.exam_modified
         return returnvalue
 
+    def get_concession(self, assessment):
+        if assessment == '1':
+            concession = self.assessment_1_concessions
+        if assessment == '2':
+            concession = self.assessment_2_concessions
+        if assessment == '3':
+            concession = self.assessment_3_concessions
+        if assessment == '4':
+            concession = self.assessment_4_concessions
+        if assessment == '5':
+            concession = self.assessment_5_concessions
+        if assessment == '6':
+            concession = self.assessment_6_concessions
+        if assessment == 'exam':
+            concession = self.exam_concessions
+        return concession
+
     def set_concession(self, assessment, concession):
         if assessment == '1':
             self.assessment_1_concessions = concession

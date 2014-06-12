@@ -1900,78 +1900,71 @@ def export_marks(request, code, year):
     elements.append(Spacer(1,20))
     data = []
     header = ['ID', 'Student', ' Programme', 'QLD']
-    # Ugly workaround to accommodate overassessing colleague...!
-    if module.code == 'MDSS1ELSM':
-        assessment_range = ['1', '2', '3', '4']
-        header.append('Online Test (25 %)')
-        header.append('Reading Law (20 %)')
-        header.append('Essay (25 %)')
-        header.append('Negotiation (30 %)')
-    else:
-        assessment_range = []
-        if module.assessment_1_value:
-            title = (
-                module.assessment_1_title +
-                ' (' +
-                str(module.assessment_1_value) +
-                '%)'
-                )
-            assessment_range.append('1')
-            header.append(title)
-        if module.assessment_2_value:
-            title = (
-                module.assessment_2_title +
-                ' (' +
-                str(module.assessment_2_value) +
-                '%)'
-                )
-            assessment_range.append('2')
-            header.append(title)
-        if module.assessment_3_value:
-            title = (
-                module.assessment_3_title +
-                ' (' +
-                str(module.assessment_3_value) +
-                '%)'
-                )
-            assessment_range.append('3')
-            header.append(title)
-        if module.assessment_4_value:
-            title = (
-                module.assessment_4_title +
-                ' (' +
-                str(module.assessment_4_value) +
-                '%)'
-                )
-            assessment_range.append('4')
-            header.append(title)
-        if module.assessment_5_value:
-            title = (
-                module.assessment_5_title +
-                ' (' +
-                str(module.assessment_5_value) +
-                '%)'
-                )
-            assessment_range.append('5')
-            header.append(title)
-        if module.assessment_6_value:
-            title = (
-                module.assessment_6_title +
-                ' (' +
-                str(module.assessment_6_value) +
-                '%)'
-                )
-            assessment_range.append('6')
-            header.append(title)
-        if module.exam_value:
-            title = (
-                'Exam (' +
-                str(module.exam_value) +
-                '%)'
-                )
-            assessment_range.append('exam')
-            header.append(title)
+    assessment_range = []
+    if module.assessment_1_value:
+        title = (
+            module.assessment_1_title +
+            ' (' +
+            str(module.assessment_1_value) +
+            '%)'
+            )
+        assessment_range.append('1')
+        header.append(paragraph(title))
+    if module.assessment_2_value:
+        title = (
+            module.assessment_2_title +
+            ' (' +
+            str(module.assessment_2_value) +
+            '%)'
+            )
+        assessment_range.append('2')
+        header.append(paragraph(title))
+    if module.assessment_3_value:
+        title = (
+            module.assessment_3_title +
+            ' (' +
+            str(module.assessment_3_value) +
+            '%)'
+            )
+        assessment_range.append('3')
+        header.append(paragraph(title))
+    if module.assessment_4_value:
+        title = (
+            module.assessment_4_title +
+            ' (' +
+            str(module.assessment_4_value) +
+            '%)'
+            )
+        assessment_range.append('4')
+        header.append(paragraph(title))
+    if module.assessment_5_value:
+        title = (
+            module.assessment_5_title +
+            ' (' +
+            str(module.assessment_5_value) +
+            '%)'
+            )
+        assessment_range.append('5')
+        header.append(paragraph(title))
+    if module.assessment_6_value:
+        title = (
+            module.assessment_6_title +
+            ' (' +
+            str(module.assessment_6_value) +
+            '%)'
+            )
+        assessment_range.append('6')
+        header.append(paragraph(title))
+    if module.exam_value:
+        title = (
+            'Exam (' +
+            str(module.exam_value) +
+            '%)'
+            )
+        assessment_range.append('exam')
+        header.append(paragraph(title))
     header.append('Total')
+    header.append('Notes')
     data.append(header)
     performances = Performance.objects.filter(module = module)
     counter = 0
@@ -1998,7 +1991,7 @@ def export_marks(request, code, year):
                 performance.student.last_name + ", " + 
                 performance.student.short_first_name()
                 )
-        row = [performance.student.student_id, student]
+        row = [performance.student.student_id, paragraph(student)]
         # This needs to be replaced once model changes
         if performance.student.course == llb:
             course = 'LLB'
@@ -2022,29 +2015,126 @@ def export_marks(request, code, year):
             row.append(u'\u2713')
         else:
             row.append(' ')
-        pay_attention = False
+        notes = ''
         if performance.average < 40:
             highlight_yellow = True
         else:
             highlight_yellow = False
         highlight_red = False
         for assessment in assessment_range:
+            concession = performance.get_concession(assessment)
+            granted_or_pending = False
+            if concession == 'G':
+                granted_or_pending = True
+                if assessment == 'exam':
+                    if len(notes) == 0:
+                        notes = 'Sit exam'
+                    else:
+                        notes += ', sit exam'
+                else:
+                    if len(notes) == 0:
+                        notes = ('Submit ' +
+                            module.get_assessment_title(assessment))
+                    else:
+                        notes += (', submit ' +
+                            module.get_assessment_title(assessment))
+            if concession == 'P':
+                granted_or_pending = True
+                if assessment == 'exam':
+                    if len(notes) == 0:
+                        notes = 'Concession for exam pending'
+                    else:
+                        notes += ', concession for exam pending'
+                else:
+                    if len(notes) == 0:
+                        notes = ('Concession for ' +
+                            module.get_assessment_title(assessment)+
+                            ' pending')
+                    else:
+                        notes += (', concession for ' +
+                            module.get_assessment_title(assessment) +
+                            ' pending')
             if performance.get_assessment_result(assessment):
                 row.append(performance.get_assessment_result(assessment))
-                if not highlight_yellow:
-                    if module.is_foundational and performance.student.qld:
-                        if performance.get_assessment_result(assessment) < 40:
+                if module.is_foundational and performance.student.qld:
+                    if performance.get_assessment_result(assessment) < 40:
+                        if not granted_or_pending:
+                            if assessment == 'exam':
+                                if len(notes) == 0:
+                                    notes = 'Resit exam'
+                                else:
+                                    notes += ', resit exam'
+                            else:
+                                if len(notes) == 0:
+                                    notes = ('Resubmit ' +
+                                        module.get_assessment_title(
+                                            assessment))
+                                else:
+                                    notes += (', resubmit ' +
+                                        module.get_assessment_title(
+                                            assessment))
+                        if not highlight_yellow:
                             highlight_red = True
+                elif performance.average < 40:
+                    if performance.get_assessment_result(assessment) < 40:
+                        if not granted_or_pending:
+                            if assessment == 'exam':
+                                if len(notes) == 0:
+                                    notes = 'Resit exam'
+                                else:
+                                    notes += ', resit exam'
+                            else:
+                                if len(notes) == 0:
+                                    notes = ('Reubmit ' +
+                                        module.get_assessment_title(
+                                            assessment))
+                                else:
+                                    notes += (', resubmit ' +
+                                        module.get_assessment_title(
+                                            assessment))
             else:
                 row.append('-')
-                if not highlight_yellow:
-                    if module.is_foundational and student.qld:
+                if module.is_foundational and performance.student.qld:
+                    if performance.get_assessment_result(assessment) < 40:
+                        if not granted_or_pending:
+                            if assessment == 'exam':
+                                if len(notes) == 0:
+                                    notes = 'Resit exam'
+                                else:
+                                    notes += ', resit exam'
+                            else:
+                                if len(notes) == 0:
+                                    notes = ('Resubmit ' +
+                                        module.get_assessment_title(
+                                            assessment))
+                                else:
+                                    notes += (', resubmit ' +
+                                        module.get_assessment_title(
+                                            assessment))
+                    if not highlight_yellow:
                         highlight_red = True
+                elif performance.average < 40:
+                    if performance.get_assessment_result(assessment) < 40:
+                        if not granted_or_pending:
+                            if assessment == 'exam':
+                                if len(notes) == 0:
+                                    notes = 'Resit exam'
+                                else:
+                                    notes += ', resit exam'
+                            else:
+                                if len(notes) == 0:
+                                    notes = ('Reubmit ' +
+                                        module.get_assessment_title(assessment))
+                                else:
+                                    notes += (', resubmit ' +
+                                        module.get_assessment_title(assessment))
         if performance.average:
             row.append(performance.average)
         else:
             row.append('-')
             highlight_yellow = True
+        notes_paragraph = paragraph(notes)
+        row.append(notes_paragraph)
         data.append(row)
         if highlight_yellow:
             highlight.append((counter,'y'))
