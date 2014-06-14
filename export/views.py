@@ -2355,16 +2355,17 @@ def sample_pack(request, code, year):
     no_of_fail = 0
     for performance in performances:
         result = performance.average
-        if result > 69:
-            no_of_first += 1
-        elif result > 59:
-            no_of_two_one += 1
-        elif result > 49:
-            no_of_two_two += 1
-        elif result > 39:
-            no_of_third += 1
-        else:
-            no_of_fail += 1
+        if result:
+            if result > 69:
+                no_of_first += 1
+            elif result > 59:
+                no_of_two_one += 1
+            elif result > 49:
+                no_of_two_two += 1
+            elif result > 39:
+                no_of_third += 1
+            else:
+                no_of_fail += 1
     first_f = float(no_of_first)
     two_one_f = float(no_of_two_one)
     two_two_f = float(no_of_two_two)
