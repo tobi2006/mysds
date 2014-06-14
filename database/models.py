@@ -374,10 +374,15 @@ class Module(models.Model):
             returnvalue = self.assessment_5_type
         elif assessment == '6':
             returnvalue = self.assessment_6_type
+        else:
+            returnvalue = 'Exam'
         return returnvalue
 
     def get_marksheet_type(self, assessment):
-        number = int(assessment)
+        try:
+            number = int(assessment)
+        except ValueError:
+            return False
         if number == 1:
             returnvalue = self.assessment_1_marksheet_type
         elif number == 2:
@@ -498,6 +503,10 @@ class Module(models.Model):
     def get_attendance_sheet_url(self):
         return reverse(
             'export_attendance_sheet', args=[self.code, str(self.year)])
+
+    def get_sample_pack_url(self):
+        return reverse(
+            'sample_pack', args=[self.code, str(self.year)])
 
     def get_seminar_group_overview_url(self):
         return reverse(

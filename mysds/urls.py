@@ -312,6 +312,11 @@ urlpatterns += patterns(
         'export_marks',
         name='export_marks'
         ),
+    url(
+        r'^sample_pack/(\w+)/(\d+)/$',
+        'sample_pack',
+        name='sample_pack'
+        ),
 )
 
 urlpatterns += patterns(

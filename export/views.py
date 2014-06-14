@@ -5,6 +5,7 @@ from django.http import (
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext
 from django.templatetags.static import static
+from random import shuffle
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4, LETTER, landscape, portrait
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -19,6 +20,7 @@ from database.models import *
 from feedback.models import *
 from feedback.categories import *
 from anonymous_marking.models import *
+from mysds.unisettings import *
 
 # The different marking categories are in feedback/categories.py
 
@@ -1646,7 +1648,6 @@ def export_feedback_sheet(request, code, year, assessment, student_id):
                 except Marksheet.DoesNotExist:
                     pass
             for student in students:
-                # This needs to be changed to take the database out
                 if assessment_type == 'ESSAY':
                     elements = essay_sheet(student, module, assessment)
                 elif assessment_type == 'LEGAL_PROBLEM':
@@ -2044,7 +2045,7 @@ def export_marks(request, code, year):
         else:
             row.append(' ')
         notes = ''
-        if performance.average < 40:
+        if performance.average < PASSMARK:
             highlight_yellow = True
         else:
             highlight_yellow = False
@@ -2087,7 +2088,8 @@ def export_marks(request, code, year):
             if performance.get_assessment_result(assessment):
                 row.append(performance.get_assessment_result(assessment))
                 if module.is_foundational and performance.student.qld:
-                    if performance.get_assessment_result(assessment) < 40:
+                    if (performance.get_assessment_result(assessment)
+                            < PASSMARK):
                         if not granted_or_pending:
                             if assessment == 'exam':
                                 if len(notes) == 0:
@@ -2101,8 +2103,9 @@ def export_marks(request, code, year):
                                     notes += ', resubmit ' + assessment_title
                         if not highlight_yellow:
                             highlight_red = True
-                elif performance.average < 40:
-                    if performance.get_assessment_result(assessment) < 40:
+                elif performance.average < PASSMARK:
+                    if (performance.get_assessment_result(assessment)
+                            < PASSMARK):
                         if not granted_or_pending:
                             if assessment == 'exam':
                                 if len(notes) == 0:
@@ -2117,7 +2120,8 @@ def export_marks(request, code, year):
             else:
                 row.append('-')
                 if module.is_foundational and performance.student.qld:
-                    if performance.get_assessment_result(assessment) < 40:
+                    if (performance.get_assessment_result(assessment)
+                            < PASSMARK):
                         if not granted_or_pending:
                             if assessment == 'exam':
                                 if len(notes) == 0:
@@ -2131,8 +2135,9 @@ def export_marks(request, code, year):
                                     notes += ', resubmit ' + assessment_title
                     if not highlight_yellow:
                         highlight_red = True
-                elif performance.average < 40:
-                    if performance.get_assessment_result(assessment) < 40:
+                elif performance.average < PASSMARK:
+                    if (performance.get_assessment_result(assessment)
+                            < PASSMARK):
                         if not granted_or_pending:
                             if assessment == 'exam':
                                 if len(notes) == 0:
@@ -2177,4 +2182,242 @@ def export_marks(request, code, year):
     elements.append(paragraph(datenow))
     elements.append(PageBreak())
     doc.build(elements)
+    return response
+
+
+def sample_pack(request, code, year):
+    """Prepares a nice sample pack for the external examiner"""
+    module = Module.objects.get(code=code, year=year)
+    response = HttpResponse(mimetype='application/pdf')
+    tmp = module.title.replace(" ", "_")
+    filename_string = 'attachment; filename=' + tmp + '_examiners_pack.pdf'
+    response['Content-Disposition'] = filename_string
+    document = SimpleDocTemplate(response)
+    elements = []
+    styles = getSampleStyleSheet()
+    performances = list(Performance.objects.filter(module=module))
+    samplesize = sample_size(len(performances))
+    per_range = round(samplesize / 5)  # Fail, 40s, 50s, 60s, 70 +
+    sample = {}
+    for assessment in module.get_assessment_range():
+        shuffle(performances)  # Make sure the marks are from all over
+        add = []
+        first = []
+        two_one = []
+        two_two = []
+        third = []
+        fail = []
+        leftover = []  # Needed if there are less than per_range in one
+        complete = False
+        for performance in performances:
+            mark = performance.get_assessment_result(assessment)
+            if mark:
+                if mark > 69:
+                    if len(first) < per_range:
+                        first.append(performance)
+                    else:
+                        leftover.append(performance)
+                elif mark > 59:
+                    if len(two_one) < per_range:
+                        two_one.append(performance)
+                    else:
+                        leftover.append(performance)
+                elif mark > 49:
+                    if len(two_two) < per_range:
+                        two_two.append(performance)
+                    else:
+                        leftover.append(performance)
+                elif mark > 39:
+                    if len(third) < per_range:
+                        third.append(performance)
+                    else:
+                        leftover.append(performance)
+                else:
+                    if len(fail) < per_range:
+                        fail.append(performance)
+                    else:
+                        leftover.append(performance)
+        this_sample = first + two_one + two_two + third + fail
+        while len(this_sample) < samplesize:
+            this_sample.append(leftover.pop())
+        this_sample.sort(
+            key=lambda x: x.get_assessment_result(assessment),
+            reverse=True)
+        sample[assessment] = this_sample
+    title = heading('Checklist, not part of the pack')
+    elements.append(title)
+    assessment_string = (
+        'Assessments (at the end, together with the marksheets included in ' +
+        'this bundle)')
+    data = [
+        [
+            bold_paragraph('Make sure to add the following to this pack'),
+            '', '', ''],
+        ['The module handbook (after the title page)', '', '', ''],
+        [bold_paragraph(assessment_string), '', '', '']
+        ]
+    headline = [0, 2]
+    only_one = [1]
+    counter = 2
+    for assessment in module.get_assessment_range():
+        if module.get_assessment_title(assessment) == 'Exam':
+            blind = True
+        else:
+            blind = False
+        newline = True
+        counter += 1
+        title = bold_paragraph(module.get_assessment_title(assessment))
+        headline.append(counter)
+        data.append([title, '', '', ''])
+        counter += 1
+        title = paragraph(
+            'Instructions for ' + module.get_assessment_title(assessment))
+        data.append([title, '', '', ''])
+        only_one.append(counter)
+        this_sample = sample[assessment]
+        for performance in this_sample:
+            if newline:
+                print "True"
+                counter += 1
+                if blind:
+                    first_column = performance.student.exam_id
+                    print first_column
+                else:
+                    first_column = performance.student.__unicode__()
+                newline = False
+            else:
+                if blind:
+                    data.append(
+                        [
+                            first_column,
+                            '',
+                            performance.student.exam_id,
+                            ''
+                        ])
+                else:
+                    data.append(
+                        [
+                            first_column,
+                            '',
+                            performance.student.__unicode__(),
+                            ''
+                        ])
+                newline = True
+    t = Table(data, colWidths=(200, 20, 200, 20))
+    style = [
+        ('BOX', (0, 1), (-1, -1), 0.25, colors.black),
+        ('INNERGRID', (0, 1), (-1, -1), 0.25, colors.black),
+        ]
+    for line in headline:
+        style.append(('SPAN', (0, line), (-1, line)))
+    for line in only_one:
+        style.append(('SPAN', (0, line), (-2, line)))
+
+#    for line in checkboxline:
+#        style.append(('BOX', (-1, line), (-1, line)))
+    t.setStyle(TableStyle(style))
+    elements.append(t)
+    # Title page
+    elements.append(PageBreak())
+    elements.append(Spacer(1, 100))
+    elements.append(logo())
+    elements.append(Spacer(1, 80))
+    title = heading(module.__unicode__(), 'Heading1')
+    elements.append(title)
+    elements.append(Spacer(1, 40))
+    if len(module.eligible) == 1:
+        tmp = 'Year ' + module.eligible
+    elif len(module.eligible) == 2:
+        tmp = 'Years ' + module.eligible[0] + ' and ' + module.eligible[1]
+    else:
+        tmp = (
+            'Years ' +
+            module.eligible[0] +
+            ', ' +
+            module.eligible[1] +
+            ' and ' +
+            module.eligible[2]
+            )
+    level = heading(tmp)
+    elements.append(level)
+    elements.append(Spacer(1, 40))
+    subtitle = heading('Exam Board Sample Pack')
+    elements.append(subtitle)
+    elements.append(PageBreak())
+    # Statistics page
+    title = heading('Module Marks')
+    elements.append(title)
+    elements.append(Spacer(1, 20))
+    no_of_first = 0
+    no_of_two_one = 0
+    no_of_two_two = 0
+    no_of_third = 0
+    no_of_fail = 0
+    for performance in performances:
+        result = performance.average
+        if result > 69:
+            no_of_first += 1
+        elif result > 59:
+            no_of_two_one += 1
+        elif result > 49:
+            no_of_two_two += 1
+        elif result > 39:
+            no_of_third += 1
+        else:
+            no_of_fail += 1
+    first_f = float(no_of_first)
+    two_one_f = float(no_of_two_one)
+    two_two_f = float(no_of_two_two)
+    third_f = float(no_of_third)
+    fail_f = float(no_of_fail)
+    first_percent = round(((first_f / len(performances)) * 100), 1)
+    two_one_percent = round(((two_one_f / len(performances)) * 100), 1)
+    two_two_percent = round(((two_two_f / len(performances)) * 100), 1)
+    third_percent = round(((third_f / len(performances)) * 100), 1)
+    fail_percent = round(((fail_f / len(performances)) * 100), 1)
+    data = []
+    data.append(['Range', 'Amount', 'Percentage'])
+    data.append(['70 +', no_of_first, first_percent])
+    data.append(['60-69', no_of_two_one, two_one_percent])
+    data.append(['50-59', no_of_two_two, two_two_percent])
+    data.append(['40-49', no_of_third, third_percent])
+    data.append(['Fail', no_of_fail, fail_percent])
+    t = Table(data)
+    style = [
+        ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+        ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+        ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+        ]
+    t.setStyle(TableStyle(style))
+    elements.append(t)
+    elements.append(PageBreak())
+    for assessment in module.get_assessment_range():
+        this_sample = sample[assessment]
+        assessment_type = module.get_marksheet_type(assessment)
+        if assessment_type:
+            for performance in this_sample:
+                student = performance.student
+                if assessment_type == 'ESSAY':
+                    marksheet = essay_sheet(student, module, assessment)
+                elif assessment_type == 'LEGAL_PROBLEM':
+                    marksheet = legal_problem_sheet(
+                        student, module, assessment)
+                elif assessment_type == 'PRESENTATION':
+                    marksheet = presentation_sheet(student, module, assessment)
+                elif assessment_type == 'ESSAY_LEGAL_PROBLEM':
+                    marksheet = essay_legal_problem_sheet(
+                        student, module, assessment)
+                elif assessment_type == 'ONLINE_TEST_COURT_REPORT':
+                    marksheet = online_test_court_report_sheet(
+                        student, module, assessment)
+                elif assessment_type == 'NEGOTIATION_WRITTEN':
+                    marksheet = negotiation_written_sheet(
+                        student, module, assessment)
+                else:
+                    marksheet = False
+                if marksheet:
+                    for element in marksheet:
+                        elements.append(element)
+                    elements.append(PageBreak())
+    document.build(elements)
     return response
