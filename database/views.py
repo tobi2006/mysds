@@ -1118,21 +1118,23 @@ def mark(request, module_id, year, assessment, resit=False):
                             student=student, module=module)
                         if resit:
                             if resit == 'resit':
-                                if (mark != 
+                                if (mark !=
                                         performance.get_assessment_result(
                                             assessment, mark, r=True)):
                                     performance.set_assessment_result(
-                                            assessment, mark, r=True)
+                                        assessment, mark, r=True)
                             if resit == 'qld':
-                                if (mark != 
+                                if (mark !=
                                         performance.get_assessment_result(
                                             assessment, mark, q=True)):
                                     performance.set_assessment_result(
-                                            assessment, mark, q=True)
+                                        assessment, mark, q=True)
                         else:
                             if (mark !=
-                                    performance.get_assessment_result(assessment)):
-                                performance.set_assessment_result(assessment, mark)
+                                    performance.get_assessment_result(
+                                        assessment)):
+                                performance.set_assessment_result(
+                                    assessment, mark)
                 except ValueError:
                     pass
         return HttpResponseRedirect(module.get_absolute_url())
@@ -1776,8 +1778,8 @@ def concessions(request, module_id, year):
             for assessment in assessment_range:
                 check = student.student_id + '_' + assessment
                 if check in request.POST:
-                   concession = request.POST[check]
-                   performance.set_concession(assessment, concession)
+                    concession = request.POST[check]
+                    performance.set_concession(assessment, concession)
         return HttpResponseRedirect(module.get_absolute_url())
     else:
         performances = []
@@ -1797,6 +1799,7 @@ def concessions(request, module_id, year):
 @login_required
 @user_passes_test(is_admin)
 def end_of_year_decision(request, year):
+    """Overview for the exam board decisions at the end of the year"""
     meta_stuff = MetaData.objects.get(data_id=1)
     current_year = meta_stuff.current_year
     students = Student.objects.filter(active=True, year=year)
